@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { Uri} from 'vscode';
 import axios from 'axios';
 
-export class DepNodeProvider implements vscode.TreeDataProvider<PluginInterface> {
+export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterface> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<PluginInterface | undefined> = new vscode.EventEmitter<PluginInterface | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<PluginInterface | undefined> = this._onDidChangeTreeData.event;
@@ -28,7 +28,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<PluginInterface>
 	private async getRmxPlugins(): Promise<PluginInterface[]> {
 		const toPlugin = (pluginName: string, version: string, icon: string): PluginInterface => {
 			return new PluginInterface(pluginName, version, vscode.TreeItemCollapsibleState.None, {
-				command: '',
+				command: 'extension.activateRmxPlugin',
 				title: pluginName,
 				arguments: [pluginName]
 			}, Uri.parse(icon));

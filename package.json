@@ -98,10 +98,10 @@
 		"tslint": "^5.12.1"
 	},
 	"dependencies": {
-		"jsonc-parser": "^0.4.2",
+		"axios": "^0.19.2",
 		"ftp": "^0.3.10",
+		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
 		"rimraf": "^2.6.2"
-	},
-	"remixPlugins": ["solidity-compiler", "remix-tests"]
+	}
 }

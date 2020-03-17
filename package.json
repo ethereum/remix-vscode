@@ -19,14 +19,14 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "package-explorer",
-					"title": "Package Explorer",
+					"id": "remix-plugins",
+					"title": "Remix Plugins",
 					"icon": "media/dep.svg"
 				}
 			]
 		},
 		"views": {
-			"package-explorer": [
+			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
 					"name": "Remix Plugins"

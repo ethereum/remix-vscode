@@ -12,7 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:nodeDependencies"
+		"onView:rmxPlugins"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -28,14 +28,14 @@
 		"views": {
 			"package-explorer": [
 				{
-					"id": "nodeDependencies",
-					"name": "Node Dependencies"
+					"id": "rmxPlugins",
+					"name": "Remix Plugins"
 				}
 			]
 		},
 		"commands": [
 			{
-				"command": "nodeDependencies.refreshEntry",
+				"command": "rmxPlugins.refreshEntry",
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -43,11 +43,11 @@
 				}
 			},
 			{
-				"command": "nodeDependencies.addEntry",
+				"command": "rmxPlugins.addEntry",
 				"title": "Add"
 			},
 			{
-				"command": "nodeDependencies.editEntry",
+				"command": "rmxPlugins.editEntry",
 				"title": "Edit",
 				"icon": {
 					"light": "resources/light/edit.svg",
@@ -55,31 +55,31 @@
 				}
 			},
 			{
-				"command": "nodeDependencies.deleteEntry",
+				"command": "rmxPlugins.deleteEntry",
 				"title": "Delete"
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
-					"command": "nodeDependencies.refreshEntry",
-					"when": "view == nodeDependencies",
+					"command": "rmxPlugins.refreshEntry",
+					"when": "view == rmxPlugins",
 					"group": "navigation"
 				},
 				{
-					"command": "nodeDependencies.addEntry",
-					"when": "view == nodeDependencies"
+					"command": "rmxPlugins.addEntry",
+					"when": "view == rmxPlugins"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "nodeDependencies.editEntry",
-					"when": "view == nodeDependencies && viewItem == dependency",
+					"command": "rmxPlugins.editEntry",
+					"when": "view == rmxPlugins && viewItem == dependency",
 					"group": "inline"
 				},
 				{
-					"command": "nodeDependencies.deleteEntry",
-					"when": "view == nodeDependencies && viewItem == dependency"
+					"command": "rmxPlugins.deleteEntry",
+					"when": "view == rmxPlugins && viewItem == dependency"
 				}
 			]
 		}

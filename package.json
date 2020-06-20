@@ -3,13 +3,13 @@
 	"displayName": "Remix plugins manager",
 	"description": "Remix plugins manager for VSCode",
 	"version": "0.0.1",
-	"publisher": "mathcody",
+	"publisher": "ethential",
 	"enableProposedApi": true,
 	"engines": {
 		"vscode": "^1.32.0"
 	},
 	"categories": [
-		"Other"
+		"Extension Packs"
 	],
 	"activationEvents": [
 		"onView:rmxPlugins"
@@ -29,7 +29,9 @@
 			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
-					"name": "Remix Plugins"
+					"name": "Remix Plugins",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Remix Plugins"
 				}
 			]
 		},
@@ -47,16 +49,12 @@
 				"title": "Add"
 			},
 			{
-				"command": "rmxPlugins.editEntry",
-				"title": "Edit",
+				"command": "rmxPlugins.showPluginOptions",
+				"title": "Options",
 				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
+					"light": "resources/light/settings.svg",
+					"dark": "resources/dark/settings.svg"
 				}
-			},
-			{
-				"command": "rmxPlugins.deleteEntry",
-				"title": "Delete"
 			}
 		],
 		"menus": {
@@ -73,13 +71,9 @@
 			],
 			"view/item/context": [
 				{
-					"command": "rmxPlugins.editEntry",
-					"when": "view == rmxPlugins && viewItem == dependency",
+					"command": "rmxPlugins.showPluginOptions",
+					"when": "view == rmxPlugins && viewItem == options",
 					"group": "inline"
-				},
-				{
-					"command": "rmxPlugins.deleteEntry",
-					"when": "view == rmxPlugins && viewItem == dependency"
 				}
 			]
 		}
@@ -103,6 +97,7 @@
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
-		"rimraf": "^2.6.2"
+		"rimraf": "^2.6.2",
+		"tslint-config-prettier": "^1.18.0"
 	}
 }

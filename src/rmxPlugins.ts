@@ -1,14 +1,11 @@
 import * as vscode from "vscode";
 import { Uri } from "vscode";
-import axios from "axios";
 
-export class RmxPluginsProvider
-  implements vscode.TreeDataProvider<PluginInterface> {
-  private _onDidChangeTreeData: vscode.EventEmitter<
+export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterface> {
+  private _onDidChangeTreeData: vscode.EventEmitter<PluginInterface | undefined> = new vscode.EventEmitter<
     PluginInterface | undefined
-  > = new vscode.EventEmitter<PluginInterface | undefined>();
-  readonly onDidChangeTreeData: vscode.Event<PluginInterface | undefined> = this
-    ._onDidChangeTreeData.event;
+  >();
+  readonly onDidChangeTreeData: vscode.Event<PluginInterface | undefined> = this._onDidChangeTreeData.event;
 
   constructor(private workspaceRoot: string) {}
 
@@ -27,19 +24,14 @@ export class RmxPluginsProvider
   }
 
   private async getRmxPlugins(): Promise<PluginInterface[]> {
-    const toPlugin = (
-	  pluginName: string,
-	  id: string,
-      version: string,
-      icon: string
-    ): PluginInterface => {
+    const toPlugin = (pluginName: string, id: string, version: string, icon: string): PluginInterface => {
       return new PluginInterface(
-		pluginName,
-		id,
+        pluginName,
+        id,
         version,
         vscode.TreeItemCollapsibleState.None,
         {
-          command: "extension.activateRmxPlugin",
+          command: "rmxPlugins.showPluginOptions",
           title: pluginName,
           arguments: [id],
         },
@@ -47,11 +39,6 @@ export class RmxPluginsProvider
       );
     };
     try {
-      // fetch plugins from https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json
-      //   const resp = await axios.get(
-      //     "https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json"
-      //   );
-      //   const { data } = resp;
       const data = [
         {
           name: "native-plugin",
@@ -67,7 +54,7 @@ export class RmxPluginsProvider
         },
         {
           name: "iframe-plugin",
-          displayName: "Remix iframe Plugin Example",
+          displayName: "Remix Iframe Plugin Example",
           description: "An example of a plugin that runs in an iframe.",
           version: "0.0.1",
           methods: [],
@@ -78,11 +65,8 @@ export class RmxPluginsProvider
           url: "https://remix.fuel.sh",
         },
       ];
-      console.log(data);
       const plugins = data
-        ? data.map((plugin) =>
-            toPlugin(plugin.displayName, plugin.name, plugin.version, plugin.icon)
-          )
+        ? data.map((plugin) => toPlugin(plugin.displayName, plugin.name, plugin.version, plugin.icon))
         : [];
       return Promise.resolve(plugins);
     } catch (error) {
@@ -93,8 +77,8 @@ export class RmxPluginsProvider
 
 export class PluginInterface extends vscode.TreeItem {
   constructor(
-	public readonly label: string,
-	public readonly id: string,
+    public readonly label: string,
+    public readonly id: string,
     private version: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly command?: vscode.Command,
@@ -112,4 +96,5 @@ export class PluginInterface extends vscode.TreeItem {
     light: this.iconURI,
     dark: this.iconURI,
   };
+  contextValue = "options";
 }

@@ -1,19 +1,17 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { Uri } from "vscode";
 import { PluginManager, Engine } from "@remixproject/engine";
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativePlugin from "./plugins/nativeplugin";
 import IframePlugin from "./plugins/iframeplugin";
+import { pluginActivate, pluginDeactivate } from './optionInputs';
 
 export function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
   vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   vscode.commands.registerCommand("extension.activateRmxPlugin", (pluginId) => {
-    console.log("activating plugin ", pluginId);
-
     const manager = new PluginManager();
     const engine = new Engine(manager);
     let plugin = null;
@@ -36,4 +34,36 @@ export function activate(context: vscode.ExtensionContext) {
       });
     });
   });
+  vscode.commands.registerCommand('rmxPlugins.refreshEntry', () =>
+    console.log('Remix Plugin will refresh plugin list.')
+  );
+  vscode.commands.registerCommand('rmxPlugins.addEntry', () =>
+    console.log('Remix Plugin will add new plugin to the list.')
+  );
+  vscode.commands.registerCommand('rmxPlugins.showPluginOptions', async (plugin) => {
+    let id = '';
+    if (plugin instanceof Object)
+      id = plugin.id
+    else
+      id = plugin
+    
+		const options: { [key: string]: (context: vscode.ExtensionContext, id: string) => Promise<void> } = {
+      Activate: pluginActivate,
+      Deactivate: pluginDeactivate,
+      // TODO: add following menu options
+      // install,
+      // uninstall,
+      // configure
+    };
+		const quickPick = vscode.window.createQuickPick();
+		quickPick.items = Object.keys(options).map(label => ({ label }));
+		quickPick.onDidChangeSelection(selection => {
+			if (selection[0]) {
+				options[selection[0].label](context, id)
+					.catch(console.error);
+			}
+		});
+		quickPick.onDidHide(() => quickPick.dispose());
+		quickPick.show();
+	})
 }

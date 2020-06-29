@@ -1,7 +1,7 @@
 import { Plugin } from "@remixproject/engine";
 import * as vscode from "vscode";
 
-export default class IframePlugin extends Plugin {
+export default class WebviewPlugin extends Plugin {
   panel: vscode.WebviewPanel;
   constructor() {
     super({ name: "iframe-plugin", methods: ["getVersion"] });
@@ -31,8 +31,7 @@ export default class IframePlugin extends Plugin {
 		<title>Remix plugin</title>
 	</head>
 	<body>
-    <h1>Remix Iframe plugin v0.1</h1>
-    <iframe height="300px" width="100%" src="https://www.w3schools.com" name="iframe_a"></iframe>
+		<h1>Remix Webview plugin v0.1</h1>
 	</body>
 	</html>`;
   }

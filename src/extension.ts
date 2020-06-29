@@ -6,6 +6,7 @@ import { PluginManager, Engine } from "@remixproject/engine";
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativePlugin from "./plugins/nativeplugin";
 import IframePlugin from "./plugins/iframeplugin";
+import WebviewPlugin from "./plugins/webviewplugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -19,6 +20,9 @@ export function activate(context: vscode.ExtensionContext) {
     switch (pluginId) {
       case "native-plugin":
         plugin = new NativePlugin();
+        break;
+      case "webview-plugin":
+        plugin = new WebviewPlugin();
         break;
       case "iframe-plugin":
         plugin = new IframePlugin();

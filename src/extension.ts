@@ -1,12 +1,11 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { PluginManager, Engine } from "@remixproject/engine";
+import { PluginManager, Engine } from '@remixproject/engine';
+import { WebviewPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativePlugin from "./plugins/nativeplugin";
-import IframePlugin from "./plugins/iframeplugin";
-import WebviewPlugin from "./plugins/webviewplugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -22,10 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
         plugin = new NativePlugin();
         break;
       case "webview-plugin":
-        plugin = new WebviewPlugin();
-        break;
-      case "iframe-plugin":
-        plugin = new IframePlugin();
+        plugin = new WebviewPlugin({ name: 'hello', url: "http://localhost:5000" }, null);
         break;
     }
 

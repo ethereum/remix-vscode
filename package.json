@@ -92,8 +92,8 @@
 		"tslint": "^5.12.1"
 	},
 	"dependencies": {
-		"@remixproject/engine": "^0.2.4",
-		"@remixproject/engine-vscode": "^0.3.0-alpha.1",
+		"@remixproject/engine": "^0.3.0-alpha.8",
+		"@remixproject/engine-vscode": "^0.3.0-alpha.3",
 		"axios": "^0.19.2",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",

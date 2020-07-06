@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
         plugin = new NativePlugin();
         break;
       case "webview-plugin":
-        plugin = new WebviewPlugin({ name: 'hello', url: "http://localhost:5000" }, null);
+        plugin = new WebviewPlugin({ name: 'hello', url: "http://localhost:5000" }, { context, column: vscode.ViewColumn.Two });
         break;
     }
 

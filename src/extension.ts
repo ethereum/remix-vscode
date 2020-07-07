@@ -7,25 +7,31 @@ import { WebviewPlugin } from '@remixproject/engine-vscode';
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativePlugin from "./plugins/nativeplugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
+import { PluginData } from "./pluginlist";
+import { ToViewColumn, GetPluginData } from "./utils";
+import { PluginInfo } from "./types";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
   vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   vscode.commands.registerCommand("extension.activateRmxPlugin", (pluginId) => {
     const manager = new PluginManager();
     const engine = new Engine(manager);
-    let plugin = null;
-    console.log("Engine loaded");
-    switch (pluginId) {
-      case "native-plugin":
-        plugin = new NativePlugin();
-        break;
-      case "webview-plugin":
-        plugin = new WebviewPlugin({ name: 'hello', url: "http://localhost:5000" }, { context, column: vscode.ViewColumn.Two });
-        break;
-    }
-
     engine.onload(() => {
+      let plugin = null;
+      console.log("Engine loaded");
+      switch (pluginId) {
+        case "native-plugin":
+          plugin = new NativePlugin();
+          break;
+        default:
+          // Get plugininfo from plugin array
+          const pluginData: PluginInfo = GetPluginData(pluginId);
+          // choose window column for display
+          const cl = ToViewColumn(pluginData);
+          plugin = new WebviewPlugin({ name: pluginData.name, url: pluginData.url }, { context, column: cl });
+          break;
+      }
       engine.register(plugin);
       manager.activatePlugin(pluginId).then(() => {
         manager.call(pluginId, "getVersion").then((v) => {

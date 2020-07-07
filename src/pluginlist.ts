@@ -293,4 +293,17 @@ export const PluginData: PluginInfo[] = [
     icon: "https://zokrates-remix-plugin.netlify.app/zokrates.svg",
     location: "sidePanel",
   },
+  {
+    name: 'solidity',
+    displayName: 'Solidity compiler',
+    icon: 'https://solidity.readthedocs.io/en/v0.6.10/_images/logo.svg',
+    description: 'Compile solidity contracts',
+    kind: 'compiler',
+    permission: true,
+    location: 'sidePanel',
+    documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
+    version: '0.0.1',
+    methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig'],
+    url: "https://gateway.ipfs.io/ipfs/QmNgz8ecPPbdvjjzy1UfRTeuN5jN2fTeAJB93zU8FtFrqF/"
+  }
 ];

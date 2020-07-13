@@ -7,7 +7,6 @@ import { WebviewPlugin } from '@remixproject/engine-vscode';
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativePlugin from "./plugins/nativeplugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
-import { PluginData } from "./pluginlist";
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo } from "./types";
 
@@ -30,6 +29,8 @@ export async function activate(context: vscode.ExtensionContext) {
           // choose window column for display
           const cl = ToViewColumn(pluginData);
           plugin = new WebviewPlugin(pluginData, { context, column: cl });
+          console.log(plugin);
+          
           break;
       }
       engine.register(plugin);

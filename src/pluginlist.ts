@@ -304,6 +304,6 @@ export const PluginData: PluginInfo[] = [
     documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
     version: '0.0.1',
     methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig'],
-    url: "https://gateway.ipfs.io/ipfs/QmNgz8ecPPbdvjjzy1UfRTeuN5jN2fTeAJB93zU8FtFrqF/"
+    url: "https://gateway.ipfs.io/ipfs/QmNgz8ecPPbdvjjzy1UfRTeuN5jN2fTeAJB93zU8FtFrqF"
   }
 ];

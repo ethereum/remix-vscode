@@ -94,6 +94,8 @@
 	"dependencies": {
 		"@remixproject/engine": "^0.3.0-alpha.8",
 		"@remixproject/engine-vscode": "^0.3.0-alpha.3",
+		"@remixproject/plugin": "^0.3.0-alpha.8",
+		"@remixproject/plugin-vscode": "^0.3.0-alpha.3",
 		"axios": "^0.19.2",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",

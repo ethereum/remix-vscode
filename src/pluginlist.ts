@@ -243,7 +243,7 @@ export const PluginData: PluginInfo[] = [
     displayName: "Solhint",
     methods: [],
     version: "0.0.1",
-    url: "https://protofire.github.io/remix-solhint-plugin/",
+    url: "https://localhost:443/",
     description: "Run Solhint in your Remix project",
     icon: "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",
     location: "sidePanel",

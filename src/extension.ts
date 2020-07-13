@@ -29,8 +29,6 @@ export async function activate(context: vscode.ExtensionContext) {
           // choose window column for display
           const cl = ToViewColumn(pluginData);
           plugin = new WebviewPlugin(pluginData, { context, column: cl });
-          console.log(plugin);
-          
           break;
       }
       engine.register(plugin);

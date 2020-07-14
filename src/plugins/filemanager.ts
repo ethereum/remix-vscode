@@ -25,7 +25,7 @@ export default class FileManagerPlugin extends CommandPlugin {
     return "";
   }
   getFile(path: string): string {
-    const greeter: string = `pragma solidity >=0.5.0 <0.6.0;
+    const greeter: string = `pragma solidity >=0.6.0 <0.6.9;
     import "../mortal/mortal.sol";
     
     contract Greeter is Mortal {

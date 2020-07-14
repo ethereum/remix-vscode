@@ -32,10 +32,10 @@ export async function activate(context: vscode.ExtensionContext) {
           break;
       }
       engine.register(plugin);
-      manager.activatePlugin(pluginId).then(() => {
-        manager.call(pluginId, "getVersion").then((v) => {
-          vscode.window.showInformationMessage(`${pluginId} v${v} activated.`);
-        });
+      manager.activatePlugin(pluginId).then(async () => {
+        const profile = await manager.getProfile(pluginId);
+        console.log(profile);
+        vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
       });
     });
   });

@@ -5,7 +5,7 @@ import { PluginManager, Engine } from '@remixproject/engine';
 import { WebviewPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
-import NativePlugin from "./plugins/nativeplugin";
+import NativeSolcPlugin from "./plugins/native_solidity_plugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo } from "./types";
@@ -17,25 +17,24 @@ export async function activate(context: vscode.ExtensionContext) {
     const manager = new PluginManager();
     const engine = new Engine(manager);
     engine.onload(() => {
-      let plugin = null;
       console.log("Engine loaded");
-      switch (pluginId) {
-        case "native-plugin":
-          plugin = new NativePlugin();
-          break;
-        default:
-          // Get plugininfo from plugin array
-          const pluginData: PluginInfo = GetPluginData(pluginId);
-          // choose window column for display
-          const cl = ToViewColumn(pluginData);
-          plugin = new WebviewPlugin(pluginData, { context, column: cl });
-          break;
-      }
+      // Load mock solidity plugin
+      const solpl = new NativeSolcPlugin();
+      engine.register(solpl);
+      // TODO: load mock fileManager & editor plugin
+      // Load supplied plugin id
+      // Get plugininfo from plugin array
+      const pluginData: PluginInfo = GetPluginData(pluginId);
+      // choose window column for display
+      const cl = ToViewColumn(pluginData);
+      const plugin = new WebviewPlugin(pluginData, { context, column: cl });
       engine.register(plugin);
-      manager.activatePlugin(pluginId).then(async () => {
+      manager.activatePlugin([pluginId, 'solidity']).then(async () => {
         const profile = await manager.getProfile(pluginId);
-        console.log(profile);
         vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
+        setTimeout(() => {
+          solpl.compile();
+        }, 5000);
       });
     });
   });

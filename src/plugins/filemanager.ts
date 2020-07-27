@@ -3,7 +3,6 @@ import { CommandPlugin } from "@remixproject/engine-vscode";
 import { window, workspace, Uri, FileType } from "vscode";
 import { pathToFileURL } from "url";
 import { resolve } from "dns";
-import { NextFileSystemApi } from "./common-api/file-system/api";
 import { rejects } from "assert";
 
 const profile = {

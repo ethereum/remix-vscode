@@ -10,8 +10,8 @@ export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterfa
 
   constructor(private workspaceRoot: string) {}
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
+  refresh(data): void {
+    this._onDidChangeTreeData.fire(data);
   }
 
   getTreeItem(element: PluginInterface): vscode.TreeItem {

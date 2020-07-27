@@ -1,5 +1,6 @@
-import { Annotation } from "./type";
+import { Annotation, HighlightPositions, RemixPosition } from "./type";
 import { CommandPlugin } from "@remixproject/engine-vscode";
+import { window, Range, TextEditorDecorationType, Position } from "vscode";
 
 const profile = {
   name: "editor",
@@ -14,12 +15,27 @@ const profile = {
 };
 
 export default class EditorPlugin extends CommandPlugin {
+  private decoration: TextEditorDecorationType;
   constructor() {
     super(profile);
+    this.decoration = window.createTextEditorDecorationType({
+      backgroundColor: 'editor.lineHighlightBackground',
+      isWholeLine: true,
+    });
   }
-  highlight(position: Position, filePath: string, hexColor: string): void {
-	console.log("TODO: highlight");
-    return;
+  highlight(position: RemixPosition, filePath: string, hexColor: string): void {
+    const editor = window.activeTextEditor;
+    const currentPosition = editor.selection.active;
+    const start: Position = new Position(position.start.line, position.start.column);
+    const end: Position = new Position(position.end.line, position.end.column);
+    const newDecoration = { range: new Range(start, end) };
+    if(hexColor) {
+      this.decoration = window.createTextEditorDecorationType({
+        backgroundColor: hexColor,
+        isWholeLine: true,
+      });
+    }
+    editor.setDecorations(this.decoration, [newDecoration]);
   }
   discardHighlight(): void {
     console.log("TODO: discardHighlight");

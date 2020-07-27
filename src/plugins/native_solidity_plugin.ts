@@ -1,4 +1,5 @@
 import { CommandPlugin } from "@remixproject/engine-vscode";
+import { window, workspace, Uri } from "vscode";
 
 const profile = {
   name: 'solidity',
@@ -21,6 +22,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
   compile() {
     console.log("Will emit compilationFinished");
-    this.emit('compilationFinished', 'greeter.sol');
+    const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
+    this.emit('compilationFinished', fileName);
   }
 }

@@ -10,7 +10,7 @@ import FileManagerPlugin from "./plugins/filemanager";
 import EditorPlugin from "./plugins/editorPlugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
-import { PluginInfo } from "./types";
+import { PluginInfo, PluginProfile } from "./types";
 
 export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
@@ -36,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const plugin = new WebviewPlugin(pluginData, { context, column: cl });
       engine.register(plugin);
       manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']).then(async () => {
-        const profile = await manager.getProfile(pluginId);
+        const profile: PluginProfile = await manager.getProfile(pluginId);
         vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
         setTimeout(() => {
           solpl.compile();

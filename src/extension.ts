@@ -1,36 +1,46 @@
 "use strict";
 
 import * as vscode from "vscode";
-import { PluginManager, Engine } from "@remixproject/engine";
+import { PluginManager, Engine } from '@remixproject/engine';
+import { WebviewPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
-import NativePlugin from "./plugins/nativeplugin";
-import IframePlugin from "./plugins/iframeplugin";
+import NativeSolcPlugin from "./plugins/native_solidity_plugin";
+import FileManagerPlugin from "./plugins/filemanager";
+import EditorPlugin from "./plugins/editorPlugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
+import { ToViewColumn, GetPluginData } from "./utils";
+import { PluginInfo, PluginProfile } from "./types";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
+  const manager = new PluginManager();
+  const solpl = new NativeSolcPlugin();
+  const engine = new Engine(manager);
+  const filemanager = new FileManagerPlugin();
+  const editorPlugin = new EditorPlugin();
+
   vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   vscode.commands.registerCommand("extension.activateRmxPlugin", (pluginId) => {
-    const manager = new PluginManager();
-    const engine = new Engine(manager);
-    let plugin = null;
-    console.log("Engine loaded");
-    switch (pluginId) {
-      case "native-plugin":
-        plugin = new NativePlugin();
-        break;
-      case "iframe-plugin":
-        plugin = new IframePlugin();
-        break;
-    }
-
-    engine.onload(() => {
+    // TODO: load mock fileManager & editor plugin
+    engine.onload(async () => {
+      console.log("Engine loaded");
+      // Load mock solidity plugin
+      await engine.register(solpl);
+      await engine.register(filemanager);
+      await engine.register(editorPlugin);
+      // Get plugininfo from plugin array
+      const pluginData: PluginInfo = GetPluginData(pluginId);
+      // choose window column for display
+      const cl = ToViewColumn(pluginData);
+      const plugin = new WebviewPlugin(pluginData, { context, column: cl });
       engine.register(plugin);
-      manager.activatePlugin(pluginId).then(() => {
-        manager.call(pluginId, "getVersion").then((v) => {
-          vscode.window.showInformationMessage(`${pluginId} v${v} activated.`);
-        });
+      manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']).then(async () => {
+        const profile: PluginProfile = await manager.getProfile(pluginId);
+        vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
+        setTimeout(() => {
+          solpl.compile();
+        }, 5000);
       });
     });
   });

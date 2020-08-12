@@ -1,9 +1,6 @@
 import { Folder } from "./type";
 import { CommandPlugin } from "@remixproject/engine-vscode";
 import { window, workspace, Uri, FileType } from "vscode";
-import { pathToFileURL } from "url";
-import { resolve } from "dns";
-import { rejects } from "assert";
 
 const profile = {
   name: "fileManager",
@@ -105,11 +102,11 @@ export default class FileManagerPlugin extends CommandPlugin {
   // ------------------------------------------
   // Legacy API. To be removed.
   // ------------------------------------------
-  getFolder(path: string): Folder {
-    const duri = Uri.parse(path);
-    // workspace.fs.readDirectory(duri).then(data => {})
-    return;
-  }
+  // getFolder(path: string): Folder {
+  //   const duri = Uri.parse(path);
+  //   workspace.fs.readDirectory(duri).then(data => {})
+  //   return;
+  // }
   getCurrentFile(): string {
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
     return fileName;

@@ -36,11 +36,12 @@ export async function activate(context: vscode.ExtensionContext) {
       const plugin = new WebviewPlugin(pluginData, { context, column: cl });
       engine.register(plugin);
       manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']).then(async () => {
+        vscode.commands.registerCommand("rmxPlugins.compile", () => {
+          console.log("Will compile");
+          solpl.compile();
+        });
         const profile: PluginProfile = await manager.getProfile(pluginId);
         vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
-        setTimeout(() => {
-          solpl.compile();
-        }, 5000);
       });
     });
   });

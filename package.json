@@ -12,7 +12,8 @@
 		"Extension Packs"
 	],
 	"activationEvents": [
-		"onView:rmxPlugins"
+		"onView:rmxPlugins",
+		"onCommand:remix.compile"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -55,6 +56,17 @@
 					"light": "resources/light/settings.svg",
 					"dark": "resources/dark/settings.svg"
 				}
+			},
+			{
+				"command": "rmxPlugins.compile",
+				"title": "Solidity compile",
+				"category": "Ethereum"
+			}
+		],
+		"keybindings": [
+			{
+				"key": "ctrl+alt+c",
+				"command": "rmxPlugins.compile"
 			}
 		],
 		"menus": {
@@ -88,8 +100,8 @@
 		"@types/node": "^10.12.21",
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.36.0",
-		"typescript": "^3.5.1",
-		"tslint": "^5.12.1"
+		"tslint": "^5.12.1",
+		"typescript": "^3.5.1"
 	},
 	"dependencies": {
 		"@remixproject/engine": "^0.3.0-alpha.8",
@@ -100,7 +112,9 @@
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
+		"remix-url-resolver": "^0.0.16",
 		"rimraf": "^2.6.2",
+		"solc": "^0.7.0",
 		"tslint-config-prettier": "^1.18.0"
 	}
 }

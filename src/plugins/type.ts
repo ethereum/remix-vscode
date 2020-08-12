@@ -21,3 +21,10 @@ export interface Annotation {
   text: string;
   type: "error" | "warning" | "information";
 }
+
+export interface ISource {
+  content: string | undefined
+}
+export interface ISources {
+  [key: string]: ISource
+}

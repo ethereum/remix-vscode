@@ -42,9 +42,7 @@ export default class EditorPlugin extends CommandPlugin {
     this.decoration.dispose();
     return;
   }
-  discardHighlightAt(line: number, filePath: string): void {
-    return;
-  }
+  discardHighlightAt(line: number, filePath: string): void {}
   addAnnotation(annotation: Annotation): void {
     // This function should append to existing map
     // Ref: https://code.visualstudio.com/api/language-extensions/programmatic-language-features#provide-diagnostics

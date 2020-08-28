@@ -1,5 +1,5 @@
 import { CommandPlugin } from "@remixproject/engine-vscode";
-import { window } from "vscode";
+import { window, OutputChannel } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
 import { ISources } from "./type";
@@ -18,8 +18,10 @@ const profile = {
 
 export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = 'latest';
+  private outputChannel: OutputChannel;
   constructor() {
     super(profile);
+    this.outputChannel = window.createOutputChannel("Remix IDE");
   }
   getVersion() {
     return 0.1;
@@ -31,8 +33,19 @@ export default class NativeSolcPlugin extends CommandPlugin {
     // });
     return fork(path.join(__dirname, "compile_worker.js"));
   }
+  private getNow(): string {
+    const date = new Date(Date.now());
+    return date.toLocaleTimeString();
+  }
+  private log(m: string) {
+    const now = this.getNow();
+    this.outputChannel.appendLine(`[${now}]: ${m}`);
+    this.outputChannel.show();
+  }
   compile() {
+    this.log("Compilation started!")
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
+    this.log(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
     const sources: ISources = {};
     if (fileName) {
@@ -79,6 +92,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
           const source = sources;
           const languageVersion = this.version;
           const data = m.compiled;
+          this.log(`Compilation finished for: ${fileName}.`);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }

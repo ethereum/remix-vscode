@@ -5,8 +5,12 @@
 	"version": "0.0.1",
 	"publisher": "ethential",
 	"enableProposedApi": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ethential/remix-plugin-vscode"
+	},
 	"engines": {
-		"vscode": "^1.32.0"
+		"vscode": "^1.36.0"
 	},
 	"categories": [
 		"Extension Packs"

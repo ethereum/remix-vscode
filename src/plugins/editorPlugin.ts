@@ -26,7 +26,9 @@ export default class EditorPlugin extends CommandPlugin {
     this.diagnosticCollection = languages.createDiagnosticCollection('solidity');
   }
   highlight(position: RemixPosition, filePath: string, hexColor: string): void {
-    const editor = window.activeTextEditor;
+    const editors = window.visibleTextEditors;
+    // Parse `filePath` to ensure if a valid file path was supplied
+    const editor = editors.filter(editor => editor.document.uri.path == Uri.parse(filePath).path)[0];
     const start: Position = new Position(position.start.line, position.start.column);
     const end: Position = new Position(position.end.line, position.end.column);
     const newDecoration = { range: new Range(start, end) };

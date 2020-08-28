@@ -26,10 +26,10 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
   private createWorker(): ChildProcess {
     // enable --inspect for debug
-    return fork(path.join(__dirname, "compile_worker.js"), [], {
-      execArgv: ["--inspect=" + (process.debugPort + 1)]
-    });
-    // return fork(path.join(__dirname, "compile_worker.js"));
+    // return fork(path.join(__dirname, "compile_worker.js"), [], {
+    //   execArgv: ["--inspect=" + (process.debugPort + 1)]
+    // });
+    return fork(path.join(__dirname, "compile_worker.js"));
   }
   compile() {
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;

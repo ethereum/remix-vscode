@@ -243,7 +243,7 @@ export const PluginData: PluginInfo[] = [
     displayName: "Solhint",
     methods: [],
     version: "0.0.1",
-    url: "https://gateway.ipfs.io/ipfs/QmVGnaN1Y6VKi55BPm2oxHh2aEnyh58M8gcYJ58qtXisQg",
+    url: "https://gateway.ipfs.io/ipfs/QmeKGo5s6fs1AQurAWbEVx9r7tet8fAbCQ6wYXRvwPybYj",
     description: "Run Solhint in your Remix project",
     icon: "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",
     location: "sidePanel",

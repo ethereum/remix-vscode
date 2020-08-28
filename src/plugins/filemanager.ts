@@ -1,6 +1,6 @@
 import { Folder } from "./type";
 import { CommandPlugin } from "@remixproject/engine-vscode";
-import { window, workspace, Uri, FileType } from "vscode";
+import { window, workspace, Uri, FileType, commands, FileStat } from "vscode";
 
 const profile = {
   name: "fileManager",
@@ -17,6 +17,7 @@ const profile = {
     "getFile",
     "setFile",
     "switchFile",
+    // NextFileSystemAPI
     "open",
     "writeFile",
     "readFile",
@@ -37,8 +38,14 @@ export default class FileManagerPlugin extends CommandPlugin {
     super(profile);
   }
   /** Open the content of the file in the context (eg: Editor) */
-  open(path: string): void {
-    // TODO:
+  open(path: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      let uri = Uri.file(path);
+      commands.executeCommand('vscode.open', uri)
+        .then(() => {
+          resolve(true);
+        })
+    })
   }
   /** Set the content of a specific file */
   writeFile(path: string, data: string): Promise<void> {
@@ -65,23 +72,25 @@ export default class FileManagerPlugin extends CommandPlugin {
   /** Change the path of a file */
   rename(oldPath: string, newPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      // TODO:
-      // rename does not exist directly in vscode API
-      // implement rename with copy + delete
-      resolve();
+      const source = Uri.parse(oldPath);
+      const target = Uri.parse(newPath);
+      workspace.fs.rename(source, target)
+        .then(() => {
+          resolve();
+        });
     });
   }
-  // /** Upsert a file with the content of the source file */
+  /** Upsert a file with the content of the source file */
   copyFile(src: string, dest: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const suri = Uri.parse(src);
-      const dsturi = Uri.parse(dest);
-      workspace.fs.copy(suri, dsturi).then(() => {
+      const source = Uri.parse(src);
+      const target = Uri.parse(dest);
+      workspace.fs.copy(source, target).then(() => {
         resolve();
       });
     });
   }
-  // /** Create a directory */
+  /** Create a directory */
   mkdir(path: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const duri = Uri.parse(path);
@@ -102,11 +111,19 @@ export default class FileManagerPlugin extends CommandPlugin {
   // ------------------------------------------
   // Legacy API. To be removed.
   // ------------------------------------------
-  // getFolder(path: string): Folder {
-  //   const duri = Uri.parse(path);
-  //   workspace.fs.readDirectory(duri).then(data => {})
-  //   return;
-  // }
+  async getFolder(path: string): Promise<Folder> {
+    try {
+      const duri = Uri.parse(path);
+      const filestat: FileStat = await workspace.fs.stat(duri);
+      let folder: Folder;
+      folder[path] = {
+        isDirectory: filestat.type == FileType.Directory ? true : false,
+      }
+      return folder;
+    } catch (error) {
+      throw error;
+    }
+  }
   getCurrentFile(): string {
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
     return fileName;

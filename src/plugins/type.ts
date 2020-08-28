@@ -15,7 +15,7 @@ export interface RemixPosition {
   };
 }
 
-export interface Annotation {
+export interface Annotation extends Error {
   row: number;
   column: number;
   text: string;

@@ -1,5 +1,5 @@
 import { CommandPlugin } from "@remixproject/engine-vscode";
-import { window, workspace, Uri } from "vscode";
+import { window } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
 import { ISources } from "./type";

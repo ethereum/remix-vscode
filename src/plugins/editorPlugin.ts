@@ -11,7 +11,7 @@ const profile = {
   location: "sidePanel",
   documentation: "https://remix-ide.readthedocs.io/en/latest/solidity_editor.html",
   version: "0.0.1",
-  methods: ["discardHighlight", "highlight"],
+  methods: ["highlight", "discardHighlight", "addAnnotation", "clearAnnotations"],
 };
 
 export default class EditorPlugin extends CommandPlugin {

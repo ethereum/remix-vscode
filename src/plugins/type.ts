@@ -1,9 +1,3 @@
-export interface Folder {
-  [path: string]: {
-    isDirectory: boolean;
-  };
-}
-
 export interface RemixPosition {
   start: {
     line: number;

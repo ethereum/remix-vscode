@@ -1,4 +1,3 @@
-import {Profile} from '@remixproject/engine';
 export interface PluginInfo {
   name: string;
   displayName: string;
@@ -18,7 +17,4 @@ interface Notifications {
   solidity?: string[] | null;
   udapp?: string[] | null;
   network?: string[] | null;
-}
-export interface PluginProfile extends Profile {
-  version?: string | number;
 }

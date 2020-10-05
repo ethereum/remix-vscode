@@ -23,15 +23,25 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@remixproject/engine-vscode@^0.3.0-alpha.3":
-  version "0.3.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.0-alpha.3.tgz#7da70b04875566a84451c21ee4effb8e5bbb266a"
-  integrity sha512-coXe9l3SfH43OjRpesj/57tFnc5+9FbikIqFagzm/EyXk2kGdsqOzbMhHKjeUpze2BwqICPTeSMjuEiYszQ18g==
+"@remixproject/engine-vscode@^0.3.0-beta.5":
+  version "0.3.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.0-beta.5.tgz#e660c39ffcabc977a4e6ca07dcca4d6aa98d764f"
+  integrity sha512-5mZw5mv+6KdRFHsFG6G2SK0SLNq60wxmmQPh0znnacyKcrob6D222KDi0vGqS3EXgRry2+c8NP3vyNsBQgPRxA==
 
-"@remixproject/engine@^0.3.0-alpha.8":
-  version "0.3.0-alpha.6-test"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.0-alpha.6-test.tgz#463ee10bbf69011ad197c66241cec373abd1dab6"
-  integrity sha512-iDactUmFtJUpLw6wA6GyYW/kXchMPRoHE/g0F3IjWXXA1FwSIj24RF7j0EgBYHl8Rh9sgNnPwV2nJeqh5yNZzw==
+"@remixproject/engine@^0.3.0-beta.5":
+  version "0.3.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.0-beta.5.tgz#09dcf3b2abb927115a0f547d2424e890df03d7da"
+  integrity sha512-siowkVh66zzIuEWNLJj3VkolAQ4StkKWE33H+p6aHrFEEB7orEGfOlPI/h1plrfK9bN2wLlhIjATVFKe72WzaA==
+
+"@remixproject/plugin-api@^0.3.0-beta.5":
+  version "0.3.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.0-beta.5.tgz#5f294f86750c6520382dacec728a62eef6ce6691"
+  integrity sha512-C1fuISsne3sfA61k1rx6qU9ZgubyP8SdNKinzeYvXg4XAm1DwoHQlzjq/WYmjOFx1NZhyMGK8ySBp0VcjAMc/Q==
+
+"@remixproject/plugin-utils@^0.3.0-beta.5":
+  version "0.3.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.0-beta.5.tgz#c6c4699393b6760e2ad2ff56b0c5fc13b43cea21"
+  integrity sha512-+gnfuSUimCxUTRxfTGu+mwI5U6EPUx2A2ANObaZzX8f17nhSW5NWw2vWKauZPSv2PWQoIukYzrmG/kogEe3Cyw==
 
 "@remixproject/plugin-vscode@^0.3.0-alpha.3":
   version "0.3.0-alpha.3"

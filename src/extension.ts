@@ -2,15 +2,16 @@
 
 import * as vscode from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
-import { WebviewPlugin } from '@remixproject/engine-vscode';
+import { WebviewPlugin, FileManagerPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import FileManagerPlugin from "./plugins/filemanager";
+// import FileManagerPlugin from "./plugins/filemanager";
 import EditorPlugin from "./plugins/editorPlugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
-import { PluginInfo, PluginProfile } from "./types";
+import { PluginInfo } from "./types";
+import {Profile} from '@remixproject/plugin-utils';
 
 export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
@@ -40,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
           console.log("Will compile");
           solpl.compile();
         });
-        const profile: PluginProfile = await manager.getProfile(pluginId);
+        const profile: Profile = await manager.getProfile(pluginId);
         vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
       });
     });

@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
-import { WebviewPlugin, FileManagerPlugin } from '@remixproject/engine-vscode';
+import { WebviewPlugin, FileManagerPlugin, ThemePlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -20,44 +20,27 @@ export async function activate(context: vscode.ExtensionContext) {
   const solpl = new NativeSolcPlugin();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin();
-  engine.register([manager]);
+  const theme = new ThemePlugin();
+  engine.register([manager, solpl, filemanager, editorPlugin, theme]);
   vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+  // compile
+  vscode.commands.registerCommand("rmxPlugins.compile", () => {
+    manager.activatePlugin(['solidity', 'fileManager', 'editor']);
+    solpl.compile();
+  });
+  // activate plugin
   vscode.commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
-    engine.register([solpl, filemanager, editorPlugin]);
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(pluginId);
     // choose window column for display
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
-    engine.register(plugin);
+    if(!engine.isRegistered(pluginId)) {
+      engine.register(plugin);
+    }
     manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);
     const profile: Profile = await manager.getProfile(pluginId);
     vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
-    vscode.commands.registerCommand("rmxPlugins.compile", () => {
-      solpl.compile();
-    });
-    // TODO: load mock fileManager & editor plugin
-    // engine.onload(async () => {
-    //   console.log("Engine loaded");
-    //   // Load mock solidity plugin
-    //   await engine.register(solpl);
-    //   await engine.register(filemanager);
-    //   await engine.register(editorPlugin);
-    //   // Get plugininfo from plugin array
-    //   const pluginData: PluginInfo = GetPluginData(pluginId);
-    //   // choose window column for display
-    //   const cl = ToViewColumn(pluginData);
-    //   const plugin = new WebviewPlugin(pluginData, { context, column: cl });
-    //   engine.register(plugin);
-    //   manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']).then(async () => {
-    //     vscode.commands.registerCommand("rmxPlugins.compile", () => {
-    //       console.log("Will compile");
-    //       solpl.compile();
-    //     });
-    //     const profile: Profile = await manager.getProfile(pluginId);
-    //     vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
-    //   });
-    // });
   });
   vscode.commands.registerCommand('rmxPlugins.refreshEntry', () =>
     console.log('Remix Plugin will refresh plugin list.')
@@ -92,8 +75,8 @@ export async function activate(context: vscode.ExtensionContext) {
     quickPick.show();
   });
   vscode.commands.registerCommand('extension.deActivateRmxPlugin', async (pluginId: string) => {
-    // Get plugininfo from plugin array
     manager.deactivatePlugin([pluginId]);
+    // engine.remove([pluginId]);
     console.log(`${pluginId} plugin deactivated!`);
   });
 }

@@ -37,15 +37,15 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const date = new Date(Date.now());
     return date.toLocaleTimeString();
   }
-  private log(m: string) {
+  private print(m: string) {
     const now = this.getNow();
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();
   }
   compile() {
-    this.log("Compilation started!")
+    this.print("Compilation started!")
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
-    this.log(`Compiling ${fileName} ...`);
+    this.print(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
     const sources: ISources = {};
     if (fileName) {
@@ -76,6 +76,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
       console.log(`............................Solidity worker message............................`);
       console.log(m);
       if (m.error) {
+        this.print(m.error);
         console.error(m.error);
       } else if (m.data && m.path) {
         sources[m.path] = {
@@ -92,7 +93,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
           const source = sources;
           const languageVersion = this.version;
           const data = m.compiled;
-          this.log(`Compilation finished for: ${fileName}.`);
+          this.print(`Compilation finished for ${fileName} with solidity version ${languageVersion}.`);
+          this.print(data);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }

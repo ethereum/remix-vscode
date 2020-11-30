@@ -1,5 +1,5 @@
 {
-	"name": "remix-plugin-vscode",
+	"name": "code-remix",
 	"displayName": "Remix plugins manager",
 	"description": "Remix plugins manager for VSCode",
 	"version": "0.0.1",
@@ -7,7 +7,7 @@
 	"enableProposedApi": true,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ethential/remix-plugin-vscode"
+		"url": "https://github.com/ethential/code-remix"
 	},
 	"engines": {
 		"vscode": "^1.36.0"
@@ -35,7 +35,7 @@
 				{
 					"id": "rmxPlugins",
 					"name": "Remix Plugins",
-					"icon": "media/dep.svg",
+					"icon": "media/remix.svg",
 					"contextualTitle": "Remix Plugins"
 				}
 			]

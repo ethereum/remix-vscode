@@ -26,7 +26,7 @@
 				{
 					"id": "remix-plugins",
 					"title": "Remix Plugins",
-					"icon": "media/dep.svg"
+					"icon": "media/remix.svg"
 				}
 			]
 		},
@@ -108,8 +108,8 @@
 		"typescript": "^3.5.1"
 	},
 	"dependencies": {
-		"@remixproject/engine": "^0.3.0-beta.5",
-		"@remixproject/engine-vscode": "^0.3.0-beta.5",
+		"@remixproject/engine": "^0.3.3",
+		"@remixproject/engine-vscode": "^0.3.3",
 		"@remixproject/plugin": "^0.3.0-alpha.8",
 		"@remixproject/plugin-api": "^0.3.0-beta.5",
 		"@remixproject/plugin-utils": "^0.3.0-beta.5",

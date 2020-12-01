@@ -252,11 +252,18 @@ export const PluginData: PluginInfo[] = [
     name: "source-verification",
     displayName: "Sourcify",
     description: "Source metadata fetcher and validator",
-    version: "0.3.0-beta",
-    methods: ["fetch", "fetchAndSave", "fetchByNetwork", "verify", "verifyByNetwork"],
+    version: "0.5.2-beta",
+    documentation: "https://github.com/sourcifyeth/remix-sourcify",
+    methods: [
+      "fetch",
+      "fetchAndSave",
+      "fetchByNetwork",
+      "verify",
+      "verifyByNetwork"
+    ],
     icon: "https://raw.githubusercontent.com/Shard-Labs/remix-contract-getter/master/public/sourcify.png",
     location: "sidePanel",
-    url: "ipfs://QmZLmbX4JPiYZYdPNYKbprtcjk2mRAevh3AZ39AiWN5vw5",
+    url: "https://ipfsgw.komputing.org/ipfs/QmcYhW9xNeQyeAUai3LEs5EkVtAZ5H73ZbPNFt8TeY6QYP"
   },
   {
     name: "vyper",

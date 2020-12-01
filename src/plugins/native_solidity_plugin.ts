@@ -88,10 +88,14 @@ export default class NativeSolcPlugin extends CommandPlugin {
           version: this.version,
         });
       } else if (m.compiled) {
+        const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
+        if(compiled.errors) {
+          this.print(`Compilation error while compiling ${fileName} with solidity version ${languageVersion}.`);
+          this.print(`${JSON.stringify(compiled.errors)}`);
+        }
         if(compiled.contracts) {
           const source = sources;
-          const languageVersion = this.version;
           const data = m.compiled;
           this.print(`Compilation finished for ${fileName} with solidity version ${languageVersion}.`);
           this.print(data);

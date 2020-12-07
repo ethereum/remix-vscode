@@ -109,7 +109,7 @@
 	},
 	"dependencies": {
 		"@remixproject/engine": "^0.3.3",
-		"@remixproject/engine-vscode": "^0.3.3",
+		"@remixproject/engine-vscode": "/home/0mkar/Karma/remix-plugin/dist/packages/engine/vscode/",
 		"@remixproject/plugin": "^0.3.0-alpha.8",
 		"@remixproject/plugin-api": "^0.3.0-beta.5",
 		"@remixproject/plugin-utils": "^0.3.0-beta.5",

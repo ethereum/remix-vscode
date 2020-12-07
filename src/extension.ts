@@ -2,24 +2,29 @@
 
 import * as vscode from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
-import { WebviewPlugin, FileManagerPlugin, ThemePlugin } from '@remixproject/engine-vscode';
+import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-// import FileManagerPlugin from "./plugins/filemanager";
-import EditorPlugin from "./plugins/editorPlugin";
 import { pluginActivate, pluginDeactivate } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
 
+class VscodeManager extends PluginManager {
+  onActivation() {
+    console.log('manager activated');
+  }
+}
+
 export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
+  const editoropt: EditorOptions = { language: 'solidity', transformCmd: null };
   const engine = new Engine();
-  const manager = new PluginManager();
+  const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const filemanager = new FileManagerPlugin();
-  const editorPlugin = new EditorPlugin();
+  const editorPlugin = new EditorPlugin(editoropt);
   const theme = new ThemePlugin();
   engine.register([manager, solpl, filemanager, editorPlugin, theme]);
   vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
@@ -35,7 +40,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // choose window column for display
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
-    if(!engine.isRegistered(pluginId)) {
+    if (!engine.isRegistered(pluginId)) {
       engine.register(plugin);
     }
     manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);

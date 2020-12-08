@@ -8,7 +8,7 @@ code .
 [start plugin with F5]
 ```
 ## Installation
-* Download vsix and install: http://gateway.ipfs.io/ipfs/QmcuwVaMdesZJcNUZc5N2fdmpCedweYw9junaHtCTKUw75
+[Install from Visualstudio Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
 ## Select, activate, deactivate plugin
 [![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
 

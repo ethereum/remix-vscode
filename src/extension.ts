@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
-import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions } from '@remixproject/engine-vscode';
+import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -19,7 +19,7 @@ class VscodeManager extends PluginManager {
 
 export async function activate(context: vscode.ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
-  const editoropt: EditorOptions = { language: 'solidity', transformCmd: null };
+  const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();

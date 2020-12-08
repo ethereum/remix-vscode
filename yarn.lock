@@ -23,15 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@remixproject/engine-vscode@/home/0mkar/Karma/remix-plugin/dist/packages/engine/vscode/":
+"@remixproject/engine-vscode@^0.3.3":
   version "0.3.3"
-  dependencies:
-    "@remixproject/engine" "0.3.3"
-    "@remixproject/plugin-api" "0.3.3"
-    "@remixproject/plugin-utils" "0.3.3"
-
-"@remixproject/engine-vscode@file:../remix-plugin/dist/packages/engine/vscode":
-  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.3.tgz#cbbfe147d98fcdf4c6aa5ca015ae708a45c5a276"
+  integrity sha512-GtY+6RSk9p5fDaoYcmfaQm9+afX47gDKdHjNdeWY/aGn1kpNpEf2i5wVU+yQTVeBRXgb1nrIIvDy93NWhzxx9A==
   dependencies:
     "@remixproject/engine" "0.3.3"
     "@remixproject/plugin-api" "0.3.3"

@@ -21,6 +21,13 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"viewsWelcome": [
+			{
+				"view": "remix-plugins",
+				"contents": "No remix plugins found [learn more](https://remix.ethereum.org/).\n[Add Plugin](command:rmxPlugins.addEntry)",
+				"when": "view == remix-plugins"
+			}
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -51,7 +58,7 @@
 			},
 			{
 				"command": "rmxPlugins.addEntry",
-				"title": "Add"
+				"title": "Add plugin"
 			},
 			{
 				"command": "rmxPlugins.showPluginOptions",
@@ -109,7 +116,7 @@
 	},
 	"dependencies": {
 		"@remixproject/engine": "^0.3.3",
-		"@remixproject/engine-vscode": "/home/0mkar/Karma/remix-plugin/dist/packages/engine/vscode/",
+		"@remixproject/engine-vscode": "^0.3.3",
 		"@remixproject/plugin": "^0.3.0-alpha.8",
 		"@remixproject/plugin-api": "^0.3.0-beta.5",
 		"@remixproject/plugin-utils": "^0.3.0-beta.5",

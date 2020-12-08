@@ -1,20 +1,23 @@
-import * as vscode from "vscode";
+import {TreeItem, TreeDataProvider, EventEmitter, Event, TreeItemCollapsibleState, Command} from "vscode";
 import { Uri } from "vscode";
 import { PluginData } from "./pluginlist";
+import { PluginInfo } from "./types";
 
-export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterface> {
-  private _onDidChangeTreeData: vscode.EventEmitter<PluginInterface | undefined> = new vscode.EventEmitter<
-    PluginInterface | undefined
-  >();
-  readonly onDidChangeTreeData: vscode.Event<PluginInterface | undefined> = this._onDidChangeTreeData.event;
+export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
+  private _onDidChangeTreeData: EventEmitter<PluginInterface | undefined> = new EventEmitter<PluginInterface | undefined>();
+  readonly onDidChangeTreeData: Event<PluginInterface | undefined> = this._onDidChangeTreeData.event;
+  private data: PluginInfo[];
 
-  constructor(private workspaceRoot: string) {}
-
-  refresh(data): void {
-    this._onDidChangeTreeData.fire(data);
+  constructor(private workspaceRoot: string) {
+    this.data = PluginData;
   }
 
-  getTreeItem(element: PluginInterface): vscode.TreeItem {
+  refresh(data: PluginInfo): void {
+    this.data.push(data);
+    this._onDidChangeTreeData.fire(null);
+  }
+
+  getTreeItem(element: PluginInterface): TreeItem {
     return element;
   }
 
@@ -23,26 +26,25 @@ export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterfa
       return Promise.resolve(children);
     });
   }
+  private toPlugin = (pluginName: string, id: string, version: string, icon: string): PluginInterface => {
+    return new PluginInterface(
+      pluginName,
+      id,
+      version,
+      TreeItemCollapsibleState.None,
+      {
+        command: "rmxPlugins.showPluginOptions",
+        title: pluginName,
+        arguments: [id],
+      },
+      Uri.parse(icon)
+    );
+  };
 
   private async getRmxPlugins(): Promise<PluginInterface[]> {
-    const toPlugin = (pluginName: string, id: string, version: string, icon: string): PluginInterface => {
-      return new PluginInterface(
-        pluginName,
-        id,
-        version,
-        vscode.TreeItemCollapsibleState.None,
-        {
-          command: "rmxPlugins.showPluginOptions",
-          title: pluginName,
-          arguments: [id],
-        },
-        Uri.parse(icon)
-      );
-    };
     try {
-      const data = PluginData;
-      const plugins = data
-        ? data.map((plugin) => toPlugin(plugin.displayName, plugin.name, plugin.version, plugin.icon))
+      const plugins = this.data
+        ? this.data.map((plugin) => this.toPlugin(plugin.displayName, plugin.name, plugin.version, plugin.icon))
         : [];
       return Promise.resolve(plugins);
     } catch (error) {
@@ -51,23 +53,19 @@ export class RmxPluginsProvider implements vscode.TreeDataProvider<PluginInterfa
   }
 }
 
-export class PluginInterface extends vscode.TreeItem {
+export class PluginInterface extends TreeItem {
   constructor(
     public readonly label: string,
     public readonly id: string,
     private version: string,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command,
+    public readonly collapsibleState: TreeItemCollapsibleState,
+    public readonly command?: Command,
     public readonly iconURI?: Uri
   ) {
     super(label, collapsibleState);
   }
-  get tooltip(): string {
-    return `${this.label}-${this.version}`;
-  }
-  get description(): string {
-    return this.version;
-  }
+  tooltip = `${this.label}-${this.version}`;
+  description = this.version;
   iconPath = {
     light: this.iconURI,
     dark: this.iconURI,

@@ -19,34 +19,31 @@ code .
   <img src="https://user-images.githubusercontent.com/13261372/91586411-f38eff80-e972-11ea-83fe-a7f798b9a160.png" height="600">
 </p>
 
-## Load plugin from local source
+## Load a development plugin
 
+* Click on add plugin button from `Remix Plugins More actions` menu on top right
+<p align="justify">
+  <img src="https://user-images.githubusercontent.com/13261372/101530235-a5e55280-39b7-11eb-820d-99ada3ae1f33.png" height="273">
+</p>
+
+* Add your `JSON` plugin info into the input box. An example is given below.
 ```json
 {
-    name: "solhint",
-    displayName: "Solhint",
-    methods: [],
-    version: "0.0.1",
-    url: "/home/0mkar/Karma/remix-solhint-plugin",
-    description: "Run Solhint in your Remix project",
-    icon: "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",
-    location: "sidePanel",
-  },
-  {
-    name: "source-verification",
-    displayName: "Sourcify",
-    description: "Source metadata fetcher and validator",
-    version: "0.5.2-beta",
-    documentation: "https://github.com/sourcifyeth/remix-sourcify",
-    methods: [
-      "fetch",
-      "fetchAndSave",
-      "fetchByNetwork",
-      "verify",
-      "verifyByNetwork"
-    ],
-    icon: "https://raw.githubusercontent.com/Shard-Labs/remix-contract-getter/master/public/sourcify.png",
-    location: "sidePanel",
-    url: "/home/0mkar/Karma/remix-sourcify/dist",
-  },
-  ```
+  "name": "solhint-dev",
+  "displayName": "Solhint development",
+  "methods": [],
+  "version": "0.0.1-dev",
+  "url": "/home/0mkar/Karma/remix-solhint-plugin",
+  "description": "Run Solhint in your Remix project",
+  "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",
+  "location": "sidePanel"
+}
+```
+<p align="justify">
+  <img src="https://user-images.githubusercontent.com/13261372/101530718-4b002b00-39b8-11eb-885b-d42e6b1352ad.png" height="434">
+</p>
+
+* Upon enter you will see your development plugin on the activiety toolbar.
+<p align="justify">
+  <img src="https://user-images.githubusercontent.com/13261372/101531113-d37ecb80-39b8-11eb-877d-99c0d0c474c8.png" height="431">
+</p>

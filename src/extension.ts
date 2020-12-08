@@ -1,6 +1,5 @@
 "use strict";
-
-import * as vscode from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd } from '@remixproject/engine-vscode';
 
@@ -17,8 +16,8 @@ class VscodeManager extends PluginManager {
   }
 }
 
-export async function activate(context: vscode.ExtensionContext) {
-  const rmxPluginsProvider = new RmxPluginsProvider(vscode.workspace.rootPath);
+export async function activate(context: ExtensionContext) {
+  const rmxPluginsProvider = new RmxPluginsProvider(workspace.rootPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
   const manager = new VscodeManager();
@@ -27,40 +26,60 @@ export async function activate(context: vscode.ExtensionContext) {
   const editorPlugin = new EditorPlugin(editoropt);
   const theme = new ThemePlugin();
   engine.register([manager, solpl, filemanager, editorPlugin, theme]);
-  vscode.window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+  window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   // compile
-  vscode.commands.registerCommand("rmxPlugins.compile", () => {
+  commands.registerCommand("rmxPlugins.compile", () => {
     manager.activatePlugin(['solidity', 'fileManager', 'editor']);
     solpl.compile();
   });
   // activate plugin
-  vscode.commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
+  commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(pluginId);
     // choose window column for display
     const cl = ToViewColumn(pluginData);
-    const plugin = new WebviewPlugin(pluginData, { context, column: cl });
+    const plugin = new WebviewPlugin(pluginData, { context, column: cl },);
     if (!engine.isRegistered(pluginId)) {
       engine.register(plugin);
     }
     manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);
     const profile: Profile = await manager.getProfile(pluginId);
-    vscode.window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
+    window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
   });
-  vscode.commands.registerCommand('rmxPlugins.refreshEntry', () =>
+  commands.registerCommand('rmxPlugins.refreshEntry', () =>
     console.log('Remix Plugin will refresh plugin list.')
   );
-  vscode.commands.registerCommand('rmxPlugins.addEntry', () =>
-    console.log('Remix Plugin will add new plugin to the list.')
+  commands.registerCommand('rmxPlugins.addEntry', () => {
+    const pluginjson: PluginInfo = {
+      name: "remix-plugin-example",
+      displayName: "Remix plugin example",
+      methods: [],
+      version: "0.0.1-dev",
+      url: "",
+      description: "Run remix plugin in your Remix project",
+      icon: "",
+      location: "sidePanel",
+    };
+    const opts: InputBoxOptions = {
+      value: JSON.stringify(pluginjson),
+      placeHolder: "Add your plugin JSON"
+    };
+    window.showInputBox(opts).then((input: string) => {
+      if (input && input.length > 0) {
+        const devPlugin: PluginInfo = JSON.parse(input);
+        rmxPluginsProvider.refresh(devPlugin);
+      }
+    });
+  }
   );
-  vscode.commands.registerCommand('rmxPlugins.showPluginOptions', async (plugin) => {
+  commands.registerCommand('rmxPlugins.showPluginOptions', async (plugin) => {
     let id = '';
     if (plugin instanceof Object)
       id = plugin.id
     else
       id = plugin
 
-    const options: { [key: string]: (context: vscode.ExtensionContext, id: string) => Promise<void> } = {
+    const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
       // TODO: add following menu options
@@ -68,7 +87,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // uninstall,
       // configure
     };
-    const quickPick = vscode.window.createQuickPick();
+    const quickPick = window.createQuickPick();
     quickPick.items = Object.keys(options).map(label => ({ label }));
     quickPick.onDidChangeSelection(selection => {
       if (selection[0]) {
@@ -79,9 +98,8 @@ export async function activate(context: vscode.ExtensionContext) {
     quickPick.onDidHide(() => quickPick.dispose());
     quickPick.show();
   });
-  vscode.commands.registerCommand('extension.deActivateRmxPlugin', async (pluginId: string) => {
+  commands.registerCommand('extension.deActivateRmxPlugin', async (pluginId: string) => {
     manager.deactivatePlugin([pluginId]);
-    // engine.remove([pluginId]);
     console.log(`${pluginId} plugin deactivated!`);
   });
 }

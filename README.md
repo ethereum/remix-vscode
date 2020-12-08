@@ -10,14 +10,7 @@ code .
 ## Installation
 * Download vsix and install: http://gateway.ipfs.io/ipfs/QmcuwVaMdesZJcNUZc5N2fdmpCedweYw9junaHtCTKUw75
 ## Select, activate, deactivate plugin
-<p align="justify">
-  <img src="https://user-images.githubusercontent.com/13261372/91587016-d0b11b00-e973-11ea-8371-cf991d329c60.png" height="400">
-</p>
-
-## Screenshots
-<p align="justify">
-  <img src="https://user-images.githubusercontent.com/13261372/91586411-f38eff80-e972-11ea-83fe-a7f798b9a160.png" height="600">
-</p>
+[![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
 
 ## Load a development plugin
 

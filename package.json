@@ -2,7 +2,7 @@
 	"name": "code-remix",
 	"displayName": "Remix plugins manager",
 	"description": "Remix plugins manager for VSCode",
-	"version": "0.0.1-alpha",
+	"version": "0.0.2",
 	"publisher": "ethential",
 	"enableProposedApi": true,
 	"repository": {

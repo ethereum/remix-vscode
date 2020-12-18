@@ -16,9 +16,18 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
 };
 
+interface ICompilationResult {
+  source: {
+    target: string;
+    sources: ISources;
+  };
+  data: any;
+}
+
 export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = 'latest';
   private outputChannel: OutputChannel;
+  private compilationResult: ICompilationResult;
   constructor() {
     super(profile);
     this.outputChannel = window.createOutputChannel("Remix IDE");
@@ -95,13 +104,22 @@ export default class NativeSolcPlugin extends CommandPlugin {
           this.print(`${JSON.stringify(compiled.errors)}`);
         }
         if(compiled.contracts) {
-          const source = sources;
-          const data = m.compiled;
+          const source = { sources };
+          const data = JSON.parse(m.compiled);
+          this.compilationResult = {
+            source: {
+              sources,
+              target: fileName
+            },
+            data
+          }
           this.print(`Compilation finished for ${fileName} with solidity version ${languageVersion}.`);
-          this.print(data);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }
     })
+  }
+  getCompilationResult() {
+    return this.compilationResult;
   }
 }

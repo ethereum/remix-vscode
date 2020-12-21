@@ -1,7 +1,7 @@
 {
 	"name": "code-remix",
-	"displayName": "Remix plugins manager",
-	"description": "Remix plugins manager for VSCode",
+	"displayName": "Remix IDE",
+	"description": "Remix IDE plugins in VSCode",
 	"version": "0.0.2",
 	"publisher": "ethential",
 	"enableProposedApi": true,

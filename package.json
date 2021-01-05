@@ -36,7 +36,7 @@
 			"activitybar": [
 				{
 					"id": "remix-plugins",
-					"title": "Remix Plugins",
+					"title": "Remix IDE",
 					"icon": "media/remix.svg"
 				}
 			]
@@ -45,9 +45,9 @@
 			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
-					"name": "Remix Plugins",
+					"name": "Remix IDE",
 					"icon": "media/remix.svg",
-					"contextualTitle": "Remix Plugins"
+					"contextualTitle": "Remix IDE"
 				}
 			]
 		},
@@ -58,11 +58,13 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.addEntry",
-				"title": "Add plugin"
+				"title": "Add plugin",
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.showPluginOptions",
@@ -70,12 +72,13 @@
 				"icon": {
 					"light": "resources/light/settings.svg",
 					"dark": "resources/dark/settings.svg"
-				}
+				},
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.compile",
 				"title": "Solidity compile",
-				"category": "Ethereum"
+				"category": "Remix IDE"
 			}
 		],
 		"keybindings": [

@@ -17,7 +17,7 @@ class VscodeManager extends PluginManager {
 }
 
 export async function activate(context: ExtensionContext) {
-  const rmxPluginsProvider = new RmxPluginsProvider(workspace.rootPath);
+  const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
   const manager = new VscodeManager();
@@ -100,6 +100,7 @@ export async function activate(context: ExtensionContext) {
   });
   commands.registerCommand('extension.deActivateRmxPlugin', async (pluginId: string) => {
     manager.deactivatePlugin([pluginId]);
+    editorPlugin.discardDecorations();
     console.log(`${pluginId} plugin deactivated!`);
   });
 }

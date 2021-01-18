@@ -23,69 +23,54 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@remixproject/engine-vscode@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.4.tgz#201ebe328cd776f18558abb828970bda716c5c22"
-  integrity sha512-aDFOvu9FswOSzC8yRXAgNAcaWHvSaqLN0phqXiYjxuMWEHXD6oblDTdKlvtiUtvyzi+z36R5946p6RGpIL+r9w==
+"@remixproject/engine-vscode@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.7.tgz#7f29c8246815cc3624eed8d5b8acdd28df395f7a"
+  integrity sha512-UDBZbwu4oQncFvAjdBN5BqPiMxoL0/1Csr3Og7L/yP0VYA7GCFzyZzMk63IM39zqewhPaoVv9bSmyHNHVb6jfA==
   dependencies:
-    "@remixproject/engine" "0.3.4"
-    "@remixproject/plugin-api" "0.3.4"
-    "@remixproject/plugin-utils" "0.3.4"
+    "@remixproject/engine" "0.3.7"
+    "@remixproject/plugin-api" "0.3.7"
+    "@remixproject/plugin-utils" "0.3.7"
 
-"@remixproject/engine@0.3.4", "@remixproject/engine@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.4.tgz#f46dd4734a583a8e28e450600c8347e77a594894"
-  integrity sha512-hmqwtmWUxMrFiUd7ZAk+0K7bXZz4AXUgJnE5JlOW8adhLX6GgP/Kx2aQ+V7hduaItaRV+eSwJu4v8qpj9nKT5Q==
+"@remixproject/engine@0.3.7", "@remixproject/engine@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.7.tgz#b8c245d5bd1a59e588eb625e67b3c762feac32db"
+  integrity sha512-I7B+OqY5W0QobZI8LxuxEbuvWrjsbUH2P6Hj7Q4R15q+hle1OAzVoKiwRAZ2g5fMPg81IlZeD5MyBLGaAyxjxQ==
   dependencies:
-    "@remixproject/plugin-api" "0.3.4"
-    "@remixproject/plugin-utils" "0.3.4"
+    "@remixproject/plugin-api" "0.3.7"
+    "@remixproject/plugin-utils" "0.3.7"
 
-"@remixproject/plugin-api@0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.4.tgz#5451bb3c8398b4c0dea48011e7f5c07da9775a29"
-  integrity sha512-P5qwriVDmZp2LB14/m3JAIShUmn3kXA2Xt71N77fPBR4GWAQ4MO9NIP9WIdlXCYRJoOOCVQQiHnqwJbrbcHcug==
+"@remixproject/plugin-api@0.3.7", "@remixproject/plugin-api@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.7.tgz#34a9ec77d989a7ce34700762a12c17167af636ed"
+  integrity sha512-efw2qELFzlO4R62QAQM+5YbycEqzlp/lyTjIm0dKiVyP1suz4UdrFAPIYMPFIAlrHDB0qMhCxe+W/HXLZCcvsg==
   dependencies:
-    "@remixproject/plugin-utils" "0.3.4"
+    "@remixproject/plugin-utils" "0.3.7"
 
-"@remixproject/plugin-api@^0.3.0-beta.5":
-  version "0.3.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.0-beta.5.tgz#5f294f86750c6520382dacec728a62eef6ce6691"
-  integrity sha512-C1fuISsne3sfA61k1rx6qU9ZgubyP8SdNKinzeYvXg4XAm1DwoHQlzjq/WYmjOFx1NZhyMGK8ySBp0VcjAMc/Q==
-
-"@remixproject/plugin-utils@0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.4.tgz#114dfa8b9709362871d4d23ad57db8cb62d11b26"
-  integrity sha512-Xs/LtlJUMUkcahFpggWp31McR70KQ1bxFf0TVkJSRBBsOJ6hkJwJD+2hn5Epzc4ugUUT/gvmQVCiaXm8dMl+rQ==
+"@remixproject/plugin-utils@0.3.7", "@remixproject/plugin-utils@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.7.tgz#dfc433442e1e4e3d1cb5169b5a7e63da8cb6f5b9"
+  integrity sha512-8L9RzouUXYr8vb4BA8yWwZvaSdJrx2twl4JAMIZwtTY8Ur1Ppmt1bkjtO4eQv37ke+3lbqGi9nW+h/4s3X/c+Q==
   dependencies:
     tslib "2.0.1"
 
-"@remixproject/plugin-utils@^0.3.0-beta.5":
-  version "0.3.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.0-beta.5.tgz#c6c4699393b6760e2ad2ff56b0c5fc13b43cea21"
-  integrity sha512-+gnfuSUimCxUTRxfTGu+mwI5U6EPUx2A2ANObaZzX8f17nhSW5NWw2vWKauZPSv2PWQoIukYzrmG/kogEe3Cyw==
-
-"@remixproject/plugin-vscode@^0.3.0-alpha.3":
-  version "0.3.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.0-alpha.3.tgz#c1f733528e70a318080c95bd09fa88f3952b7988"
-  integrity sha512-FwyLZ/yneX+v8PZ9JK2GJ4rUIKb5n813m2Bs+9Cs2VgEXc5yaPDMsQzJcGuLu40EFmbiVhrrXzgtzJpnGmOYTw==
+"@remixproject/plugin-vscode@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.7.tgz#31d948e38bfcbf673e0ed1bf9960249969c2356f"
+  integrity sha512-vNeU+bZ/owP+BmTdo/e1EjNCAGqqwabShgW+DQxMhNUpahGQGVpvEpEFpgGDKdAKxZObRlmqNTbyq28X9U4HqA==
   dependencies:
-    "@remixproject/plugin" "0.3.0-alpha.4"
+    "@remixproject/plugin" "0.3.7"
+    "@remixproject/plugin-api" "0.3.7"
+    "@remixproject/plugin-utils" "0.3.7"
 
-"@remixproject/plugin@0.3.0-alpha.4":
-  version "0.3.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.0-alpha.4.tgz#a9b6ba0a686f54196bb3e54dee2988e9e1bb05f2"
-  integrity sha512-nnriKHN6UTm8KuUFdbepHmZj5gVzan1h2PZPle0UmooQnzNE6Qw4DffnXqky9teNBJDTo0x0ZxTgYVZf+V4xMA==
+"@remixproject/plugin@0.3.7", "@remixproject/plugin@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.7.tgz#be8268ee7ea9fb780905df4b24780e8a64bb8ba8"
+  integrity sha512-FrRUKaZgsxAAkYziAKjsMVezd2rtyklHA+Y+OlEtHfICN0NJXjnaSy3Tz5LGRA0MWqnvki6vIw/ZHr8T4zknZQ==
   dependencies:
-    "@types/node" "^13.13.4"
-    events "^3.0.0"
-
-"@remixproject/plugin@^0.3.0-alpha.8":
-  version "0.3.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.0-alpha.8.tgz#32323a03fc6fb45b3d368f1fe9f27e038c3fb7a3"
-  integrity sha512-uV5/YQPhX4E3amCS2yBV9tfwDo6ZThady9n70H20nFPGiZYnZxruFL6kf4iKQAj5FrnzjDyEVEZwfV9QyrAwZg==
-  dependencies:
-    "@types/node" "^13.13.4"
-    events "^3.0.0"
+    "@remixproject/plugin-api" "0.3.7"
+    "@remixproject/plugin-utils" "0.3.7"
+    events "3.2.0"
 
 "@types/glob@*":
   version "7.1.3"
@@ -116,11 +101,6 @@
   version "10.17.28"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.28.tgz#0e36d718a29355ee51cec83b42d921299200f6d9"
   integrity sha512-dzjES1Egb4c1a89C7lKwQh8pwjYmlOAG9dW1pBgxEk57tMrLnssOfEthz8kdkNaBd7lIqQx7APm5+mZ619IiCQ==
-
-"@types/node@^13.13.4":
-  version "13.13.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.15.tgz#fe1cc3aa465a3ea6858b793fd380b66c39919766"
-  integrity sha512-kwbcs0jySLxzLsa2nWUAGOd/s21WU1jebrEdtzhsj1D4Yps1EOuyI1Qcu+FD56dL7NRNIJtDDjcqIG22NwkgLw==
 
 "@types/rimraf@^2.0.2":
   version "2.0.4"
@@ -250,7 +230,7 @@ esprima@^4.0.0:
   resolved "https://registry.yarnpkg.com/esprima/-/esprima-4.0.1.tgz#13b04cdb3e6c5d19df91ab6987a8695619b0aa71"
   integrity sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==
 
-events@^3.0.0:
+events@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.2.0.tgz#93b87c18f8efcd4202a461aec4dfc0556b639379"
   integrity sha512-/46HWwbfCX2xTawVfkKLGxMifJYQBWMwY1mjywRtb4c9x8l5NP3KoJtnIOiL1hfdRkIuYhETxQlo62IF8tcnlg==

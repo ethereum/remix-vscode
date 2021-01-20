@@ -18,5 +18,5 @@ export async function pluginActivate(context: ExtensionContext, pluginId: string
  * @param pluginId plugin ID mentioned as plugin ViewItem
  */
 export async function pluginDeactivate(context: ExtensionContext, pluginId: string) {
-	console.log("Will deactivate plugin: ");
+	commands.executeCommand('extension.deActivateRmxPlugin', pluginId);
 }

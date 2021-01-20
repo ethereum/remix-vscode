@@ -1,13 +1,13 @@
 {
-	"name": "remix-plugin-vscode",
-	"displayName": "Remix plugins manager",
-	"description": "Remix plugins manager for VSCode",
-	"version": "0.0.1",
+	"name": "code-remix",
+	"displayName": "Remix IDE",
+	"description": "Remix IDE plugins in VSCode",
+	"version": "0.0.2",
 	"publisher": "ethential",
 	"enableProposedApi": true,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ethential/remix-plugin-vscode"
+		"url": "https://github.com/ethential/code-remix"
 	},
 	"engines": {
 		"vscode": "^1.36.0"
@@ -15,18 +15,29 @@
 	"categories": [
 		"Extension Packs"
 	],
+	"keywords": [
+		"ethereum",
+		"Remix IDE"
+	],
 	"activationEvents": [
 		"onView:rmxPlugins",
 		"onCommand:remix.compile"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"viewsWelcome": [
+			{
+				"view": "remix-plugins",
+				"contents": "No remix plugins found [learn more](https://remix.ethereum.org/).\n[Add Plugin](command:rmxPlugins.addEntry)",
+				"when": "view == remix-plugins"
+			}
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
 					"id": "remix-plugins",
-					"title": "Remix Plugins",
-					"icon": "media/dep.svg"
+					"title": "Remix IDE",
+					"icon": "media/remix.svg"
 				}
 			]
 		},
@@ -34,9 +45,9 @@
 			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
-					"name": "Remix Plugins",
-					"icon": "media/dep.svg",
-					"contextualTitle": "Remix Plugins"
+					"name": "Remix IDE",
+					"icon": "media/remix.svg",
+					"contextualTitle": "Remix IDE"
 				}
 			]
 		},
@@ -47,11 +58,13 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.addEntry",
-				"title": "Add"
+				"title": "Add plugin",
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.showPluginOptions",
@@ -59,12 +72,13 @@
 				"icon": {
 					"light": "resources/light/settings.svg",
 					"dark": "resources/dark/settings.svg"
-				}
+				},
+				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.compile",
 				"title": "Solidity compile",
-				"category": "Ethereum"
+				"category": "Remix IDE"
 			}
 		],
 		"keybindings": [
@@ -108,13 +122,13 @@
 		"typescript": "^3.5.1"
 	},
 	"dependencies": {
-		"@remixproject/engine": "^0.3.0-beta.5",
-		"@remixproject/engine-vscode": "^0.3.0-beta.5",
-		"@remixproject/plugin": "^0.3.0-alpha.8",
-		"@remixproject/plugin-api": "^0.3.0-beta.5",
-		"@remixproject/plugin-utils": "^0.3.0-beta.5",
-		"@remixproject/plugin-vscode": "^0.3.0-alpha.3",
-		"axios": "^0.21.1",
+		"@remixproject/engine": "^0.3.7",
+		"@remixproject/engine-vscode": "^0.3.7",
+		"@remixproject/plugin": "^0.3.7",
+		"@remixproject/plugin-api": "^0.3.7",
+		"@remixproject/plugin-utils": "^0.3.7",
+		"@remixproject/plugin-vscode": "^0.3.7",
+		"axios": "^0.19.2",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",

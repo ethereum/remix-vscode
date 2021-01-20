@@ -16,9 +16,18 @@ const profile = {
   methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
 };
 
+interface ICompilationResult {
+  source: {
+    target: string;
+    sources: ISources;
+  };
+  data: any;
+}
+
 export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = 'latest';
   private outputChannel: OutputChannel;
+  private compilationResult: ICompilationResult;
   constructor() {
     super(profile);
     this.outputChannel = window.createOutputChannel("Remix IDE");
@@ -37,15 +46,15 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const date = new Date(Date.now());
     return date.toLocaleTimeString();
   }
-  private log(m: string) {
+  private print(m: string) {
     const now = this.getNow();
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();
   }
   compile() {
-    this.log("Compilation started!")
+    this.print("Compilation started!")
     const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
-    this.log(`Compiling ${fileName} ...`);
+    this.print(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
     const sources: ISources = {};
     if (fileName) {
@@ -76,6 +85,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
       console.log(`............................Solidity worker message............................`);
       console.log(m);
       if (m.error) {
+        this.print(m.error);
         console.error(m.error);
       } else if (m.data && m.path) {
         sources[m.path] = {
@@ -87,15 +97,29 @@ export default class NativeSolcPlugin extends CommandPlugin {
           version: this.version,
         });
       } else if (m.compiled) {
+        const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
+        if(compiled.errors) {
+          this.print(`Compilation error while compiling ${fileName} with solidity version ${languageVersion}.`);
+          this.print(`${JSON.stringify(compiled.errors)}`);
+        }
         if(compiled.contracts) {
-          const source = sources;
-          const languageVersion = this.version;
-          const data = m.compiled;
-          this.log(`Compilation finished for: ${fileName}.`);
+          const source = { sources };
+          const data = JSON.parse(m.compiled);
+          this.compilationResult = {
+            source: {
+              sources,
+              target: fileName
+            },
+            data
+          }
+          this.print(`Compilation finished for ${fileName} with solidity version ${languageVersion}.`);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }
     })
+  }
+  getCompilationResult() {
+    return this.compilationResult;
   }
 }

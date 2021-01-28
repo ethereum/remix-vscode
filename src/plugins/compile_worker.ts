@@ -2,7 +2,7 @@ import * as solc from "solc";
 import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
-import { RemixURLResolver } from "remix-url-resolver";
+import { RemixURLResolver } from "@remix-project/remix-url-resolver";
 
 
 function handleLocal(pathString: string, filePath: any) {
@@ -41,7 +41,6 @@ function findImports(path: any) {
 			}
 		}
 	];
-	// @ts-ignore
 	const urlResolver = new RemixURLResolver();
 	// this section usually executes after solc returns error file not found
 	urlResolver.resolve(path, FSHandler)

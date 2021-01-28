@@ -23,6 +23,16 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@remix-project/remix-url-resolver@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.18.tgz#e9239ff43954424093b4df462f6bf8d1239ba528"
+  integrity sha512-p37cC0j7JxhERDC3ur/ARdg1BfgWubB/+gpmrbTjcjzOpMZSO4kHXjtGI/NOy1rEd4CDzZllYb5wSQw94/SAFw==
+  dependencies:
+    axios "^0.18.0"
+    solc "^0.7.4"
+    url "^0.11.0"
+    valid-url "^1.0.9"
+
 "@remixproject/engine-vscode@^0.3.7":
   version "0.3.7"
   resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.7.tgz#7f29c8246815cc3624eed8d5b8acdd28df395f7a"
@@ -137,12 +147,12 @@ axios@^0.18.0:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
 
-axios@^0.21.1:
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
-  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
   dependencies:
-    follow-redirects "^1.10.0"
+    follow-redirects "1.5.10"
 
 balanced-match@^1.0.0:
   version "1.0.0"
@@ -242,7 +252,7 @@ follow-redirects@1.5.10:
   dependencies:
     debug "=3.1.0"
 
-follow-redirects@^1.10.0, follow-redirects@^1.12.1:
+follow-redirects@^1.12.1:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
   integrity sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==
@@ -478,6 +488,21 @@ solc@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/solc/-/solc-0.7.0.tgz#f242ba1888a0b7fe3070a82cd9fd09fcea3e15ad"
   integrity sha512-4mpz0XimxHpR7X/YIpM2C4hX+wGTenACJX8Vch6I1jgwwQoZElqnaKHD/f2z9/B8jdU5eim5NGcgg3XEY5rcrA==
+  dependencies:
+    command-exists "^1.2.8"
+    commander "3.0.2"
+    follow-redirects "^1.12.1"
+    fs-extra "^0.30.0"
+    js-sha3 "0.8.0"
+    memorystream "^0.3.1"
+    require-from-string "^2.0.0"
+    semver "^5.5.0"
+    tmp "0.0.33"
+
+solc@^0.7.4:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/solc/-/solc-0.7.6.tgz#21fc5dc11b85fcc518c181578b454f3271c27252"
+  integrity sha512-WsR/W7CXwh2VnmZapB4JrsDeLlshoKBz5Pz/zYNulB6LBsOEHI2Zj/GeKLMFcvv57OHiXHvxq5ZOQB+EdqxlxQ==
   dependencies:
     command-exists "^1.2.8"
     commander "3.0.2"

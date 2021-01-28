@@ -2,7 +2,7 @@
 	"name": "code-remix",
 	"displayName": "Remix IDE",
 	"description": "Remix IDE plugins in VSCode",
-	"version": "0.0.2",
+	"version": "0.0.4",
 	"publisher": "ethential",
 	"enableProposedApi": true,
 	"repository": {
@@ -122,6 +122,7 @@
 		"typescript": "^3.5.1"
 	},
 	"dependencies": {
+		"@remix-project/remix-url-resolver": "^0.0.18",
 		"@remixproject/engine": "^0.3.7",
 		"@remixproject/engine-vscode": "^0.3.7",
 		"@remixproject/plugin": "^0.3.7",

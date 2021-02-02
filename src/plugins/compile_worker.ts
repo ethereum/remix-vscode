@@ -4,29 +4,22 @@ import * as fs from "fs";
 import axios from "axios";
 import { RemixURLResolver } from "@remix-project/remix-url-resolver";
 
-
-function handleLocal(pathString: string, filePath: any) {
-	// if no relative/absolute path given then search in node_modules folder
-	if (pathString && pathString.indexOf(".") !== 0 && pathString.indexOf("/") !== 0) {
-		console.error("Error: Node Modules Import is not implemented yet!");
-		// return handleNodeModulesImport(pathString, filePath, pathString)
-		return;
-	} else {
-		try {
-			const o = { encoding: "UTF-8" };
-			// hack for compiler imports to work (do not change)
-			const p = pathString ? path.resolve(pathString, filePath) : path.resolve(pathString, filePath);
-			const content = fs.readFileSync(p, o);
-			return content;
-		} catch (error) {
-			// @ts-ignore
-			process.send({ error });
-			throw error;
-		}
+function handleLocal(pathString: string, root: string) {
+	try {
+		const o = { encoding: "UTF-8" };
+		// hack for compiler imports to work (do not change)
+		const p = path.resolve(root, pathString);
+		
+		const content = fs.readFileSync(p, o);
+		return content;
+	} catch (error) {
+		// @ts-ignore
+		process.send({ error });
+		throw error;
 	}
 }
 
-function findImports(path: any) {
+function findImports(path: any, root: string) {
 	// TODO: We need current solc file path here for relative local import
 	// @ts-ignore
 	process.send({ processMessage: "importing file: " + path });
@@ -37,7 +30,7 @@ function findImports(path: any) {
 				return /(^(?!(?:http:\/\/)|(?:https:\/\/)?(?:www.)?(?:github.com)))(^\/*[\w+-_/]*\/)*?(\w+\.sol)/g.exec(url);
 			},
 			handle: (match: Array<string>) => {
-				return handleLocal(match[2], match[3]);
+				return handleLocal(match[0], root);
 			}
 		}
 	];
@@ -65,7 +58,7 @@ process.on("message", async m => {
 		if (m.version === vn || m.version === 'latest') {
 			try {
 				console.log("compiling with local version: ", solc.version());
-				const output = await solc.compile(JSON.stringify(input), { import: findImports });
+				const output = await solc.compile(JSON.stringify(input), { import: (path) => findImports(path, m.root) });
 				// @ts-ignore
 				process.send({ compiled: output });
 				// we should not exit process here as findImports still might be running

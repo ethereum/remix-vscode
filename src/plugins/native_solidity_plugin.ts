@@ -1,5 +1,5 @@
 import { CommandPlugin } from "@remixproject/engine-vscode";
-import { window, OutputChannel } from "vscode";
+import { window, OutputChannel, workspace } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
 import { ISources } from "./type";
@@ -51,9 +51,9 @@ export default class NativeSolcPlugin extends CommandPlugin {
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();
   }
-  compile() {
+  async compile() {
     this.print("Compilation started!")
-    const fileName = window.activeTextEditor ? window.activeTextEditor.document.fileName : undefined;
+    const fileName = await this.call('fileManager', 'getCurrentFile')
     this.print(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
     const sources: ISources = {};
@@ -78,6 +78,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     };
     solcWorker.send({
       command: "compile",
+      root: workspace.workspaceFolders[0].uri.fsPath,
       payload: input,
       version: this.version,
     });
@@ -93,6 +94,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
         };
         solcWorker.send({
           command: "compile",
+          root: workspace.workspaceFolders[0].uri.fsPath,
           payload: input,
           version: this.version,
         });

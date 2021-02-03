@@ -34,8 +34,8 @@ export async function activate(context: ExtensionContext) {
   engine.register([manager, solpl, filemanager, editorPlugin, theme]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   // compile
-  commands.registerCommand("rmxPlugins.compile", () => {
-    manager.activatePlugin(['solidity', 'fileManager', 'editor']);
+  commands.registerCommand("rmxPlugins.compile", async () => {
+    await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
     solpl.compile();
   });
   // activate plugin

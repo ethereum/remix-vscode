@@ -102,8 +102,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
         const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
         if(compiled.errors) {
-          this.print(`Compilation error while compiling ${fileName} with solidity version ${languageVersion}.`);
-          this.print(`${JSON.stringify(compiled.errors)}`);
+          this.print(`Compilation error while compiling ${fileName} with solidity version ${m?.version}.`);
+          logError(compiled?.errors)
         }
         if(compiled.contracts) {
           const source = { sources };
@@ -115,11 +115,23 @@ export default class NativeSolcPlugin extends CommandPlugin {
             },
             data
           }
-          this.print(`Compilation finished for ${fileName} with solidity version ${languageVersion}.`);
+          this.print(`Compilation finished for ${fileName} with solidity version ${m?.version}.`);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }
     })
+
+    const errorKeysToLog = ['formattedMessage']
+    const logError = (errors:any[]) => {
+      for(let i in errors){
+        if(['number','string'].includes(typeof errors[i])){
+                if(errorKeysToLog.includes(i))
+                  this.print(errors[i])
+        }else{
+                logError(errors[i])
+        }
+      }
+    }
   }
   getCompilationResult() {
     return this.compilationResult;

@@ -60,7 +60,7 @@ process.on("message", async m => {
 				console.log("compiling with local version: ", solc.version());
 				const output = await solc.compile(JSON.stringify(input), { import: (path) => findImports(path, m.root) });
 				// @ts-ignore
-				process.send({ compiled: output });
+				process.send({ compiled: output, version:solc.version() });
 				// we should not exit process here as findImports still might be running
 			} catch (e) {
 				console.error(e);
@@ -81,7 +81,7 @@ process.on("message", async m => {
 					try {
 						const output = await newSolc.compile(JSON.stringify(input), { import: findImports });
 						// @ts-ignore
-						process.send({ compiled: output });
+						process.send({ compiled: output, version:newSolc.version() });
 					} catch (e) {
 						console.error(e);
 						// @ts-ignore

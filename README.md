@@ -10,7 +10,7 @@ code .
 ## Installation
 [Install from Visualstudio Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
 ## Select, activate, deactivate plugin
-[![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
+![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)
 
 ## Load a development plugin
 

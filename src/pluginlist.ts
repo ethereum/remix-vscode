@@ -63,5 +63,29 @@ export const PluginData: PluginInfo[] = [
     icon: 'https://dgitremix.web.app/dgitlogo.png',
     location: 'mainPanel',
     documentation: 'https://github.com/bunsenstraat/remix-storage-plugin'
+  },
+  {
+    name: 'tenderly',
+    kind: 'none',
+    displayName: 'tenderly',
+    events: [],
+    methods: [],
+    url: 'https://remix-plugin.tenderly.co/index.html',
+    description: 'A decentralized git plugin for Remix. Store your files in IPFS and 3Box as a git repository.',
+    icon: 'https://dgitremix.web.app/dgitlogo.png',
+    location: 'mainPanel',
+    documentation: 'https://github.com/bunsenstraat/remix-storage-plugin'
+  },
+  {
+    name: 'tenderly2',
+    kind: 'none',
+    displayName: 'tenderly23',
+    events: [],
+    methods: [],
+    url: 'https://remix-plugin.tenderly2.co/index2.html',
+    description: 'A decentralized git plugin for Remix. Store your files in IPFS and 3Box as a git repository.',
+    icon: 'https://dgitremix.web.app/dgitlogo.png',
+    location: 'mainPanel',
+    documentation: 'https://github.com/bunsenstraat/remix-storage-plugin'
   }
 ];

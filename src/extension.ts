@@ -6,7 +6,7 @@ import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOpti
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import { pluginActivate, pluginDeactivate } from './optionInputs';
+import { pluginActivate, pluginDeactivate, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
@@ -78,6 +78,9 @@ export async function activate(context: ExtensionContext) {
     });
   }
   );
+  commands.registerCommand('rmxPlugins.uninstallRmxPlugin', async (pluginId: string) => {
+    
+  });
   commands.registerCommand('rmxPlugins.showPluginOptions', async (plugin) => {
     let id = '';
     if (plugin instanceof Object)
@@ -88,6 +91,7 @@ export async function activate(context: ExtensionContext) {
     const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
+      Uninstall: pluginUninstall,
       // TODO: add following menu options
       // install,
       // uninstall,

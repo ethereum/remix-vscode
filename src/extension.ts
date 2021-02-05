@@ -37,7 +37,7 @@ export async function activate(context: ExtensionContext) {
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
-    solpl.compile(this.selectedVersion);
+    solpl.compile(selectedVersion);
   });
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
@@ -116,7 +116,7 @@ export async function activate(context: ExtensionContext) {
       const versions = solpl.getSolidityVersions();
       window.showQuickPick(Object.keys(versions)).then((selected) => {
         if (selected) {
-          this.selectedVersion = selected;
+          selectedVersion = selected;
         }
       });
     } catch (error) {

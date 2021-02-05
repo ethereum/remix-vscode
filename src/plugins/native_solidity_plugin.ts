@@ -55,7 +55,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
   async compile(_version: string) {
     this.print("Compilation started!")
-    this.version = this.versions[_version];
+    this.version = _version in this.versions ? this.versions[_version] : _version;
     const fileName = await this.call('fileManager', 'getCurrentFile')
     this.print(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;

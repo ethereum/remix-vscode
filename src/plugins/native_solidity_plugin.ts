@@ -26,11 +26,13 @@ interface ICompilationResult {
 
 export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = 'latest';
+  private versions: Array<string>;
   private outputChannel: OutputChannel;
   private compilationResult: ICompilationResult;
   constructor() {
     super(profile);
     this.outputChannel = window.createOutputChannel("Remix IDE");
+    this.loadSolidityVersions();
   }
   getVersion() {
     return 0.1;
@@ -51,8 +53,9 @@ export default class NativeSolcPlugin extends CommandPlugin {
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();
   }
-  async compile() {
+  async compile(_version: string) {
     this.print("Compilation started!")
+    this.version = this.versions[_version];
     const fileName = await this.call('fileManager', 'getCurrentFile')
     this.print(`Compiling ${fileName} ...`);
     const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
@@ -101,11 +104,11 @@ export default class NativeSolcPlugin extends CommandPlugin {
       } else if (m.compiled) {
         const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
-        if(compiled.errors) {
+        if (compiled.errors) {
           this.print(`Compilation error while compiling ${fileName} with solidity version ${m?.version}.`);
           logError(compiled?.errors)
         }
-        if(compiled.contracts) {
+        if (compiled.contracts) {
           const source = { sources };
           const data = JSON.parse(m.compiled);
           this.compilationResult = {
@@ -122,18 +125,28 @@ export default class NativeSolcPlugin extends CommandPlugin {
     })
 
     const errorKeysToLog = ['formattedMessage']
-    const logError = (errors:any[]) => {
-      for(let i in errors){
-        if(['number','string'].includes(typeof errors[i])){
-                if(errorKeysToLog.includes(i))
-                  this.print(errors[i])
-        }else{
-                logError(errors[i])
+    const logError = (errors: any[]) => {
+      for (let i in errors) {
+        if (['number', 'string'].includes(typeof errors[i])) {
+          if (errorKeysToLog.includes(i))
+            this.print(errors[i])
+        } else {
+          logError(errors[i])
         }
       }
     }
   }
   getCompilationResult() {
     return this.compilationResult;
+  }
+  private loadSolidityVersions() {
+    const solcWorker = this.createWorker();
+    solcWorker.send({ command: "fetch_compiler_verison" });
+    solcWorker.on("message", (m: any) => {
+      this.versions = m.versions;
+    });
+  }
+  getSolidityVersions() {
+    return this.versions;
   }
 }

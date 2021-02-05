@@ -69,9 +69,10 @@ process.on("message", async m => {
 				// @ts-ignore
 				process.exit(1);
 			}
-		} else if (m.version !== vn) {
-			console.log("loading remote version " + m.version + "...");
-			solc.loadRemoteVersion(m.version, async (err: Error, newSolc: any) => {
+		} else {
+			const v = m.version.replace('soljson-', '').replace('.js', '');
+			console.log("Loading remote version " + v + "...");
+			solc.loadRemoteVersion(v, async (err: Error, newSolc: any) => {
 				if (err) {
 					console.error(err);
 					// @ts-ignore
@@ -79,7 +80,7 @@ process.on("message", async m => {
 				} else {
 					console.log("compiling with remote version ", newSolc.version());
 					try {
-						const output = await newSolc.compile(JSON.stringify(input), { import: findImports });
+						const output = await newSolc.compile(JSON.stringify(input), { import: (path) => findImports(path, m.root) });
 						// @ts-ignore
 						process.send({ compiled: output, version:newSolc.version() });
 					} catch (e) {
@@ -98,7 +99,7 @@ process.on("message", async m => {
 			.get("https://ethereum.github.io/solc-bin/bin/list.json")
 			.then((res: any) => {
 				// @ts-ignore
-				process.send({ versions: res.data });
+				process.send({ versions: res.data.releases });
 			})
 			.catch((e: Error) => {
 				// @ts-ignore

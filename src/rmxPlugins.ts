@@ -12,8 +12,20 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
     this.data = PluginData;
   }
 
-  refresh(data: PluginInfo): void {
+  add(data: PluginInfo): void {
     this.data.push(data);
+    this._onDidChangeTreeData.fire(null);
+  }
+
+  remove(id: string):void {
+    this.data = this.data.filter((plugin: PluginInfo)=>{
+      return plugin.name != id
+    })
+    this._onDidChangeTreeData.fire(null);
+  }
+
+  refresh():void {
+    this.data = PluginData
     this._onDidChangeTreeData.fire(null);
   }
 

@@ -20,3 +20,12 @@ export async function pluginActivate(context: ExtensionContext, pluginId: string
 export async function pluginDeactivate(context: ExtensionContext, pluginId: string) {
 	commands.executeCommand('extension.deActivateRmxPlugin', pluginId);
 }
+
+/**
+ * Uninstall a plugin with given id
+ * @param context vscode Execution context
+ * @param pluginId plugin ID mentioned as plugin ViewItem
+ */
+export async function pluginUninstall(context: ExtensionContext, pluginId: string) {
+	commands.executeCommand('rmxPlugins.uninstallRmxPlugin', pluginId);
+}

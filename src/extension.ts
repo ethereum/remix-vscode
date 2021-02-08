@@ -6,7 +6,7 @@ import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOpti
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import { pluginActivate, pluginDeactivate } from './optionInputs';
+import { pluginActivate, pluginDeactivate, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
@@ -53,8 +53,10 @@ export async function activate(context: ExtensionContext) {
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
   });
-  commands.registerCommand('rmxPlugins.refreshEntry', () =>
-    console.log('Remix Plugin will refresh plugin list.')
+  commands.registerCommand('rmxPlugins.refreshEntry', () => {
+      console.log('Remix Plugin will refresh plugin list.')
+      rmxPluginsProvider.refresh()
+    }
   );
   commands.registerCommand('rmxPlugins.addEntry', () => {
     const pluginjson: PluginInfo = {
@@ -74,11 +76,15 @@ export async function activate(context: ExtensionContext) {
     window.showInputBox(opts).then((input: string) => {
       if (input && input.length > 0) {
         const devPlugin: PluginInfo = JSON.parse(input);
-        rmxPluginsProvider.refresh(devPlugin);
+        rmxPluginsProvider.add(devPlugin);
       }
     });
   }
   );
+  commands.registerCommand('rmxPlugins.uninstallRmxPlugin', async (pluginId: string) => {
+    commands.executeCommand('extension.deActivateRmxPlugin', pluginId);
+    rmxPluginsProvider.remove(pluginId)
+  });
   commands.registerCommand('rmxPlugins.showPluginOptions', async (plugin) => {
     let id = '';
     if (plugin instanceof Object)
@@ -89,6 +95,7 @@ export async function activate(context: ExtensionContext) {
     const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
+      Uninstall: pluginUninstall,
       // TODO: add following menu options
       // install,
       // uninstall,

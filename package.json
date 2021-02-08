@@ -81,10 +81,10 @@
 				"category": "Remix IDE"
 			},
 			{
-        "command": "rmxPlugins.versionSelector",
-        "title": "Version selector",
-        "category": "Remix IDE"
-      }
+				"command": "rmxPlugins.versionSelector",
+				"title": "Version selector",
+				"category": "Remix IDE"
+			}
 		],
 		"keybindings": [
 			{
@@ -92,9 +92,9 @@
 				"command": "rmxPlugins.compile"
 			},
 			{
-        "key": "ctrl+alt+v",
-        "command": "rmxPlugins.versionSelector"
-      }
+				"key": "ctrl+alt+v",
+				"command": "rmxPlugins.versionSelector"
+			}
 		],
 		"menus": {
 			"view/title": [
@@ -132,8 +132,8 @@
 	},
 	"dependencies": {
 		"@remix-project/remix-url-resolver": "^0.0.18",
-		"@remixproject/engine": "^0.3.7",
-		"@remixproject/engine-vscode": "^0.3.7",
+		"@remixproject/engine": "^0.3.8",
+		"@remixproject/engine-vscode": "^0.3.8",
 		"@remixproject/plugin": "^0.3.7",
 		"@remixproject/plugin-api": "^0.3.7",
 		"@remixproject/plugin-utils": "^0.3.7",

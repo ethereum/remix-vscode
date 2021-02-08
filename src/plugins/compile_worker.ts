@@ -96,7 +96,7 @@ process.on("message", async m => {
 	}
 	if (m.command === "fetch_compiler_verison") {
 		axios
-			.get("https://ethereum.github.io/solc-bin/bin/list.json")
+			.get("https://solc-bin.ethereum.org/bin/list.json")
 			.then((res: any) => {
 				// @ts-ignore
 				process.send({ versions: res.data.releases });

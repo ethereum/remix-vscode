@@ -10,7 +10,7 @@
 		"url": "https://github.com/ethential/code-remix"
 	},
 	"engines": {
-		"vscode": "^1.36.0"
+		"vscode": "^1.47.0"
 	},
 	"categories": [
 		"Extension Packs"

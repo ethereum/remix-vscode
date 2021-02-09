@@ -18,6 +18,7 @@ class VscodeManager extends PluginManager {
 }
 
 export async function activate(context: ExtensionContext) {
+  let selectedVersion: string = 'latest';
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -36,7 +37,7 @@ export async function activate(context: ExtensionContext) {
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
-    solpl.compile();
+    solpl.compile(selectedVersion);
   });
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
@@ -116,4 +117,17 @@ export async function activate(context: ExtensionContext) {
     editorPlugin.discardDecorations();
     console.log(`${pluginId} plugin deactivated!`);
   });
+  commands.registerCommand('rmxPlugins.versionSelector', async () => {
+    try {
+      await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
+      const versions = solpl.getSolidityVersions();
+      window.showQuickPick(Object.keys(versions)).then((selected) => {
+        if (selected) {
+          selectedVersion = selected;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  })
 }

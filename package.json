@@ -79,12 +79,21 @@
 				"command": "rmxPlugins.compile",
 				"title": "Solidity compile",
 				"category": "Remix IDE"
+			},
+			{
+				"command": "rmxPlugins.versionSelector",
+				"title": "Version selector",
+				"category": "Remix IDE"
 			}
 		],
 		"keybindings": [
 			{
 				"key": "ctrl+alt+c",
 				"command": "rmxPlugins.compile"
+			},
+			{
+				"key": "ctrl+alt+v",
+				"command": "rmxPlugins.versionSelector"
 			}
 		],
 		"menus": {

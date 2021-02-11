@@ -150,7 +150,7 @@ export async function activate(context: ExtensionContext) {
         },
       ];
       window.showQuickPick(opts).then((selected) => {
-        if (selected && compilerOpts.language === 'Yul') {
+        if (selected) {
           compilerOpts.optimize = Boolean(selected.label === 'Enable');
         }
       });

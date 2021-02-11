@@ -142,11 +142,11 @@ export async function activate(context: ExtensionContext) {
       const opts: Array<QuickPickItem> = [
         {
           label: 'Enable',
-          description: 'Enable Yul optimizer',
+          description: 'Enable optimizer',
         },
         {
           label: 'Disable',
-          description: 'Disable Yul optimizer',
+          description: 'Disable optimizer',
         },
       ];
       window.showQuickPick(opts).then((selected) => {

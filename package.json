@@ -77,12 +77,22 @@
 			},
 			{
 				"command": "rmxPlugins.compile",
-				"title": "Solidity compile",
+				"title": "Solidity/Yul compile",
 				"category": "Remix IDE"
 			},
 			{
 				"command": "rmxPlugins.versionSelector",
 				"title": "Version selector",
+				"category": "Remix IDE"
+			},
+			{
+				"command": "rmxPlugins.optimizerSelector",
+				"title": "Yul optimizer",
+				"category": "Remix IDE"
+			},
+			{
+				"command": "rmxPlugins.languageSelector",
+				"title": "Language selector",
 				"category": "Remix IDE"
 			}
 		],

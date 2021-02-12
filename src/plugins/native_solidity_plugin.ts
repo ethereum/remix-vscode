@@ -2,7 +2,7 @@ import { CommandPlugin } from "@remixproject/engine-vscode";
 import { window, OutputChannel, workspace } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
-import { ISources } from "./type";
+import { ISources, CompilerInput, CompilerInputOptions } from "../types";
 
 const profile = {
   name: 'solidity',
@@ -53,7 +53,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();
   }
-  async compile(_version: string) {
+  async compile(_version: string, opts: CompilerInputOptions) {
     this.print("Compilation started!")
     this.version = _version in this.versions ? this.versions[_version] : _version;
     const fileName = await this.call('fileManager', 'getCurrentFile')
@@ -68,17 +68,37 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const solcWorker = this.createWorker();
     console.log(`Solidity compiler invoked with WorkerID: ${solcWorker.pid}`);
     console.log(`Compiling with solidity version ${this.version}`);
-    var input = {
-      language: "Solidity",
+    var input: CompilerInput = {
+      language: opts.language,
       sources,
       settings: {
         outputSelection: {
           "*": {
-            "*": ["*"],
+            "": ["ast"],
+            '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
           },
         },
+        optimizer: {
+          enabled: opts.optimize === true || opts.optimize === 1,
+          runs: opts.runs || 200,
+          details: {
+            yul: Boolean(opts.language === 'Yul' && opts.optimize)
+          }
+        },
+        libraries: opts.libraries,
       },
     };
+    if (opts.evmVersion) {
+      input.settings.evmVersion = opts.evmVersion
+    }
+    if (opts.language) {
+      input.language = opts.language
+    }
+    if (opts.language === 'Yul' && input.settings.optimizer.enabled) {
+      if (!input.settings.optimizer.details) 
+        input.settings.optimizer.details = {}
+      input.settings.optimizer.details.yul = true
+    }
     solcWorker.send({
       command: "compile",
       root: workspace.workspaceFolders[0].uri.fsPath,

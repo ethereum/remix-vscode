@@ -1,5 +1,5 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, languages } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
 import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions } from '@remixproject/engine-vscode';
@@ -127,9 +127,16 @@ export async function activate(context: ExtensionContext) {
     try {
       await manager.activatePlugin(['solidity']);
       const versions = solpl.getSolidityVersions();
-      window.showQuickPick(Object.keys(versions)).then((selected) => {
+      const opts: Array<QuickPickItem> = Object.keys(versions).map((v): QuickPickItem => {
+        const vopt: QuickPickItem = {
+          label: v,
+          description: `Solidity ${v}`
+        };
+        return vopt;
+      });
+      window.showQuickPick(opts).then((selected) => {
         if (selected) {
-          selectedVersion = selected;
+          selectedVersion = selected.label;
         }
       });
     } catch (error) {

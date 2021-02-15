@@ -1,5 +1,5 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, QuickPickOptions } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
 import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions } from '@remixproject/engine-vscode';
@@ -8,7 +8,7 @@ import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
 import { pluginActivate, pluginDeactivate, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
-import { PluginInfo } from "./types";
+import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
 
 class VscodeManager extends PluginManager {
@@ -19,6 +19,11 @@ class VscodeManager extends PluginManager {
 
 export async function activate(context: ExtensionContext) {
   let selectedVersion: string = 'latest';
+  let compilerOpts: CompilerInputOptions = {
+    language: "Solidity",
+    optimize: false,
+    runs: 200
+  };
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -37,7 +42,7 @@ export async function activate(context: ExtensionContext) {
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
-    solpl.compile(selectedVersion);
+    solpl.compile(selectedVersion, compilerOpts);
   });
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
@@ -117,9 +122,10 @@ export async function activate(context: ExtensionContext) {
     editorPlugin.discardDecorations();
     console.log(`${pluginId} plugin deactivated!`);
   });
+  // Version selector
   commands.registerCommand('rmxPlugins.versionSelector', async () => {
     try {
-      await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
+      await manager.activatePlugin(['solidity']);
       const versions = solpl.getSolidityVersions();
       const opts: Array<QuickPickItem> = Object.keys(versions).map((v): QuickPickItem => {
         const vopt: QuickPickItem = {
@@ -136,5 +142,60 @@ export async function activate(context: ExtensionContext) {
     } catch (error) {
       console.log(error);
     }
-  })
+  });
+  // Optimizer selector
+  commands.registerCommand('rmxPlugins.optimizerSelector', async () => {
+    try {
+      const opts: Array<QuickPickItem> = [
+        {
+          label: 'Enable',
+          description: 'Enable optimizer',
+        },
+        {
+          label: 'Disable',
+          description: 'Disable optimizer',
+        },
+      ];
+      window.showQuickPick(opts).then((selected) => {
+        if (selected) {
+          compilerOpts.optimize = Boolean(selected.label === 'Enable');
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  // Language selector
+  commands.registerCommand('rmxPlugins.languageSelector', async () => {
+    try {
+      const opts: Array<QuickPickItem> = [
+        {
+          label: 'Solidity',
+          description: 'Enable Solidity language',
+        },
+        {
+          label: 'Yul',
+          description: 'Enable Yul language',
+        },
+      ];
+      window.showQuickPick(opts).then((selected) => {
+        if (selected) {
+          switch(selected.label) {
+            case 'Solidity':
+              compilerOpts.language = 'Solidity';
+              compilerOpts.optimize = false;
+              break;
+            case 'Yul':
+              compilerOpts.language = 'Yul';
+              compilerOpts.optimize = false;
+              break;
+            default:
+              compilerOpts.language = 'Solidity';
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error);      
+    }
+  });
 }

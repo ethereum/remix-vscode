@@ -2,7 +2,7 @@
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
-import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions } from '@remixproject/engine-vscode';
+import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -31,17 +31,18 @@ export async function activate(context: ExtensionContext) {
   const solpl = new NativeSolcPlugin();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin(editoropt);
+  const importer = new ContentImportPlugin();
   const themeURLs: Partial<ThemeUrls> = {
     light: 'https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css',
     dark: 'https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css'
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
-  engine.register([manager, solpl, filemanager, editorPlugin, theme]);
+  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
-    await manager.activatePlugin(['solidity', 'fileManager', 'editor']);
+    await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
     solpl.compile(selectedVersion, compilerOpts);
   });
   // activate plugin

@@ -2,7 +2,7 @@
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
-import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
+import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -11,7 +11,7 @@ import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
 
-class VscodeManager extends PluginManager {
+class VscodeManager extends VscodeAppManager {
   onActivation() {
     console.log('manager activated');
   }
@@ -39,6 +39,7 @@ export async function activate(context: ExtensionContext) {
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
   engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
+  console.log("PROFILES",manager.registeredPluginData());
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {

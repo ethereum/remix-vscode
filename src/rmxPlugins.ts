@@ -1,15 +1,19 @@
 import {TreeItem, TreeDataProvider, EventEmitter, Event, TreeItemCollapsibleState, Command} from "vscode";
 import { Uri } from "vscode";
-import { PluginData } from "./pluginlist";
 import { PluginInfo } from "./types";
 
 export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   private _onDidChangeTreeData: EventEmitter<PluginInterface | undefined> = new EventEmitter<PluginInterface | undefined>();
   readonly onDidChangeTreeData: Event<PluginInterface | undefined> = this._onDidChangeTreeData.event;
   private data: PluginInfo[];
-
+  private defaultData: PluginInfo[];
   constructor(private workspaceRoot: string) {
-    this.data = PluginData;
+    this.data = [];
+  }
+
+  setDefaultData(data:any[]){
+    this.defaultData = data
+    this.refresh()
   }
 
   add(data: PluginInfo): void {
@@ -25,7 +29,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   }
 
   refresh():void {
-    this.data = PluginData
+    this.data = [... this.defaultData]
     this._onDidChangeTreeData.fire(null);
   }
 

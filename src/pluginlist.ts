@@ -15,7 +15,7 @@ export const PluginData: PluginInfo[] = [
     name: "source-verification",
     displayName: "Sourcify",
     description: "Source metadata fetcher and validator",
-    version: "0.5.2-beta",
+    version: "0.6.0-beta",
     documentation: "https://github.com/sourcifyeth/remix-sourcify",
     methods: [
       "fetch",
@@ -26,7 +26,7 @@ export const PluginData: PluginInfo[] = [
     ],
     icon: "https://raw.githubusercontent.com/Shard-Labs/remix-contract-getter/master/public/sourcify.png",
     location: "sidePanel",
-    url: "https://ipfsgw.komputing.org/ipfs/QmcYhW9xNeQyeAUai3LEs5EkVtAZ5H73ZbPNFt8TeY6QYP",
+    url: "https://ipfsgw.komputing.org/ipfs/QmUYEy8H4HLCdkaWmitwiVmyKofXJ7TCazr7V3cMvB5SJL",
   },
   {
     name: "sol2uml",

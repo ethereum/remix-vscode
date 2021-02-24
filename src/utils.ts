@@ -1,6 +1,5 @@
 import { PluginInfo } from './types';
 import { ViewColumn } from "vscode";
-import { PluginData } from "./pluginlist";
 
 export function ToViewColumn(pluginData: PluginInfo) {
 	switch (pluginData.location) {
@@ -11,8 +10,8 @@ export function ToViewColumn(pluginData: PluginInfo) {
 	}
 }
 
-export function GetPluginData(pluginId: string): PluginInfo {
-	const p: PluginInfo[] = PluginData.filter(i => {
+export function GetPluginData(pluginId: string, defaultPluginData:PluginInfo[]): PluginInfo {
+	const p: PluginInfo[] = defaultPluginData.filter(i => {
 		return i.name == pluginId;
 	});
 	return p[0];

@@ -2,7 +2,7 @@
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
-import { WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
+import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -11,7 +11,7 @@ import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
 
-class VscodeManager extends PluginManager {
+class VscodeManager extends VscodeAppManager {
   onActivation() {
     console.log('manager activated');
   }
@@ -40,6 +40,11 @@ export async function activate(context: ExtensionContext) {
   const theme = new ThemePlugin(themeOpts);
   engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+
+  // fetch default data from the plugins-directory filtered by engine
+  const defaultPluginData = await manager.registeredPluginData()
+  rmxPluginsProvider.setDefaultData(defaultPluginData)
+  
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
@@ -48,13 +53,15 @@ export async function activate(context: ExtensionContext) {
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array
-    const pluginData: PluginInfo = GetPluginData(pluginId);
+    const pluginData: PluginInfo = GetPluginData(pluginId, defaultPluginData);
+    
     // choose window column for display
     const cl = ToViewColumn(pluginData);
-    const plugin = new WebviewPlugin(pluginData, { context, column: cl },);
+    const plugin = new WebviewPlugin(pluginData, { context, column: cl });
     if (!engine.isRegistered(pluginId)) {
       engine.register(plugin);
     }
+
     manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);

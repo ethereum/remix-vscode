@@ -16,6 +16,10 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
     this.refresh()
   }
 
+  getData(){
+    return this.data
+  }
+
   add(data: PluginInfo): void {
     this.data.push(data);
     this._onDidChangeTreeData.fire(null);

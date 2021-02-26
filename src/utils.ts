@@ -10,8 +10,8 @@ export function ToViewColumn(pluginData: PluginInfo) {
 	}
 }
 
-export function GetPluginData(pluginId: string, defaultPluginData:PluginInfo[]): PluginInfo {
-	const p: PluginInfo[] = defaultPluginData.filter(i => {
+export function GetPluginData(pluginId: string, data:PluginInfo[]): PluginInfo {
+	const p: PluginInfo[] = data.filter(i => {
 		return i.name == pluginId;
 	});
 	return p[0];

@@ -53,8 +53,7 @@ export async function activate(context: ExtensionContext) {
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array
-    const pluginData: PluginInfo = GetPluginData(pluginId, defaultPluginData);
-    
+    const pluginData: PluginInfo = GetPluginData(pluginId, rmxPluginsProvider.getData());
     // choose window column for display
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });

@@ -1,12 +1,12 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import { pluginActivate, pluginDeactivate, pluginUninstall } from './optionInputs';
+import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
@@ -24,6 +24,7 @@ export async function activate(context: ExtensionContext) {
     optimize: false,
     runs: 200
   };
+  if(!workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -44,7 +45,6 @@ export async function activate(context: ExtensionContext) {
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
   rmxPluginsProvider.setDefaultData(defaultPluginData)
-  
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
@@ -108,6 +108,7 @@ export async function activate(context: ExtensionContext) {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
       Uninstall: pluginUninstall,
+      Documentation: pluginDocumentation
       // TODO: add following menu options
       // install,
       // uninstall,
@@ -204,5 +205,13 @@ export async function activate(context: ExtensionContext) {
     } catch (error) {
       console.log(error);      
     }
+  });
+
+  commands.registerCommand('rmxPlugins.openDocumentation', async (pluginId: string) => {
+    const pluginData: PluginInfo = GetPluginData(pluginId, rmxPluginsProvider.getData());
+    if(pluginData.documentation)
+      env.openExternal(Uri.parse(pluginData.documentation))
+    else
+      window.showWarningMessage(`Documentation not provided for ${pluginData.displayName}.`);
   });
 }

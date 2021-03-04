@@ -1,7 +1,7 @@
 /**
  * Shows a pick list using window.showQuickPick().
  */
-import { commands, ExtensionContext,  } from 'vscode';
+import { commands, ExtensionContext  } from 'vscode';
 
 /**
  * Activate a plugin
@@ -28,4 +28,13 @@ export async function pluginDeactivate(context: ExtensionContext, pluginId: stri
  */
 export async function pluginUninstall(context: ExtensionContext, pluginId: string) {
 	commands.executeCommand('rmxPlugins.uninstallRmxPlugin', pluginId);
+}
+
+/**
+ * Open Documentation
+ * @param context vscode Execution context
+ * @param pluginId plugin ID mentioned as plugin ViewItem
+ */
+export async function pluginDocumentation(context: ExtensionContext, pluginId: string) {
+	commands.executeCommand('rmxPlugins.openDocumentation', pluginId);
 }

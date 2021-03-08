@@ -45,17 +45,6 @@ export async function activate(context: ExtensionContext) {
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
   rmxPluginsProvider.setDefaultData(defaultPluginData)
-  let dapp = {
-    "name": "remix-plugin-example",
-    "displayName": "Remix plugin example",
-    "methods": [],
-    "version": "0.0.1-dev",
-    "url": "http://localhost:3000",
-    "description": "Run remix plugin in your Remix project",
-    "icon": "",
-    "location": "sidePanel"
-  }
-  rmxPluginsProvider.add(dapp)
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);

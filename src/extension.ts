@@ -103,13 +103,7 @@ export async function activate(context: ExtensionContext) {
       id = plugin.id
     else
       id = plugin
-
-    
-
     const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
-
-    console.log("register command", pluginData)
-
     const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,

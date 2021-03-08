@@ -24,7 +24,7 @@ export async function activate(context: ExtensionContext) {
     optimize: false,
     runs: 200
   };
-  if(!workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
+  if(!workspace.workspaceFolders || !workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -45,6 +45,17 @@ export async function activate(context: ExtensionContext) {
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
   rmxPluginsProvider.setDefaultData(defaultPluginData)
+  let dapp = {
+    "name": "remix-plugin-example",
+    "displayName": "Remix plugin example",
+    "methods": [],
+    "version": "0.0.1-dev",
+    "url": "http://localhost:3000",
+    "description": "Run remix plugin in your Remix project",
+    "icon": "",
+    "location": "sidePanel"
+  }
+  rmxPluginsProvider.add(dapp)
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
@@ -104,16 +115,23 @@ export async function activate(context: ExtensionContext) {
     else
       id = plugin
 
+    
+
+    const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
+
+    console.log("register command", pluginData)
+
     const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
-      Uninstall: pluginUninstall,
-      Documentation: pluginDocumentation
+      //Uninstall: pluginUninstall,
       // TODO: add following menu options
       // install,
       // uninstall,
       // configure
     };
+    if(pluginData.documentation) options['Documentation'] = pluginDocumentation
+    if((pluginData.targets && !pluginData.targets.includes('vscode')) || !pluginData.targets) options['Uninstall'] = pluginUninstall
     const quickPick = window.createQuickPick();
     quickPick.items = Object.keys(options).map(label => ({ label }));
     quickPick.onDidChangeSelection(selection => {

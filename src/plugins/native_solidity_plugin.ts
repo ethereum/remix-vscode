@@ -171,7 +171,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const content = await this.call("fileManager", "readFile", file)
     const parsedContent = JSON.parse(content)
     const sourcePath = parsedContent.sourcePath
-    const solcOutput = `${path.basename(JSON.parse(content).sourcePath).split('.').slice(0, -1).join('.')}-solc-output.json`
+    const solcOutput = `${path.basename(parsedContent.sourcePath).split('.').slice(0, -1).join('.')}-solc-output.json`
     const outputDir = path.dirname(file)
     let raw = await this.call("fileManager", "readFile", `${outputDir}/${solcOutput}`)
     const relativeFilePath = relativePath(sourcePath)

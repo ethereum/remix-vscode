@@ -40,7 +40,6 @@ export async function activate(context: ExtensionContext) {
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
   engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
-  console.log("PROFILES",manager.registeredPluginData());
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
   // fetch default data from the plugins-directory filtered by engine

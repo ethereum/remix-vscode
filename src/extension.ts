@@ -1,12 +1,12 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import { pluginActivate, pluginDeactivate, pluginUninstall } from './optionInputs';
+import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
@@ -24,6 +24,7 @@ export async function activate(context: ExtensionContext) {
     optimize: false,
     runs: 200
   };
+  if(!workspace.workspaceFolders || !workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -41,6 +42,10 @@ export async function activate(context: ExtensionContext) {
   engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
   console.log("PROFILES",manager.registeredPluginData());
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+
+  // fetch default data from the plugins-directory filtered by engine
+  const defaultPluginData = await manager.registeredPluginData()
+  rmxPluginsProvider.setDefaultData(defaultPluginData)
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
@@ -49,13 +54,14 @@ export async function activate(context: ExtensionContext) {
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array
-    const pluginData: PluginInfo = GetPluginData(pluginId);
+    const pluginData: PluginInfo = GetPluginData(pluginId, rmxPluginsProvider.getData());
     // choose window column for display
     const cl = ToViewColumn(pluginData);
-    const plugin = new WebviewPlugin(pluginData, { context, column: cl },);
+    const plugin = new WebviewPlugin(pluginData, { context, column: cl });
     if (!engine.isRegistered(pluginId)) {
       engine.register(plugin);
     }
+
     manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
@@ -98,16 +104,18 @@ export async function activate(context: ExtensionContext) {
       id = plugin.id
     else
       id = plugin
-
+    const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
     const options: { [key: string]: (context: ExtensionContext, id: string) => Promise<void> } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
-      Uninstall: pluginUninstall,
+      //Uninstall: pluginUninstall,
       // TODO: add following menu options
       // install,
       // uninstall,
       // configure
     };
+    if(pluginData.documentation) options['Documentation'] = pluginDocumentation
+    if((pluginData.targets && !pluginData.targets.includes('vscode')) || !pluginData.targets) options['Uninstall'] = pluginUninstall
     const quickPick = window.createQuickPick();
     quickPick.items = Object.keys(options).map(label => ({ label }));
     quickPick.onDidChangeSelection(selection => {
@@ -199,5 +207,13 @@ export async function activate(context: ExtensionContext) {
     } catch (error) {
       console.log(error);      
     }
+  });
+
+  commands.registerCommand('rmxPlugins.openDocumentation', async (pluginId: string) => {
+    const pluginData: PluginInfo = GetPluginData(pluginId, rmxPluginsProvider.getData());
+    if(pluginData.documentation)
+      env.openExternal(Uri.parse(pluginData.documentation))
+    else
+      window.showWarningMessage(`Documentation not provided for ${pluginData.displayName}.`);
   });
 }

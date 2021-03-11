@@ -12,6 +12,7 @@ export interface PluginInfo {
   notifications?: Notifications | null;
   documentation?: string | null;
   permission?: boolean;
+  targets?: string[];
 }
 interface Notifications {
   solidity?: string[] | null;

@@ -48,7 +48,7 @@ export async function activate(context: ExtensionContext) {
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
-    solpl.compile(selectedVersion, compilerOpts);    
+    solpl.compile(selectedVersion, compilerOpts)
   });
   commands.registerCommand("rmxPlugins.compile.solidity", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);

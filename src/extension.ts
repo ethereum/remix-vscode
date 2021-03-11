@@ -1,5 +1,5 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls} from '@remixproject/plugin-api'
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
@@ -49,8 +49,22 @@ export async function activate(context: ExtensionContext) {
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
-    solpl.compile(selectedVersion, compilerOpts);
+    solpl.compile(selectedVersion, compilerOpts);    
   });
+  commands.registerCommand("rmxPlugins.compile.solidity", async () => {
+    await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
+    try{
+      let solextension = extensions.getExtension("juanblanco.solidity")
+      if(solextension.isActive){
+        solpl.compileWithSolidityExtension()
+      }else{
+        window.showErrorMessage("The Solidity extension is not enabled.")
+      }
+    }catch(e){
+      window.showErrorMessage("The Solidity extension is not installed.")
+    }
+  })
+
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array

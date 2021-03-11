@@ -1,7 +1,7 @@
 {
 	"name": "code-remix",
-	"displayName": "Remix IDE",
-	"description": "Remix IDE plugins in VSCode",
+	"displayName": "Ethereum Remix",
+	"description": "Ethereum Remix plugins in VSCode",
 	"version": "0.0.4",
 	"publisher": "ethential",
 	"enableProposedApi": true,
@@ -17,7 +17,7 @@
 	],
 	"keywords": [
 		"ethereum",
-		"Remix IDE"
+		"Remix"
 	],
 	"activationEvents": [
 		"onView:rmxPlugins",
@@ -36,7 +36,7 @@
 			"activitybar": [
 				{
 					"id": "remix-plugins",
-					"title": "Remix IDE",
+					"title": "Ethereum Remix",
 					"icon": "media/remix.svg"
 				}
 			]
@@ -45,9 +45,9 @@
 			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
-					"name": "Remix IDE",
+					"name": "Ethereum Remix",
 					"icon": "media/remix.svg",
-					"contextualTitle": "Remix IDE"
+					"contextualTitle": "Remix"
 				}
 			]
 		},
@@ -59,12 +59,12 @@
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
 				},
-				"category": "Remix IDE"
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.addEntry",
 				"title": "Add plugin",
-				"category": "Remix IDE"
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.showPluginOptions",
@@ -73,27 +73,32 @@
 					"light": "resources/light/settings.svg",
 					"dark": "resources/dark/settings.svg"
 				},
-				"category": "Remix IDE"
+				"category": "Remix"
+			},
+			{
+				"command": "rmxPlugins.compile.solidity",
+				"title": "Compile with Solidity extension",
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.compile",
-				"title": "Solidity/Yul compile",
-				"category": "Remix IDE"
+				"title": "Compile with Remix Solidity/YUL compiler",
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.versionSelector",
-				"title": "Version selector",
-				"category": "Remix IDE"
+				"title": "Remix compiler version selector",
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.optimizerSelector",
 				"title": "Yul optimizer",
-				"category": "Remix IDE"
+				"category": "Remix"
 			},
 			{
 				"command": "rmxPlugins.languageSelector",
 				"title": "Language selector",
-				"category": "Remix IDE"
+				"category": "Remix"
 			}
 		],
 		"keybindings": [

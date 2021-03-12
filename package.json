@@ -45,7 +45,7 @@
 			"remix-plugins": [
 				{
 					"id": "rmxPlugins",
-					"name": "Ethereum Remix",
+					"name": "Plugins",
 					"icon": "media/remix.svg",
 					"contextualTitle": "Remix"
 				}
@@ -147,12 +147,12 @@
 	},
 	"dependencies": {
 		"@remix-project/remix-url-resolver": "^0.0.18",
-		"@remixproject/engine": "^0.3.9",
-		"@remixproject/engine-vscode": "^0.3.9",
-		"@remixproject/plugin": "^0.3.9",
-		"@remixproject/plugin-api": "^0.3.9",
-		"@remixproject/plugin-utils": "^0.3.9",
-		"@remixproject/plugin-vscode": "^0.3.9",
+		"@remixproject/engine": "^0.3.10",
+		"@remixproject/engine-vscode": "^0.3.10",
+		"@remixproject/plugin": "^0.3.10",
+		"@remixproject/plugin-api": "^0.3.10",
+		"@remixproject/plugin-utils": "^0.3.10",
+		"@remixproject/plugin-vscode": "^0.3.10",
 		"axios": "^0.21.1",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",

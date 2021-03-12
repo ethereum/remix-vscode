@@ -46,11 +46,11 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
       return Promise.resolve(children);
     });
   }
-  private toPlugin = (pluginName: string, id: string, version: string, icon: string): PluginInterface => {
+  private toPlugin = (pluginName: string, id: string, text: string, icon: string): PluginInterface => {
     return new PluginInterface(
       pluginName,
       id,
-      version,
+      text,
       TreeItemCollapsibleState.None,
       {
         command: "rmxPlugins.showPluginOptions",
@@ -64,7 +64,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   private async getRmxPlugins(): Promise<PluginInterface[]> {
     try {
       const plugins = this.data
-        ? this.data.map((plugin) => this.toPlugin(plugin.displayName, plugin.name, plugin.version, plugin.icon))
+        ? this.data.map((plugin) => this.toPlugin(plugin.displayName, plugin.name, plugin.description, plugin.icon))
         : [];
       return Promise.resolve(plugins);
     } catch (error) {
@@ -77,15 +77,15 @@ export class PluginInterface extends TreeItem {
   constructor(
     public readonly label: string,
     public readonly id: string,
-    private version: string,
+    private text: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly command?: Command,
     public readonly iconURI?: Uri
   ) {
     super(label, collapsibleState);
   }
-  tooltip = `${this.label}-${this.version}`;
-  description = this.version;
+  tooltip = `${this.label}-${this.text}`;
+  description = this.text;
   iconPath = {
     light: this.iconURI,
     dark: this.iconURI,

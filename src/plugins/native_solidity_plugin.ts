@@ -1,9 +1,9 @@
 import { CommandPlugin } from "@remixproject/engine-vscode";
-import { window, OutputChannel, workspace } from "vscode";
+import { window, OutputChannel, workspace, commands } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
 import { ISources, CompilerInput, CompilerInputOptions } from "../types";
-
+import { relativePath } from '@remixproject/engine-vscode/util/path'
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',
@@ -156,6 +156,44 @@ export default class NativeSolcPlugin extends CommandPlugin {
       }
     }
   }
+
+  async compileWithSolidityExtension(){
+    commands.executeCommand("solidity.compile.active").then(async (listOFiles:string[])=>{
+     if(listOFiles)
+      for(let file of listOFiles){
+        await this.parseSolcOutputFile(file)
+      }
+    })
+  }
+
+  async parseSolcOutputFile(file:string){
+    this.print(`Compiling with Solidity Extension`)
+    const content = await this.call("fileManager", "readFile", file)
+    const parsedContent = JSON.parse(content)
+    const sourcePath = parsedContent.sourcePath
+    const solcOutput = `${path.basename(parsedContent.sourcePath).split('.').slice(0, -1).join('.')}-solc-output.json`
+    const outputDir = path.dirname(file)
+    let raw = await this.call("fileManager", "readFile", `${outputDir}/${solcOutput}`)
+    const relativeFilePath = relativePath(sourcePath)
+    var re = new RegExp(`${sourcePath}`,"gi");
+    raw = raw.replace(re, relativeFilePath)
+    const compiled = JSON.parse(raw)
+    let source = {}
+    const fileKeys = Object.keys(compiled.sources)
+    for(let s of fileKeys){
+      source[s] = { content: await this.call("fileManager", "readFile", s) }
+    }
+    this.compilationResult = {
+      source: {
+        sources: source,
+        target: relativeFilePath
+      },
+      data: compiled
+    }
+    this.print(`Compilation finished for ${relativeFilePath} with solidity version ${parsedContent?.compiler.version}.`);
+    this.emit('compilationFinished', relativeFilePath,{sources:source}, parsedContent?.compiler.version, compiled);
+  }
+
   getCompilationResult() {
     return this.compilationResult;
   }

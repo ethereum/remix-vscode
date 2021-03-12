@@ -69,55 +69,55 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
-"@remixproject/engine-vscode@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.9.tgz#46e81f1124a8b501b30d90518250a113df526957"
-  integrity sha512-jAjPx6QwsQlChYvnBVoJa0Sk322G0S83lq+9bZzYGQ6Osu+aNNC7vrVgksVuTrtJp099dDOVZGHYOw6ktmRF9g==
+"@remixproject/engine-vscode@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.10.tgz#4480d803b429e5a7ed79d7d92b33f0d699e315b3"
+  integrity sha512-ZEofZ74OWL5cr9KThylrKQJ3FsaFwqE68adQZ56PtvJR0Jdn6N30sbEAqrfvYWhdDyxVkjY8xAEEf2qKDqBAAw==
   dependencies:
     "@remix-project/remix-url-resolver" "0.0.19"
-    "@remixproject/engine" "0.3.9"
-    "@remixproject/plugin-api" "0.3.9"
-    "@remixproject/plugin-utils" "0.3.9"
+    "@remixproject/engine" "0.3.10"
+    "@remixproject/plugin-api" "0.3.10"
+    "@remixproject/plugin-utils" "0.3.10"
     axios "^0.21.1"
 
-"@remixproject/engine@0.3.9", "@remixproject/engine@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.9.tgz#1a88eea1ace1214d134454ce57c730bafe8c1cc5"
-  integrity sha512-GuPopAnLGocpFsyFEfO6cjMeN5wV77nD1IjmM9oOEYEpyC6yZrcpjDsvilmecJ35QIDtlFn+4A9oz1n76m3Aag==
+"@remixproject/engine@0.3.10", "@remixproject/engine@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.10.tgz#090ec655e5e0d3f3c436f063315b3806e4f6c449"
+  integrity sha512-5P2FfTIAwgFaVTazrNdZa0fg0I6idhHJ+bzYdYNGw1jAL0lgT31jOL8K8TQw0b2XN5meXt7dA7HY1olN8AaANA==
   dependencies:
-    "@remixproject/plugin-api" "0.3.9"
-    "@remixproject/plugin-utils" "0.3.9"
+    "@remixproject/plugin-api" "0.3.10"
+    "@remixproject/plugin-utils" "0.3.10"
 
-"@remixproject/plugin-api@0.3.9", "@remixproject/plugin-api@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.9.tgz#ea8fb796958b6a0fb38c16f072e0b0f05721eefb"
-  integrity sha512-UukZND+i5u1SsTTrcM+HDIkKs4Qmc/yWryQL+wWIORJSgUh7B05M3vabAmASQgmt2zKlf6toe8JY0X70UjxxJw==
+"@remixproject/plugin-api@0.3.10", "@remixproject/plugin-api@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.10.tgz#bac69c1bbc0bc9840f387fed82b0954b5a37d312"
+  integrity sha512-HHxsH8YR2UqDlHvLE2fCdF0q6/WzBHxDlnhYrCUQY6xL8TmtGIlmDLixAVeWz19nxKYa7zFi2pgJen/OYFUwIw==
   dependencies:
-    "@remixproject/plugin-utils" "0.3.9"
+    "@remixproject/plugin-utils" "0.3.10"
 
-"@remixproject/plugin-utils@0.3.9", "@remixproject/plugin-utils@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.9.tgz#73284ea86516cdb347c2ac7bc8b8dd3c9798a098"
-  integrity sha512-NT+BySoiWsSzdW5yD70NR95pDE4Z23GIAbcDE8dtaUvmmi3fQJN6Z0rck+iwTDDCSjI66iaDanmpBB5Y4nJ/5w==
+"@remixproject/plugin-utils@0.3.10", "@remixproject/plugin-utils@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.10.tgz#959e602849cb4e894bee7557d17e9cb573918cdd"
+  integrity sha512-l2ggYlVSyJNmRrozHYqY7jcjQfSlB4fMONytrFfCob8hRrBowP3Mz9B73fHvP0f0wROWuSHZasmOQikacKtGWg==
   dependencies:
     tslib "2.0.1"
 
-"@remixproject/plugin-vscode@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.9.tgz#5164cf61d6d8d4fc2f61dff0512da39baf790406"
-  integrity sha512-RbwwWjjen4noBXZMuolZZPjqCtoFadSH/fqxut5RKVdCSfdsUJ9osPABfl8mj+/pABGZY/SEn5PANqk1HKEcGA==
+"@remixproject/plugin-vscode@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.10.tgz#b39538478b1c2acf60f2e8516ce052d76ee1b2a6"
+  integrity sha512-c0IiiB9mNpDhzqXtnNcSX2PIkIxeRU/TIHDVUIf9p502YvXjQtFnNpTppNGoei8xUCdRp69AnPACGXilp1xZqg==
   dependencies:
-    "@remixproject/plugin" "0.3.9"
-    "@remixproject/plugin-api" "0.3.9"
-    "@remixproject/plugin-utils" "0.3.9"
+    "@remixproject/plugin" "0.3.10"
+    "@remixproject/plugin-api" "0.3.10"
+    "@remixproject/plugin-utils" "0.3.10"
 
-"@remixproject/plugin@0.3.9", "@remixproject/plugin@^0.3.9":
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.9.tgz#c7eab25fb9f443d0b7e592d6a654d910bd063a71"
-  integrity sha512-YXB4XKDqMJdUvL6Uwo/vM0tuQcvdbloDjIoiy9G9HaobNzZno3Xrf7c1WblwVrgomrCH63fVEPKodswDmEDOog==
+"@remixproject/plugin@0.3.10", "@remixproject/plugin@^0.3.10":
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.10.tgz#b88e61f1d68358d82bc96965fe7581c1b384797f"
+  integrity sha512-d6q6bThs/eHfXCsZLsk07rAehO388m0ujL6iIHWBJFZ1Ytfqsk7aD3AE+nJWKPaeErQrR5JQvoeRhQy/y7u7sg==
   dependencies:
-    "@remixproject/plugin-api" "0.3.9"
-    "@remixproject/plugin-utils" "0.3.9"
+    "@remixproject/plugin-api" "0.3.10"
+    "@remixproject/plugin-utils" "0.3.10"
     events "3.2.0"
 
 "@types/glob@*":

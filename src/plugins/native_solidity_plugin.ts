@@ -75,7 +75,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
         outputSelection: {
           "*": {
             "": ["ast"],
-            '*': [ 'abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly' ]
+            '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
           },
         },
         optimizer: {
@@ -95,7 +95,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
       input.language = opts.language
     }
     if (opts.language === 'Yul' && input.settings.optimizer.enabled) {
-      if (!input.settings.optimizer.details) 
+      if (!input.settings.optimizer.details)
         input.settings.optimizer.details = {}
       input.settings.optimizer.details.yul = true
     }
@@ -157,16 +157,16 @@ export default class NativeSolcPlugin extends CommandPlugin {
     }
   }
 
-  async compileWithSolidityExtension(){
-    commands.executeCommand("solidity.compile.active").then(async (listOFiles:string[])=>{
-     if(listOFiles)
-      for(let file of listOFiles){
-        await this.parseSolcOutputFile(file)
-      }
+  async compileWithSolidityExtension() {
+    commands.executeCommand("solidity.compile.active").then(async (listOFiles: string[]) => {
+      if (listOFiles)
+        for (let file of listOFiles) {
+          await this.parseSolcOutputFile(file)
+        }
     })
   }
 
-  async parseSolcOutputFile(file:string){
+  async parseSolcOutputFile(file: string) {
     this.print(`Compiling with Solidity Extension`)
     const content = await this.call("fileManager", "readFile", file)
     const parsedContent = JSON.parse(content)
@@ -175,12 +175,12 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const outputDir = path.dirname(file)
     let raw = await this.call("fileManager", "readFile", `${outputDir}/${solcOutput}`)
     const relativeFilePath = relativePath(sourcePath)
-    var re = new RegExp(`${sourcePath}`,"gi");
+    var re = new RegExp(`${sourcePath}`, "gi");
     raw = raw.replace(re, relativeFilePath)
     const compiled = JSON.parse(raw)
     let source = {}
     const fileKeys = Object.keys(compiled.sources)
-    for(let s of fileKeys){
+    for (let s of fileKeys) {
       source[s] = { content: await this.call("fileManager", "readFile", s) }
     }
     this.compilationResult = {
@@ -191,7 +191,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
       data: compiled
     }
     this.print(`Compilation finished for ${relativeFilePath} with solidity version ${parsedContent?.compiler.version}.`);
-    this.emit('compilationFinished', relativeFilePath,{sources:source}, parsedContent?.compiler.version, compiled);
+    this.emit('compilationFinished', relativeFilePath, { sources: source }, parsedContent?.compiler.version, compiled);
   }
 
   getCompilationResult() {

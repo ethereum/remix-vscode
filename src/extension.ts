@@ -1,7 +1,7 @@
 "use strict";
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
-import { ThemeUrls} from '@remixproject/plugin-api'
+import { ThemeUrls } from '@remixproject/plugin-api';
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";
@@ -24,7 +24,7 @@ export async function activate(context: ExtensionContext) {
     optimize: false,
     runs: 200
   };
-  if(!workspace.workspaceFolders || !workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
+  if (!workspace.workspaceFolders || !workspace.workspaceFolders[0]) { window.showErrorMessage("Please open a workspace or folder before using this extension."); return false; }
   const rmxPluginsProvider = new RmxPluginsProvider(workspace.workspaceFolders[0].uri.fsPath);
   const editoropt: EditorOptions = { language: 'solidity', transformCmd };
   const engine = new Engine();
@@ -52,14 +52,14 @@ export async function activate(context: ExtensionContext) {
   });
   commands.registerCommand("rmxPlugins.compile.solidity", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
-    try{
+    try {
       let solextension = extensions.getExtension("juanblanco.solidity")
-      if(solextension.isActive){
+      if (solextension.isActive) {
         solpl.compileWithSolidityExtension()
-      }else{
+      } else {
         window.showErrorMessage("The Solidity extension is not enabled.")
       }
-    }catch(e){
+    } catch (e) {
       window.showErrorMessage("The Solidity extension is not installed.")
     }
   })
@@ -80,9 +80,9 @@ export async function activate(context: ExtensionContext) {
     window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
   });
   commands.registerCommand('rmxPlugins.refreshEntry', () => {
-      console.log('Remix Plugin will refresh plugin list.')
-      rmxPluginsProvider.refresh()
-    }
+    console.log('Remix Plugin will refresh plugin list.')
+    rmxPluginsProvider.refresh()
+  }
   );
   commands.registerCommand('rmxPlugins.addEntry', () => {
     const pluginjson: PluginInfo = {
@@ -127,8 +127,8 @@ export async function activate(context: ExtensionContext) {
       // uninstall,
       // configure
     };
-    if(pluginData.documentation) options['Documentation'] = pluginDocumentation
-    if((pluginData.targets && !pluginData.targets.includes('vscode')) || !pluginData.targets) options['Uninstall'] = pluginUninstall
+    if (pluginData.documentation) options['Documentation'] = pluginDocumentation
+    if ((pluginData.targets && !pluginData.targets.includes('vscode')) || !pluginData.targets) options['Uninstall'] = pluginUninstall
     const quickPick = window.createQuickPick();
     quickPick.items = Object.keys(options).map(label => ({ label }));
     quickPick.onDidChangeSelection(selection => {
@@ -203,7 +203,7 @@ export async function activate(context: ExtensionContext) {
       ];
       window.showQuickPick(opts).then((selected) => {
         if (selected) {
-          switch(selected.label) {
+          switch (selected.label) {
             case 'Solidity':
               compilerOpts.language = 'Solidity';
               compilerOpts.optimize = false;
@@ -218,13 +218,13 @@ export async function activate(context: ExtensionContext) {
         }
       });
     } catch (error) {
-      console.log(error);      
+      console.log(error);
     }
   });
 
   commands.registerCommand('rmxPlugins.openDocumentation', async (pluginId: string) => {
     const pluginData: PluginInfo = GetPluginData(pluginId, rmxPluginsProvider.getData());
-    if(pluginData.documentation)
+    if (pluginData.documentation)
       env.openExternal(Uri.parse(pluginData.documentation))
     else
       window.showWarningMessage(`Documentation not provided for ${pluginData.displayName}.`);

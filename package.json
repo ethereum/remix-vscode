@@ -2,7 +2,7 @@
 	"name": "code-remix",
 	"displayName": "Ethereum Remix",
 	"description": "Ethereum Remix plugins in VSCode",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "ethential",
 	"enableProposedApi": true,
 	"repository": {

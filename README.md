@@ -1,9 +1,11 @@
-# Remix Plugins for Visual Studio Code
-This project aims to provide a similar interface like Visual Studio Code extension manager but for Remix plugins.
+# Ethereum Remix extension for Visual Studio Code
+This project brings Remix plugins to Visual Studio Code.<br>Remix plugins can perform a variety of tasks such as verifying contracts, generating documentation, running tutorials, compiling and debugging and much more.<br>The plugin system and API of Remix allows plugins that run in Remix to run in Visual Studio Code too.<br>
+It allows developers to access and interact with the file system and other components, extensions and other Remix plugins in Visual Studio without actually having to create a different code base.
 
 For more info on what Remix is and what plugins do please visit our [Remix IDE](https://remix.ethereum.org/) and [Remix Project website](https://remix-project.org/)
 
-- [Remix Plugins for Visual Studio Code](#remix-plugins-for-visual-studio-code)
+- [Ethereum Remix extension for Visual Studio Code](#ethereum-remix-extension-for-visual-studio-code)
+  - [A beta release.](#a-beta-release)
   - [Installation from the Visual Studio Code Marketplace](#installation-from-the-visual-studio-code-marketplace)
   - [Requirements](#requirements)
   - [The plugins](#the-plugins)
@@ -11,6 +13,10 @@ For more info on what Remix is and what plugins do please visit our [Remix IDE](
   - [Load a development plugin](#load-a-development-plugin)
   - [Compiling Solidity & Yul](#compiling-solidity--yul)
   - [Contributing and development](#contributing-and-development)
+
+## A beta release. 
+
+As we are continuing development of Remix and the Plugin system and API more functionalities will open up.<br>So at first it might feel limited. In this beta release we show you a glimpse of what the possibilities are, inviting everybody to contribute & comment.
 
 ## Installation from the Visual Studio Code Marketplace
 [Install from Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
@@ -22,9 +28,7 @@ Before being able to use the extension, you need to have at least a folder opene
 
 ## The plugins
 
-The extension loads with a default set of plugins. As time goes on we will add more plugins.  The plugin system allows developers to access and interact with the file system and other components, plugins and extensions.
-
-You can also suggest and create plugins using our plugin system and API. Feel free to contact us on our gitter channels.
+The extension loads with a default set of plugins. As time goes on we will add more plugins.<br>You can also suggest and create plugins using our plugin system and API. Feel free to contact us on our gitter channels.
 [Remix](https://gitter.im/ethereum/remix) & [Remix Dev](https://gitter.im/ethereum/remix-dev) and read up on the basics
 on [Read the docs](https://remix-plugins-directory.readthedocs.io/en/latest/)
 ## Select, activate, deactivate a plugin
@@ -37,7 +41,7 @@ Before you can use a plugin, it needs to be activated. Activation means you open
 
 As you develop your own plugin or you want to try out a plugin by using a custom URL you can easily add it to the list.
 
-* Click on add plugin button from `Remix Plugins More actions` menu on top right
+* Click on 'add plugin' from the `Remix Plugins More actions` menu on top right
 <p align="justify">
   <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-addplugin.png">
 </p>
@@ -45,7 +49,7 @@ As you develop your own plugin or you want to try out a plugin by using a custom
 * The plugin system requires a valid JSON string that contains the information needed.
   Add your `JSON` plugin info into the input box. An example is given below.
 
-  The URL can contain any URL or a local file.
+  The URL can contain any URL or a local file.<br>Make sure to give your plugin a unique name. You can't have two plugins with the same name.
 ```json
 {
   "name": "solhint-dev",
@@ -91,8 +95,8 @@ You can also change the compiler version of both compilers from the command pale
 ## Contributing and development
 
 You can checkout our code on [github](https://github.com/ethereum/remix-vscode)
-* Make sure the extension from the marketplace is not installed, otherwise there will be conflicts
-* Open up the repo in Visual Studio Code
+* Make sure the extension from the marketplace is not installed, running both versions will not work.
+* Open up the repo in Visual Studio Code.
 * run Yarn
 * hit F5
-* A new Visual Studio Code window will open where the extension is running
+* A new Visual Studio Code window will open where the extension is running.

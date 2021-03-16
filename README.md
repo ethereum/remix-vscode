@@ -1,6 +1,6 @@
 # Ethereum Remix extension for Visual Studio Code
-This project brings Remix plugins to Visual Studio Code.<br>Remix plugins can perform a variety of tasks such as verifying contracts, generating documentation, running tutorials, compiling and debugging and much more.<br>The plugin system and API of Remix allows plugins that run in Remix to run in Visual Studio Code too.<br>
-It allows developers to access and interact with the file system and other components, extensions and other Remix plugins in Visual Studio without actually having to create a different code base.
+This project brings Remix plugins to Visual Studio Code.<br>Remix plugins can perform a variety of tasks such as verifying contracts, generating documentation, running tutorials, compiling and debugging and much more.<br>The Remix Plugin API allows plugins that run in Remix to run in Visual Studio Code too.<br>
+It allows developers to access and interact with the file system, components, extensions and other Remix plugins without actually having to create a different code base.
 
 For more info on what Remix is and what plugins do please visit our [Remix IDE](https://remix.ethereum.org/) and [Remix Project website](https://remix-project.org/)
 
@@ -16,7 +16,7 @@ For more info on what Remix is and what plugins do please visit our [Remix IDE](
 
 ## A beta release. 
 
-As we are continuing development of Remix and the Plugin system and API more functionalities will open up.<br>So at first it might feel limited. In this beta release we show you a glimpse of what the possibilities are, inviting everybody to contribute & comment.
+As we are continuing development of Remix and the Plugin API more functionalities will open up.<br>So at first it might feel limited. In this beta release we show you a glimpse of what the possibilities are, inviting everybody to contribute & comment.
 
 ## Installation from the Visual Studio Code Marketplace
 [Install from Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
@@ -52,16 +52,17 @@ As you develop your own plugin or you want to try out a plugin by using a custom
   The URL can contain any URL or a local file.<br>Make sure to give your plugin a unique name. You can't have two plugins with the same name.
 ```json
 {
-  "name": "solhint-dev",
-  "displayName": "Solhint development",
+  "name": "dev-plugin",
+  "displayName": "My first plugin",
   "methods": [],
   "version": "0.0.1-dev",
-  "url": "/home/0mkar/Karma/remix-solhint-plugin",
-  "description": "Run Solhint in your Remix project",
+  "url": "http://localhost:3000",
+  "description": "A great plugin for the Remix project",
   "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",
   "location": "sidePanel"
 }
 ```
+
 <p align="justify">
   <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-addplugin2.png">
 </p>
@@ -91,6 +92,7 @@ You can also change the compiler version of both compilers from the command pale
   <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-selectversion.png">
 </p>
 
+You can change to Yul development the same way using the language selector in the command palette.
 
 ## Contributing and development
 

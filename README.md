@@ -80,6 +80,8 @@ Compiling with the Solidity extension provides some extra features that are incl
 *Warning: when you have the Solidity extension installed you usually hit F5 to compile.<br>This will not work (yet) in conjunction with Remix.<br>You
 should compile with the 'Compile with Solidity extension'. This way you get the benefits of both extensions.*
 
+*You should have a sol file actively selected when compiling. If you have the plugin in focus it won't be able to tell which file you want to compile.*
+
 To compile use the command palette ( Shift+cmd+p ) and type in REMIX. You will see both options there.
 
 <p align="justify">

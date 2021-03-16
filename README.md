@@ -1,15 +1,24 @@
-# Remix Plugins manager
-This project aims to provide a similar interface like vscode extension manager but for Remix plugins.
+# Remix Plugins for Visual Studio Code
+This project aims to provide a similar interface like Visual Studio Code extension manager but for Remix plugins.
 
-## Development
-```
-yarn
-code .
-[start plugin with F5]
-```
-## Installation
-[Install from Visualstudio Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
+For more info on what Remix is and what plugins do please visit our [Remix IDE](https://remix.ethereum.org/) and [Remix Project website](https://remix-project.org/)
+
+## Installation from the Visual Studio Code Marketplace
+[Install from VSCODE Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
+
+
+## Requirements
+
+Before being able to use the extension, you need to have at least a folder opened or a workspace.
+
+## The plugins
+
+The extension loads with a default set of plugins. As time goes on we will add more plugins.  The plugin system allows developers to access and interact with the file system and other components, plugins and extensions.
+
+You can also suggest and create plugins using our plugin system and API. Feel free to contact us on our gitter channels.
+[Remix](https://gitter.im/ethereum/remix) & [Remix Dev](https://gitter.im/ethereum/remix-dev)
 ## Select, activate, deactivate plugin
+
 ![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)
 
 ## Load a development plugin
@@ -40,3 +49,11 @@ code .
 <p align="justify">
   <img src="https://user-images.githubusercontent.com/13261372/101531113-d37ecb80-39b8-11eb-877d-99c0d0c474c8.png" height="431">
 </p>
+
+
+## Development
+```
+yarn
+code .
+[start plugin with F5]
+```

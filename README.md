@@ -17,18 +17,23 @@ The extension loads with a default set of plugins. As time goes on we will add m
 
 You can also suggest and create plugins using our plugin system and API. Feel free to contact us on our gitter channels.
 [Remix](https://gitter.im/ethereum/remix) & [Remix Dev](https://gitter.im/ethereum/remix-dev)
-## Select, activate, deactivate plugin
+## Select, activate, deactivate a plugin
 
-![Activate, deactivate remix plugin](https://j.gifs.com/3QMVnM.gif)
+Before you can use a plugin, it needs to be activated. Activation means you open it and it will run.
+
+![Activate, deactivate remix plugin](https://j.gifs.com/2xn4KP.gif)
 
 ## Load a development plugin
+
+As you develop your own plugin or you want to try out a plugin by using a custom URL you can easily add it to the list.
 
 * Click on add plugin button from `Remix Plugins More actions` menu on top right
 <p align="justify">
   <img src="https://user-images.githubusercontent.com/13261372/101530235-a5e55280-39b7-11eb-820d-99ada3ae1f33.png" height="273">
 </p>
 
-* Add your `JSON` plugin info into the input box. An example is given below.
+* The plugin system requires a valid JSON string that contains the information needed.
+  Add your `JSON` plugin info into the input box. An example is given below.
 ```json
 {
   "name": "solhint-dev",
@@ -44,12 +49,6 @@ You can also suggest and create plugins using our plugin system and API. Feel fr
 <p align="justify">
   <img src="https://user-images.githubusercontent.com/13261372/101530718-4b002b00-39b8-11eb-885b-d42e6b1352ad.png" height="434">
 </p>
-
-* Upon enter you will see your development plugin on the activiety toolbar.
-<p align="justify">
-  <img src="https://user-images.githubusercontent.com/13261372/101531113-d37ecb80-39b8-11eb-877d-99c0d0c474c8.png" height="431">
-</p>
-
 
 ## Development
 ```

@@ -1,10 +1,10 @@
-# Ethereum Remix extension for Visual Studio Code
+# Ethereum Remix Project extension for Visual Studio Code
 This project brings Remix plugins to Visual Studio Code.<br>Remix plugins can perform a variety of tasks such as verifying contracts, linting, generating documentation, running tutorials, compiling, debugging and much more.<br>The Remix Plugin API allows plugins that run in Remix to run in Visual Studio Code too.<br>
 It allows developers to access and interact with the file system, components, extensions and other Remix plugins without actually having to create a different code base.
 
 For more info on what Remix is and what plugins do please visit our [Remix IDE](https://remix.ethereum.org/) and [Remix Project website](https://remix-project.org/)
 
-- [Ethereum Remix extension for Visual Studio Code](#ethereum-remix-extension-for-visual-studio-code)
+- [Ethereum Remix Project extension for Visual Studio Code](#ethereum-remix-project-extension-for-visual-studio-code)
   - [A beta release.](#a-beta-release)
   - [Installation from the Visual Studio Code Marketplace](#installation-from-the-visual-studio-code-marketplace)
   - [Requirements](#requirements)

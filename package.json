@@ -1,13 +1,13 @@
 {
-	"name": "code-remix",
+	"name": "ethereum-remix",
 	"displayName": "Ethereum Remix",
 	"description": "Ethereum Remix plugins in VSCode",
 	"version": "0.0.4",
-	"publisher": "ethential",
+	"publisher": "RemixProject",
 	"enableProposedApi": true,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ethential/code-remix"
+		"url": "https://github.com/ethereum/remix-vscode"
 	},
 	"engines": {
 		"vscode": "^1.47.0"

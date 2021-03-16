@@ -78,8 +78,15 @@ should compile with the 'Compile with Solidity extension'. This way you get the 
 To compile use the command palette ( Shift+cmd+p ) and type in REMIX. You will see both options there.
 
 <p align="justify">
-  <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/compile.png">
+  <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-compile.png">
 </p>
+
+You can also change the compiler version of both compilers from the command palette.
+
+<p align="justify">
+  <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-selectversion.png">
+</p>
+
 
 ## Contributing and development
 

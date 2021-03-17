@@ -19,7 +19,7 @@ For more info on what Remix is and what plugins do please visit our [Remix IDE](
 As we are continuing development of Remix and the Plugin API more functionalities will open up.<br>So at first it might feel limited. In this beta release we show you a glimpse of what the possibilities are, inviting everybody to contribute & comment.
 
 ## Installation from the Visual Studio Code Marketplace
-[Install from Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Ethential.code-remix)
+[Install from Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=RemixProject.ethereum-remix)
 
 
 ## Requirements

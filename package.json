@@ -5,6 +5,7 @@
 	"version": "0.0.4",
 	"publisher": "RemixProject",
 	"enableProposedApi": true,
+	"icon": "media/icon.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ethereum/remix-vscode"

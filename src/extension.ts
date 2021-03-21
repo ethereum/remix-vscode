@@ -2,6 +2,7 @@
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls } from '@remixproject/plugin-api';
+import IpfsHttpClient from "ipfs-http-client";
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 
 import { RmxPluginsProvider } from "./rmxPlugins";

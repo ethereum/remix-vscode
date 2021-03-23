@@ -68,6 +68,16 @@
 				"category": "Remix"
 			},
 			{
+				"command": "rmxPlugins.clone",
+				"title": "clone url",
+				"category": "Remix"
+			},
+			{
+				"command": "rmxPlugins.push",
+				"title": "Send to Remix IDE",
+				"category": "Remix"
+			},
+			{
 				"command": "rmxPlugins.showPluginOptions",
 				"title": "Options",
 				"icon": {
@@ -160,6 +170,7 @@
 		"isomorphic-git": "^1.8.1",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
+		"query-string": "^7.0.0",
 		"remix-url-resolver": "^0.0.16",
 		"rimraf": "^2.6.2",
 		"solc": "^0.7.0",

@@ -1,5 +1,5 @@
 "use strict";
-import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions } from "vscode";
+import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions, OutputChannel } from "vscode";
 import { PluginManager, Engine } from '@remixproject/engine';
 import { ThemeUrls } from '@remixproject/plugin-api';
 import IpfsHttpClient from "ipfs-http-client";
@@ -7,10 +7,12 @@ import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, Editor
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
+import DGitProvider from './plugins/dgitProvider'
 import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
+const queryString = require('query-string');
 
 class VscodeManager extends VscodeAppManager {
   onActivation() {
@@ -31,6 +33,7 @@ export async function activate(context: ExtensionContext) {
   const engine = new Engine();
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
+  const dgitprovider = new DGitProvider();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin(editoropt);
   const importer = new ContentImportPlugin();
@@ -40,11 +43,22 @@ export async function activate(context: ExtensionContext) {
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
-  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
+  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, dgitprovider]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
+  defaultPluginData.push({
+    name: 'dGit2',
+    displayName: 'dGit2',
+    methods: [],
+    version: '0.0.1-dev',
+    url: 'http://localhost:3000',
+    description: 'dGit for workspaces',
+    icon: 'https://dgitremix.web.app/dgitlogo.png',
+    location: 'sidePanel',
+    canActivate: ['dGitProvider']
+  })
   rmxPluginsProvider.setDefaultData(defaultPluginData)
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
@@ -64,6 +78,26 @@ export async function activate(context: ExtensionContext) {
       window.showErrorMessage("The Solidity extension is not installed.")
     }
   })
+  window.registerUriHandler({
+    async handleUri(uri:Uri) 
+    {
+      console.log("HANDLE URI", uri)
+        // do something with the URI
+      const parsed = queryString.parse(uri.query);
+      console.log(parsed);
+      if(uri.path == '/pull'){
+        console.log("pull ", parsed.cid)
+        await dgitprovider.pull(parsed.cid)
+      }
+    }
+  });
+
+  commands.registerCommand("rmxPlugins.push", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.push()
+    console.log("pushed",cid)
+    env.openExternal(Uri.parse(`http://localhost:8080/?activate=solidity,dGit2&call=dGit2//pull//${cid}`))
+  });
 
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {

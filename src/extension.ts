@@ -99,6 +99,11 @@ export async function activate(context: ExtensionContext) {
     env.openExternal(Uri.parse(`http://localhost:8080/?activate=solidity,dGit2&call=dGit2//pull//${cid}`))
   });
 
+  commands.registerCommand("rmxPlugins.clone", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.pull('')
+  });
+
   // activate plugin
   commands.registerCommand("extension.activateRmxPlugin", async (pluginId: string) => {
     // Get plugininfo from plugin array

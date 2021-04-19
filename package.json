@@ -78,6 +78,11 @@
 				"category": "Remix"
 			},
 			{
+				"command": "rmxPlugins.deploy",
+				"title": "Deploy compiled contract to Wallet Connect",
+				"category": "Remix"
+			},
+			{
 				"command": "rmxPlugins.showPluginOptions",
 				"title": "Options",
 				"icon": {
@@ -174,6 +179,7 @@
 		"remix-url-resolver": "^0.0.16",
 		"rimraf": "^2.6.2",
 		"solc": "^0.7.0",
-		"tslint-config-prettier": "^1.18.0"
+		"tslint-config-prettier": "^1.18.0",
+		"web3": "^1.3.5"
 	}
 }

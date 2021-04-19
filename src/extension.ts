@@ -8,6 +8,7 @@ import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, Editor
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
 import DGitProvider from './plugins/dgitProvider'
+import Web3Module from './plugins/web3'
 import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
@@ -34,6 +35,7 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const dgitprovider = new DGitProvider();
+  const web3Module = new Web3Module();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin(editoropt);
   const importer = new ContentImportPlugin();
@@ -43,23 +45,36 @@ export async function activate(context: ExtensionContext) {
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
-  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, dgitprovider]);
+
+
+  engine.setPluginOption = ({name, kind}) => {
+    if (kind === 'provider') return { queueTimeout: 60000 * 2 }
+    if (name === 'LearnEth') return { queueTimeout: 60000 }
+    return { queueTimeout: 10000 }
+  }
+
+  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, dgitprovider, web3Module]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+
+  await manager.activatePlugin(['web3']);
+  await web3Module.setListeners();
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
   defaultPluginData.push({
-    name: 'dGit2',
-    displayName: 'dGit2',
+    name: 'walletconnect',
+    displayName: 'wallet connect',
     methods: [],
     version: '0.0.1-dev',
-    url: 'http://localhost:3000',
-    description: 'dGit for workspaces',
+    url: 'https://ipfs.io/ipfs/QmTbM998hguLTL8Pq7auBnE8jGt4LUbT1Lhsi5EueDkwS6/',
+    description: 'wallet connect',
     icon: 'https://dgitremix.web.app/dgitlogo.png',
     location: 'sidePanel',
-    canActivate: ['dGitProvider']
+    kind: 'provider',
+    canActivate: []
   })
   rmxPluginsProvider.setDefaultData(defaultPluginData)
+
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin(['solidity', 'fileManager', 'editor', 'contentImport']);
@@ -102,6 +117,11 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.clone", async () => {  
     await manager.activatePlugin(['dGitProvider']);
     const cid = await dgitprovider.pull('')
+  });
+
+  commands.registerCommand("rmxPlugins.deploy", async () => {  
+   
+    await web3Module.deploy()
   });
 
   // activate plugin

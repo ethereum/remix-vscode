@@ -167,6 +167,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
 
   async parseSolcOutputFile(file: string) {
+    console.log(file)
     this.print(`Compiling with Solidity Extension`)
     const content = await this.call("fileManager", "readFile", file)
     const parsedContent = JSON.parse(content)
@@ -174,6 +175,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const solcOutput = `${path.basename(parsedContent.sourcePath).split('.').slice(0, -1).join('.')}-solc-output.json`
     const outputDir = path.dirname(file)
     let raw = await this.call("fileManager", "readFile", `${outputDir}/${solcOutput}`)
+    console.log(`${outputDir}/${solcOutput}`);
     const relativeFilePath = relativePath(sourcePath)
     var re = new RegExp(`${sourcePath}`, "gi");
     raw = raw.replace(re, relativeFilePath)

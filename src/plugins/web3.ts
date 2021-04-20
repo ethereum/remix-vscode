@@ -61,7 +61,7 @@ export default class Web3Module extends Plugin {
 
   // web3
   async addPluginProvider(profile) {
-    //console.log(profile)
+    console.log(profile)
     if (profile.kind === "provider") {
       ((profile, app) => {
         this.web3Provider = {

@@ -13,6 +13,7 @@ import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall 
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from '@remixproject/plugin-utils';
+import Wallet from "./plugins/wallet";
 const queryString = require('query-string');
 
 class VscodeManager extends VscodeAppManager {
@@ -36,6 +37,7 @@ export async function activate(context: ExtensionContext) {
   const solpl = new NativeSolcPlugin();
   const dgitprovider = new DGitProvider();
   const web3Module = new Web3Module();
+  const wallet = new Wallet();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin(editoropt);
   const importer = new ContentImportPlugin();
@@ -53,24 +55,26 @@ export async function activate(context: ExtensionContext) {
     return { queueTimeout: 10000 }
   }
 
-  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, dgitprovider, web3Module]);
+  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, dgitprovider, web3Module, wallet]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
   await manager.activatePlugin(['web3']);
   await web3Module.setListeners();
+  await manager.activatePlugin(['wallet']);
+  
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData()
   defaultPluginData.push({
     name: 'walletconnect',
     displayName: 'wallet connect',
-    methods: [],
+    methods: ['qr','dismiss'],
     version: '0.0.1-dev',
-    url: 'https://ipfs.io/ipfs/QmTbM998hguLTL8Pq7auBnE8jGt4LUbT1Lhsi5EueDkwS6/',
+    url: 'http://localhost:3000',
     description: 'wallet connect',
     icon: 'https://dgitremix.web.app/dgitlogo.png',
     location: 'sidePanel',
-    kind: 'provider',
+    kind: '',
     canActivate: []
   })
   rmxPluginsProvider.setDefaultData(defaultPluginData)
@@ -119,8 +123,14 @@ export async function activate(context: ExtensionContext) {
     const cid = await dgitprovider.pull('')
   });
 
-  commands.registerCommand("rmxPlugins.deploy", async () => {  
-   
+  commands.registerCommand("rmxPlugins.wallet", async () => {   
+    //await manager.activatePlugin(['walletconnect']);
+    await wallet.connect();
+    //await web3Module.deploy()
+  });
+
+  commands.registerCommand("rmxPlugins.deploy", async () => {   
+   // await wallet.connect();
     await web3Module.deploy()
   });
 

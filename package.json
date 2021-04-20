@@ -83,6 +83,11 @@
 				"category": "Remix"
 			},
 			{
+				"command": "rmxPlugins.wallet",
+				"title": "Connect to mobile Wallet",
+				"category": "Remix"
+			},
+			{
 				"command": "rmxPlugins.showPluginOptions",
 				"title": "Options",
 				"icon": {
@@ -169,6 +174,7 @@
 		"@remixproject/plugin-api": "^0.3.10",
 		"@remixproject/plugin-utils": "^0.3.10",
 		"@remixproject/plugin-vscode": "^0.3.10",
+		"@walletconnect/web3-provider": "^1.4.1",
 		"axios": "^0.21.1",
 		"ftp": "^0.3.10",
 		"ipfs-http-client": "47.0.1",

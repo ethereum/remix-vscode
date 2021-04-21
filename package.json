@@ -83,8 +83,13 @@
 				"category": "Remix"
 			},
 			{
-				"command": "rmxPlugins.wallet",
+				"command": "rmxPlugins.walletConnect",
 				"title": "Connect to mobile Wallet",
+				"category": "Remix"
+			},
+			{
+				"command": "rmxPlugins.walletDisconnect",
+				"title": "Disconnect from mobile Wallet",
 				"category": "Remix"
 			},
 			{

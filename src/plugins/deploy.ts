@@ -11,24 +11,25 @@ import {
   ViewColumn,
   InputBoxOptions,
   OutputChannel,
+  QuickPickItem,
 } from "vscode";
 import Web3 from "web3";
 
-
 const profile = {
-  name: "web3",
-  displayName: "web3",
+  name: "deploy",
+  displayName: "deploy",
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
   methods: ["deploy"],
   kind: "file-system",
 };
-export default class Web3Module extends Plugin {
+export default class DeployModule extends Plugin {
   private outputChannel: OutputChannel;
   private web3Provider;
-  private compiledContracts;
+  public compiledContracts;
   private accounts: string[] = [];
+  private web3: Web3;
   constructor() {
     super(profile);
     this.outputChannel = window.createOutputChannel("Remix IDE");
@@ -61,7 +62,7 @@ export default class Web3Module extends Plugin {
 
   // web3
   async addPluginProvider(profile) {
-    console.log(profile)
+    console.log(profile);
     if (profile.kind === "provider") {
       ((profile, app) => {
         this.web3Provider = {
@@ -75,6 +76,7 @@ export default class Web3Module extends Plugin {
           },
         };
         console.log("ADD PROVIDER ", this.web3Provider);
+        this.web3 = new Web3(this.web3Provider);
         //app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
       })(profile, this);
     }
@@ -94,12 +96,38 @@ export default class Web3Module extends Plugin {
     this.outputChannel.show();
   }
 
-  async deploy() {
-    this.print("Deploy started!");
+  async showContractPicker() {
+    const keys = Object.keys(this.compiledContracts);
+    console.log(keys);
+  }
 
-    const c = this.compiledContracts[Object.keys(this.compiledContracts)[0]];
-    const fileName = await this.call("fileManager", "getCurrentFile");
+  async detectNetwork() {
+    this.web3.eth.net.getId((err, id) => {
+      let networkName: string = null;
+      if (err) {
+        this.print(`Could not detect network! Please connnect to your wallet.`);
+        return
+      }
+      // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+      else if (id === 1) networkName = "Main";
+      else if (id === 2) networkName = "Morden (deprecated)";
+      else if (id === 3) networkName = "Ropsten";
+      else if (id === 4) networkName = "Rinkeby";
+      else if (id === 5) networkName = "Goerli";
+      else if (id === 42) networkName = "Kovan";
+      else networkName = "Custom";
+      this.print(`Network is ${networkName}!`);
+    });
+  }
+
+  async deploy(contractName: string) {
+    const selectedContractKey = Object.keys(this.compiledContracts).find(
+      (name) => name == contractName
+    );
+    console.log(selectedContractKey);
+    const c = this.compiledContracts[selectedContractKey];
     console.log(c);
+    this.print(`Deploying contract ${contractName} started!`);
     //this.print(`Deploying  ${Object.keys(c)} ...`);
     try {
       if (!this.web3Provider) {
@@ -108,9 +136,9 @@ export default class Web3Module extends Plugin {
         );
         return;
       }
-      const web3 = new Web3(this.web3Provider);
+      await this.detectNetwork()
       console.log("content abi", c.abi);
-      let contract = new web3.eth.Contract(c.abi);
+      let contract = new this.web3.eth.Contract(c.abi);
       console.log("content bytecode", c.evm.bytecode.object);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
@@ -118,9 +146,9 @@ export default class Web3Module extends Plugin {
       console.log("deploy object ", deployObject);
       let gasValue = await deployObject.estimateGas();
       const gasBase = Math.ceil(gasValue * 1.2);
-      const gas = false ? gasBase * 2 : gasBase;
+      const gas = gasBase;
       this.print(`Gas estimate ${gas}`);
-      let accounts = await web3.eth.getAccounts();
+      let accounts = await this.web3.eth.getAccounts();
       console.log(accounts);
       let me = this;
       deployObject
@@ -134,6 +162,7 @@ export default class Web3Module extends Plugin {
         });
     } catch (e) {
       console.log("ERROR ", e);
+      this.print(`There are errors deploying.`)
     }
   }
 }

@@ -6,6 +6,7 @@ import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, Editor
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
+import { ExtAPIPlugin } from "./plugins/ext_api_plugin";
 import { pluginActivate, pluginDeactivate, pluginDocumentation, pluginUninstall } from './optionInputs';
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
@@ -39,7 +40,8 @@ export async function activate(context: ExtensionContext) {
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
-  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer]);
+  const vscodeExtAPI = new ExtAPIPlugin();
+  engine.register([manager, solpl, filemanager, editorPlugin, theme, importer, vscodeExtAPI]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
   // fetch default data from the plugins-directory filtered by engine
@@ -72,10 +74,11 @@ export async function activate(context: ExtensionContext) {
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
     if (!engine.isRegistered(pluginId)) {
+      // @ts-ignore
       engine.register(plugin);
     }
 
-    manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor']);
+    manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor', 'vscodeExtAPI']);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(`${profile.displayName} v${profile.version} activated.`);
   });

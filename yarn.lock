@@ -69,6 +69,15 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
+"@remixproject/engine-vscode@/home/0mkar/Karma/remix-plugin/dist/packages/engine/vscode/":
+  version "0.3.8"
+  dependencies:
+    "@remix-project/remix-url-resolver" "0.0.19"
+    "@remixproject/engine" "0.3.8"
+    "@remixproject/plugin-api" "0.3.8"
+    "@remixproject/plugin-utils" "0.3.8"
+    axios "^0.21.1"
+
 "@remixproject/engine-vscode@^0.3.10":
   version "0.3.10"
   resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.10.tgz#4480d803b429e5a7ed79d7d92b33f0d699e315b3"
@@ -80,6 +89,12 @@
     "@remixproject/plugin-utils" "0.3.10"
     axios "^0.21.1"
 
+"@remixproject/engine@/home/0mkar/Karma/remix-plugin/dist/packages/engine/core/", "@remixproject/engine@0.3.8":
+  version "0.3.8"
+  dependencies:
+    "@remixproject/plugin-api" "0.3.8"
+    "@remixproject/plugin-utils" "0.3.8"
+
 "@remixproject/engine@0.3.10", "@remixproject/engine@^0.3.10":
   version "0.3.10"
   resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.10.tgz#090ec655e5e0d3f3c436f063315b3806e4f6c449"
@@ -88,6 +103,11 @@
     "@remixproject/plugin-api" "0.3.10"
     "@remixproject/plugin-utils" "0.3.10"
 
+"@remixproject/plugin-api@/home/0mkar/Karma/remix-plugin/dist/packages/api":
+  version "0.3.8"
+  dependencies:
+    "@remixproject/plugin-utils" "0.3.8"
+
 "@remixproject/plugin-api@0.3.10", "@remixproject/plugin-api@^0.3.10":
   version "0.3.10"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.10.tgz#bac69c1bbc0bc9840f387fed82b0954b5a37d312"
@@ -95,12 +115,31 @@
   dependencies:
     "@remixproject/plugin-utils" "0.3.10"
 
+"@remixproject/plugin-api@0.3.8", "@remixproject/plugin-api@file:../remix-plugin/dist/packages/api":
+  version "0.3.8"
+  dependencies:
+    "@remixproject/plugin-utils" "0.3.8"
+
 "@remixproject/plugin-utils@0.3.10", "@remixproject/plugin-utils@^0.3.10":
   version "0.3.10"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.10.tgz#959e602849cb4e894bee7557d17e9cb573918cdd"
   integrity sha512-l2ggYlVSyJNmRrozHYqY7jcjQfSlB4fMONytrFfCob8hRrBowP3Mz9B73fHvP0f0wROWuSHZasmOQikacKtGWg==
   dependencies:
     tslib "2.0.1"
+
+"@remixproject/plugin-utils@0.3.8":
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.8.tgz#e24d27f3580fa2533adadc0b0925dbe85804ea27"
+  integrity sha512-tI7PNHCwkoF2LzmZlQy1Lw0T/f05dURR+pjH+usqUAnyoVRgtgOvbHq18HLSyZN9xz6E1YNotuE4DFT2VJTZ2A==
+  dependencies:
+    tslib "2.0.1"
+
+"@remixproject/plugin-vscode@/home/0mkar/Karma/remix-plugin/dist/packages/plugin/vscode":
+  version "0.3.8"
+  dependencies:
+    "@remixproject/plugin" "0.3.8"
+    "@remixproject/plugin-api" "0.3.8"
+    "@remixproject/plugin-utils" "0.3.8"
 
 "@remixproject/plugin-vscode@^0.3.10":
   version "0.3.10"
@@ -110,6 +149,13 @@
     "@remixproject/plugin" "0.3.10"
     "@remixproject/plugin-api" "0.3.10"
     "@remixproject/plugin-utils" "0.3.10"
+
+"@remixproject/plugin@/home/0mkar/Karma/remix-plugin/dist/packages/plugin/core", "@remixproject/plugin@0.3.8":
+  version "0.3.8"
+  dependencies:
+    "@remixproject/plugin-api" "file:../remix-plugin/dist/packages/api"
+    "@remixproject/plugin-utils" "0.3.8"
+    events "3.2.0"
 
 "@remixproject/plugin@0.3.10", "@remixproject/plugin@^0.3.10":
   version "0.3.10"

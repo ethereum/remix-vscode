@@ -9,14 +9,19 @@ const profile = {
   permission: true,
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: '0.0.1',
-  methods: ['deploy']
+  methods: ['exec']
 };
 export class ExtAPIPlugin extends CommandPlugin {
 	constructor() {
 		super(profile);
 	}
-	async deploy(data: any) {
-		const ext = extensions.getExtension('ethential.ethcode');
+	async exec(extName: string, cmdName: string, params: Array<any>) {
+		const ext = extensions.getExtension(extName);
     await ext.activate();
+    const extAPI = ext.exports;
+    console.log('==============Execute============');
+    console.log(params);
+    
+    extAPI[cmdName](...params);
 	}
 }

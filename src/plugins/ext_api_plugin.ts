@@ -19,9 +19,6 @@ export class ExtAPIPlugin extends CommandPlugin {
 		const ext = extensions.getExtension(extName);
     await ext.activate();
     const extAPI = ext.exports;
-    console.log('==============Execute============');
-    console.log(params);
-    
     extAPI[cmdName](...params);
 	}
 }

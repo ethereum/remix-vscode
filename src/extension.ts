@@ -1,6 +1,6 @@
 "use strict";
 import { window, commands, workspace, InputBoxOptions, ExtensionContext, QuickPickItem, env, Uri, extensions } from "vscode";
-import { PluginManager, Engine } from '@remixproject/engine';
+import { Engine } from '@remixproject/engine';
 import { ThemeUrls } from '@remixproject/plugin-api';
 import { VscodeAppManager, WebviewPlugin, ThemePlugin, FileManagerPlugin, EditorPlugin, EditorOptions, transformCmd, ThemeOptions, ContentImportPlugin } from '@remixproject/engine-vscode';
 

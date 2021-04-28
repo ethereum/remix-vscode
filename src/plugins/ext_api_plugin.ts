@@ -9,13 +9,13 @@ const profile = {
   permission: true,
   documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
   version: '0.0.1',
-  methods: ['exec']
+  methods: ['executeCommand']
 };
 export class ExtAPIPlugin extends CommandPlugin {
 	constructor() {
 		super(profile);
 	}
-	async exec(extName: string, cmdName: string, params: Array<any>) {
+	async executeCommand(extName: string, cmdName: string, params: Array<any>) {
 		const ext = extensions.getExtension(extName);
     await ext.activate();
     const extAPI = ext.exports;

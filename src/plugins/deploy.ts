@@ -30,6 +30,7 @@ export default class DeployModule extends Plugin {
   public compiledContracts;
   private accounts: string[] = [];
   private web3: Web3;
+  private networkName: string;
   constructor() {
     super(profile);
     this.outputChannel = window.createOutputChannel("Remix IDE");
@@ -103,21 +104,36 @@ export default class DeployModule extends Plugin {
 
   async detectNetwork() {
     this.web3.eth.net.getId((err, id) => {
-      let networkName: string = null;
+      this.networkName = null;
       if (err) {
         this.print(`Could not detect network! Please connnect to your wallet.`);
         return
       }
       // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-      else if (id === 1) networkName = "Main";
-      else if (id === 2) networkName = "Morden (deprecated)";
-      else if (id === 3) networkName = "Ropsten";
-      else if (id === 4) networkName = "Rinkeby";
-      else if (id === 5) networkName = "Goerli";
-      else if (id === 42) networkName = "Kovan";
-      else networkName = "Custom";
-      this.print(`Network is ${networkName}!`);
+      else if (id === 1) this.networkName = "Main";
+      else if (id === 2) this.networkName = "Morden (deprecated)";
+      else if (id === 3) this.networkName = "Ropsten";
+      else if (id === 4) this.networkName = "Rinkeby";
+      else if (id === 5) this.networkName = "Goerli";
+      else if (id === 42) this.networkName = "Kovan";
+      else this.networkName = "Custom";
+      this.print(`Network is ${this.networkName}!`);
     });
+  }
+
+  async txDetailsLink (hash: string) {
+    await this.detectNetwork();
+    const transactionDetailsLinks = {
+      Main: 'https://www.etherscan.io/address/',
+      Rinkeby: 'https://rinkeby.etherscan.io/address/',
+      Ropsten: 'https://ropsten.etherscan.io/address/',
+      Kovan: 'https://kovan.etherscan.io/address/',
+      Goerli: 'https://goerli.etherscan.io/address/'
+    }
+
+    if (transactionDetailsLinks[this.networkName]) {
+      return transactionDetailsLinks[this.networkName] + hash
+    }
   }
 
   async deploy(contractName: string) {
@@ -156,9 +172,11 @@ export default class DeployModule extends Plugin {
           from: accounts[0],
           gas: gas,
         })
-        .on("receipt", function (receipt) {
+        .on("receipt", async function (receipt) {
           console.log(receipt);
           me.print(`Contract deployed at ${receipt.contractAddress}`);
+          const link: string = await me.txDetailsLink(receipt.contractAddress)
+          me.print(link)
         });
     } catch (e) {
       console.log("ERROR ", e);

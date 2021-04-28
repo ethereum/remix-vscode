@@ -24,7 +24,7 @@ export default class WalletConnect extends Plugin {
   async createProvider() {
     this.provider = new WalletConnectProvider({
       infuraId: "83d4d660ce3546299cbe048ed95b6fad",
-      bridge: "https://static.225.91.181.135.clients.your-server.de",
+      bridge: "https://wallet-connect-bridge.dyn.plugin.remixproject.org:8080",
       qrcode: false,
       clientMeta: {
         description: "Remix Extension",
@@ -37,6 +37,7 @@ export default class WalletConnect extends Plugin {
   }
 
   async setListeners() {
+    this.emit("disconnect")
     this.provider.connector.on("display_uri", (err, payload) => {
       const uri = payload.params[0];
       console.log(uri);
@@ -75,16 +76,16 @@ export default class WalletConnect extends Plugin {
     console.log("connect");
     await this.createProvider()
 
-    await this.provider.enable();
-    this.print(`Connected to wallet`)
-    this.emit("connect")
+    this.provider.enable();
+    this.print(`Connect to wallet`)
+    //this.emit("connect")
   }
 
   async disconnect(){
     console.log("disconnect")
 
-    await this.provider.disconnect();
-    await this.provider.close()
+    this.provider.disconnect();
+    this.provider.close()
     this.print(`Disconnected from wallet`)
     this.emit("disconnect")
   }

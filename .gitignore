@@ -1,4 +1,4 @@
 out
 node_modules
 error.log
-remix-plugin-vscode*
+*.vsix

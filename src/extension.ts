@@ -33,6 +33,7 @@ import {
   pluginDocumentation,
   pluginUninstall,
 } from "./optionInputs";
+import { ExtAPIPlugin } from "./plugins/ext_api_plugin";
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
@@ -66,6 +67,7 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const deployModule = new DeployModule();
+  const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
   const filemanager = new FileManagerPlugin();
   const editorPlugin = new EditorPlugin(editoropt);
@@ -94,6 +96,7 @@ export async function activate(context: ExtensionContext) {
     importer,
     deployModule,
     wallet,
+    vscodeExtAPI
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
@@ -156,15 +159,11 @@ export async function activate(context: ExtensionContext) {
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
     if (!engine.isRegistered(pluginId)) {
+      // @ts-ignore
       engine.register(plugin);
     }
 
-    await manager.activatePlugin([
-      pluginId,
-      "solidity",
-      "fileManager",
-      "editor",
-    ]);
+    manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor', 'vscodeExtAPI']);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(
       `${profile.displayName} v${profile.version} activated.`

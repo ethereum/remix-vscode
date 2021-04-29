@@ -9,11 +9,9 @@ import {
   env,
   Uri,
   extensions,
-  OutputChannel,
 } from "vscode";
 import { PluginManager, Engine } from "@remixproject/engine";
 import { ThemeUrls } from "@remixproject/plugin-api";
-import IpfsHttpClient from "ipfs-http-client";
 import {
   VscodeAppManager,
   WebviewPlugin,
@@ -28,7 +26,6 @@ import {
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import DGitProvider from "./plugins/dgitProvider";
 import DeployModule from "./plugins/deploy";
 import {
   pluginActivate,
@@ -68,7 +65,6 @@ export async function activate(context: ExtensionContext) {
   const engine = new Engine();
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
-  const dgitprovider = new DGitProvider();
   const deployModule = new DeployModule();
   const wallet = new WalletConnect();
   const filemanager = new FileManagerPlugin();
@@ -96,7 +92,6 @@ export async function activate(context: ExtensionContext) {
     editorPlugin,
     theme,
     importer,
-    dgitprovider,
     deployModule,
     wallet,
   ]);
@@ -150,18 +145,6 @@ export async function activate(context: ExtensionContext) {
       window.showErrorMessage("The Solidity extension is not installed.");
     }
   });
-  window.registerUriHandler({
-    async handleUri(uri: Uri) {
-      console.log("HANDLE URI", uri);
-      // do something with the URI
-      const parsed = queryString.parse(uri.query);
-      console.log(parsed);
-      if (uri.path == "/pull") {
-        console.log("pull ", parsed.cid);
-        await dgitprovider.pull(parsed.cid);
-      }
-    },
-  });
 
   const activatePlugin = async (pluginId: string) => {
     // Get plugininfo from plugin array
@@ -187,22 +170,6 @@ export async function activate(context: ExtensionContext) {
       `${profile.displayName} v${profile.version} activated.`
     );
   };
-
-  commands.registerCommand("rmxPlugins.push", async () => {
-    await manager.activatePlugin(["dGitProvider"]);
-    const cid = await dgitprovider.push();
-    console.log("pushed", cid);
-    env.openExternal(
-      Uri.parse(
-        `http://localhost:8080/?activate=solidity,dGit2&call=dGit2//pull//${cid}`
-      )
-    );
-  });
-
-  commands.registerCommand("rmxPlugins.clone", async () => {
-    await manager.activatePlugin(["dGitProvider"]);
-    const cid = await dgitprovider.pull("");
-  });
 
   commands.registerCommand("rmxPlugins.walletConnect", async () => {
     //await manager.activatePlugin(['walletconnect']);
@@ -236,7 +203,6 @@ export async function activate(context: ExtensionContext) {
         await deployModule.deploy(selected.label)
       }
     });
-
   });
 
   // activate plugin

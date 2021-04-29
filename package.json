@@ -68,16 +68,6 @@
 				"category": "Remix"
 			},
 			{
-				"command": "rmxPlugins.clone",
-				"title": "Clone from IPFS",
-				"category": "Remix"
-			},
-			{
-				"command": "rmxPlugins.push",
-				"title": "Send to Remix IDE",
-				"category": "Remix"
-			},
-			{
 				"command": "rmxPlugins.deploy",
 				"title": "Deploy compiled contract to Wallet Connect",
 				"category": "Remix"

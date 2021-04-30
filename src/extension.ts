@@ -100,7 +100,7 @@ export async function activate(context: ExtensionContext) {
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin(["deploy"]);
+  await manager.activatePlugin(["udapp"]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 
@@ -199,7 +199,7 @@ export async function activate(context: ExtensionContext) {
     window.showQuickPick(opts).then(async (selected) => {
       if (selected) {
         console.log("deploy ", selected.label);
-        await deployModule.deploy(selected.label)
+        await deployModule.deploy(selected.label, [])
       }
     });
   });

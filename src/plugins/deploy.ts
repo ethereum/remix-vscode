@@ -16,12 +16,13 @@ import {
 import Web3 from "web3";
 
 const profile = {
-  name: "deploy",
-  displayName: "deploy",
+  name: "udapp",
+  displayName: "udapp",
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
   methods: ["deploy"],
+  events: ['receipt'],
   kind: "file-system",
 };
 export default class DeployModule extends Plugin {
@@ -136,7 +137,7 @@ export default class DeployModule extends Plugin {
     }
   }
 
-  async deploy(contractName: string) {
+  async deploy(contractName: string, payload: any[]) {
     const selectedContractKey = Object.keys(this.compiledContracts).find(
       (name) => name == contractName
     );
@@ -158,6 +159,7 @@ export default class DeployModule extends Plugin {
       console.log("content bytecode", c.evm.bytecode.object);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
+        arguments: payload
       });
       console.log("deploy object ", deployObject);
       let gasValue = await deployObject.estimateGas();
@@ -174,6 +176,7 @@ export default class DeployModule extends Plugin {
         })
         .on("receipt", async function (receipt) {
           console.log(receipt);
+          me.emit('receipt', receipt)
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress)
           me.print(link)

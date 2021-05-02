@@ -14,6 +14,7 @@ import {
   QuickPickItem,
 } from "vscode";
 import Web3 from "web3";
+import { AbiInput, AbiItem } from "web3-utils";
 
 const profile = {
   name: "udapp",
@@ -21,8 +22,8 @@ const profile = {
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
-  methods: ["deploy"],
-  events: ['receipt'],
+  methods: ["deploy", "send"],
+  events: ['receipt', 'deploy'],
   kind: "file-system",
 };
 export default class DeployModule extends Plugin {
@@ -122,7 +123,7 @@ export default class DeployModule extends Plugin {
     });
   }
 
-  async txDetailsLink (hash: string) {
+  async txDetailsLink(hash: string) {
     await this.detectNetwork();
     const transactionDetailsLinks = {
       Main: 'https://www.etherscan.io/address/',
@@ -137,13 +138,19 @@ export default class DeployModule extends Plugin {
     }
   }
 
-  async deploy(contractName: string, payload: any[]) {
+  async getContract(contractName: string) {
     const selectedContractKey = Object.keys(this.compiledContracts).find(
       (name) => name == contractName
     );
     console.log(selectedContractKey);
     const c = this.compiledContracts[selectedContractKey];
     console.log(c);
+    return c
+  }
+
+  async deploy(contractName: string, payload: any[]) {
+
+    const c = await this.getContract(contractName)
     this.print(`Deploying contract ${contractName} started!`);
     //this.print(`Deploying  ${Object.keys(c)} ...`);
     try {
@@ -161,6 +168,8 @@ export default class DeployModule extends Plugin {
         data: c.evm.bytecode.object,
         arguments: payload
       });
+
+
       console.log("deploy object ", deployObject);
       let gasValue = await deployObject.estimateGas();
       const gasBase = Math.ceil(gasValue * 1.2);
@@ -176,7 +185,7 @@ export default class DeployModule extends Plugin {
         })
         .on("receipt", async function (receipt) {
           console.log(receipt);
-          me.emit('receipt', receipt)
+          me.emit('deploy', receipt)
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress)
           me.print(link)
@@ -184,6 +193,51 @@ export default class DeployModule extends Plugin {
     } catch (e) {
       console.log("ERROR ", e);
       this.print(`There are errors deploying.`)
+    }
+  }
+
+  async send(abi: AbiItem, payload: any[], address: string) {
+
+    try {
+      if (!this.web3Provider) {
+        this.print(
+          "No Web3 provider activated! Please activate a wallet or web3 provider plugin."
+        );
+        return;
+      }
+      await this.detectNetwork()
+
+      let contract = new this.web3.eth.Contract(JSON.parse(JSON.stringify([abi])), address);
+      let accounts = await this.web3.eth.getAccounts();
+      if (abi.stateMutability === 'view' || abi.stateMutability === 'pure') {
+        try {
+          console.log("calling ", contract.methods[abi.name], payload, accounts[0])
+          const txReceipt = abi.name
+            ? await contract.methods[abi.name](...payload).call({ from: accounts[0] })
+            : null;
+          this.emit('receipt', txReceipt)
+          console.log(txReceipt)
+          // TODO: LOG
+        } catch (e) {
+          console.error(e)
+          
+        }
+      } else {
+        try {
+          const txReceipt = abi.name
+            ? await contract.methods[abi.name](...payload).send({ from: accounts[0] })
+            : null;
+          console.log(txReceipt)
+          this.emit('receipt', txReceipt)
+          // TODO: LOG
+        } catch (e) {
+          console.error(e)
+          
+        }
+      }
+    } catch (e) {
+      console.log("ERROR ", e);
+      this.print(`There are errors sending data.`)
     }
   }
 }

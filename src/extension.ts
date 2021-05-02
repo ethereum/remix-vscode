@@ -83,6 +83,7 @@ export async function activate(context: ExtensionContext) {
 
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === "provider") return { queueTimeout: 60000 * 2 };
+    if (name === "udapp") return { queueTimeout: 60000 * 2 };
     if (name === "LearnEth") return { queueTimeout: 60000 };
     return { queueTimeout: 10000 };
   };

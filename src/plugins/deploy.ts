@@ -105,7 +105,7 @@ export default class DeployModule extends Plugin {
   }
 
   async detectNetwork() {
-    this.web3.eth.net.getId((err, id) => {
+    await this.web3.eth.net.getId((err, id) => {
       this.networkName = null;
       if (err) {
         this.print(`Could not detect network! Please connnect to your wallet.`);
@@ -151,6 +151,12 @@ export default class DeployModule extends Plugin {
   async deploy(contractName: string, payload: any[]) {
 
     const c = await this.getContract(contractName)
+    if(!c){
+      this.print(
+        "No contract specified."
+      );
+      return;
+    }
     this.print(`Deploying contract ${contractName} started!`);
     //this.print(`Deploying  ${Object.keys(c)} ...`);
     try {
@@ -160,7 +166,10 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
+      let accounts = await this.web3.eth.getAccounts();
+      console.log(accounts);
       await this.detectNetwork()
+      
       console.log("content abi", c.abi);
       let contract = new this.web3.eth.Contract(c.abi);
       console.log("content bytecode", c.evm.bytecode.object);
@@ -175,10 +184,10 @@ export default class DeployModule extends Plugin {
       const gasBase = Math.ceil(gasValue * 1.2);
       const gas = gasBase;
       this.print(`Gas estimate ${gas}`);
-      let accounts = await this.web3.eth.getAccounts();
-      console.log(accounts);
+
+      
       let me = this;
-      deployObject
+      await deployObject
         .send({
           from: accounts[0],
           gas: gas,
@@ -189,7 +198,8 @@ export default class DeployModule extends Plugin {
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress)
           me.print(link)
-        });
+      });
+      this.print('Deploying ...')
     } catch (e) {
       console.log("ERROR ", e);
       this.print(`There are errors deploying.`)
@@ -212,11 +222,14 @@ export default class DeployModule extends Plugin {
       if (abi.stateMutability === 'view' || abi.stateMutability === 'pure') {
         try {
           console.log("calling ", contract.methods[abi.name], payload, accounts[0])
+          this.print(`Calling method '${abi.name}' with ${JSON.stringify(payload)} from ${accounts[0]} at contract address ${address}`)
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).call({ from: accounts[0] })
             : null;
-          this.emit('receipt', txReceipt)
+          //this.emit('receipt', txReceipt)
           console.log(txReceipt)
+          this.print(JSON.stringify(txReceipt))
+          return txReceipt
           // TODO: LOG
         } catch (e) {
           console.error(e)
@@ -224,11 +237,14 @@ export default class DeployModule extends Plugin {
         }
       } else {
         try {
+          this.print(`Send data to method '${abi.name}' with ${JSON.stringify(payload)} from ${accounts[0]} at contract address ${address}`)
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).send({ from: accounts[0] })
             : null;
           console.log(txReceipt)
-          this.emit('receipt', txReceipt)
+          //this.emit('receipt', txReceipt)
+          this.print(JSON.stringify(txReceipt))
+          return txReceipt
           // TODO: LOG
         } catch (e) {
           console.error(e)

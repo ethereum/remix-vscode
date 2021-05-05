@@ -111,7 +111,7 @@ export default class WalletConnect extends Plugin {
           resolve(message);
         });
       } else {
-        return reject("this.provider not loaded");
+        return reject("Provider not loaded");
       }
     });
   };

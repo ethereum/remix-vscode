@@ -109,11 +109,11 @@ export async function activate(context: ExtensionContext) {
   const defaultPluginData = await manager.registeredPluginData();
   defaultPluginData.push({
     name: "vscodewalletconnect",
-    displayName: "Wallet Connect",
+    displayName: "Deploy & Run",
     methods: ["displayUri"],
     version: "0.0.1-dev",
     url: "http://localhost:3000",
-    description: "Connect to a Wallet Connect app",
+    description: "Connect to a Wallet Connect app to run and deploy.",
     icon: "https://example.walletconnect.org/favicon.ico",
     location: "sidePanel",
     kind: "",

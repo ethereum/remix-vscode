@@ -38,6 +38,7 @@ import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/wallet";
+import { Web3ProviderModule } from "./plugins/web3provider";
 const queryString = require("query-string");
 
 class VscodeManager extends VscodeAppManager {
@@ -67,6 +68,7 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const deployModule = new DeployModule();
+  const web3Povider = new Web3ProviderModule();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
   const filemanager = new FileManagerPlugin();
@@ -95,13 +97,14 @@ export async function activate(context: ExtensionContext) {
     editorPlugin,
     theme,
     importer,
+    web3Povider,
     deployModule,
     wallet,
     vscodeExtAPI
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin(["udapp"]);
+  await manager.activatePlugin(["web3Provider", "udapp"]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 

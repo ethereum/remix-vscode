@@ -68,7 +68,7 @@ export default class DeployModule extends Plugin {
     console.log(profile);
     if (profile.kind === "provider") {
       ((profile, app) => {
-        this.web3Provider = {
+        let web3Provider = {
           async sendAsync(payload, callback) {
             try {
               const result = await app.call(profile.name, "sendAsync", payload);
@@ -78,7 +78,18 @@ export default class DeployModule extends Plugin {
             }
           },
         };
-        console.log("ADD PROVIDER ", this.web3Provider);
+        console.log("ADD PROVIDER ", web3Provider);
+        this.call('web3Provider', 'setProvider', web3Provider)
+        this.web3Provider = {
+          async sendAsync(payload, callback) {
+            try {
+              const result = await app.call("web3Provider", "sendAsync", payload);
+              callback(null, result);
+            } catch (e) {
+              callback(e);
+            }
+          },
+        };
         this.web3 = new Web3(this.web3Provider);
         //app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
       })(profile, this);

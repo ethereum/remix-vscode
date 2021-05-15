@@ -22,8 +22,8 @@ const profile = {
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
-  methods: ["deploy", "send"],
-  events: ['receipt', 'deploy'],
+  methods: ["deploy", "send", "addNetwork", "getAccounts", "setAccount"],
+  events: ["receipt", "deploy"],
   kind: "file-system",
 };
 export default class DeployModule extends Plugin {
@@ -63,6 +63,30 @@ export default class DeployModule extends Plugin {
     );
   }
 
+  async addNetwork(network: string) {
+    let networkprovider = new Web3.providers.HttpProvider(network);
+    this.call("web3Provider", "setProvider", networkprovider);
+  }
+
+  async setAccount(account: string){
+    this.web3.eth.defaultAccount = account
+    this.print(`Account changed to ${this.web3.eth.defaultAccount}`)
+  }
+
+  async getAccounts() {
+    try {
+      if (await this.web3.eth.net.isListening()) {
+        let accounts = await this.web3.eth.getAccounts();
+        if(accounts.length > 0 )this.web3.eth.defaultAccount = accounts[0]
+        this.print(`Account changed to ${this.web3.eth.defaultAccount}`)
+        return accounts;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return [];
+  }
+
   // web3
   async addPluginProvider(profile) {
     console.log(profile);
@@ -79,11 +103,15 @@ export default class DeployModule extends Plugin {
           },
         };
         console.log("ADD PROVIDER ", web3Provider);
-        this.call('web3Provider', 'setProvider', web3Provider)
+        this.call("web3Provider", "setProvider", web3Provider);
         this.web3Provider = {
           async sendAsync(payload, callback) {
             try {
-              const result = await app.call("web3Provider", "sendAsync", payload);
+              const result = await app.call(
+                "web3Provider",
+                "sendAsync",
+                payload
+              );
               callback(null, result);
             } catch (e) {
               callback(e);
@@ -120,7 +148,7 @@ export default class DeployModule extends Plugin {
       this.networkName = null;
       if (err) {
         this.print(`Could not detect network! Please connnect to your wallet.`);
-        return
+        return;
       }
       // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
       else if (id === 1) this.networkName = "Main";
@@ -137,15 +165,15 @@ export default class DeployModule extends Plugin {
   async txDetailsLink(hash: string) {
     await this.detectNetwork();
     const transactionDetailsLinks = {
-      Main: 'https://www.etherscan.io/address/',
-      Rinkeby: 'https://rinkeby.etherscan.io/address/',
-      Ropsten: 'https://ropsten.etherscan.io/address/',
-      Kovan: 'https://kovan.etherscan.io/address/',
-      Goerli: 'https://goerli.etherscan.io/address/'
-    }
+      Main: "https://www.etherscan.io/address/",
+      Rinkeby: "https://rinkeby.etherscan.io/address/",
+      Ropsten: "https://ropsten.etherscan.io/address/",
+      Kovan: "https://kovan.etherscan.io/address/",
+      Goerli: "https://goerli.etherscan.io/address/",
+    };
 
     if (transactionDetailsLinks[this.networkName]) {
-      return transactionDetailsLinks[this.networkName] + hash
+      return transactionDetailsLinks[this.networkName] + hash;
     }
   }
 
@@ -156,16 +184,13 @@ export default class DeployModule extends Plugin {
     console.log(selectedContractKey);
     const c = this.compiledContracts[selectedContractKey];
     console.log(c);
-    return c
+    return c;
   }
 
   async deploy(contractName: string, payload: any[]) {
-
-    const c = await this.getContract(contractName)
-    if(!c){
-      this.print(
-        "No contract specified."
-      );
+    const c = await this.getContract(contractName);
+    if (!c) {
+      this.print("No contract specified.");
       return;
     }
     this.print(`Deploying contract ${contractName} started!`);
@@ -179,16 +204,15 @@ export default class DeployModule extends Plugin {
       }
       let accounts = await this.web3.eth.getAccounts();
       console.log(accounts);
-      await this.detectNetwork()
-      
+      await this.detectNetwork();
+
       console.log("content abi", c.abi);
       let contract = new this.web3.eth.Contract(c.abi);
       console.log("content bytecode", c.evm.bytecode.object);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
-        arguments: payload
+        arguments: payload,
       });
-
 
       console.log("deploy object ", deployObject);
       let gasValue = await deployObject.estimateGas();
@@ -196,29 +220,28 @@ export default class DeployModule extends Plugin {
       const gas = gasBase;
       this.print(`Gas estimate ${gas}`);
 
-      
       let me = this;
       await deployObject
         .send({
-          from: accounts[0],
+          from: this.web3.eth.defaultAccount,
           gas: gas,
         })
         .on("receipt", async function (receipt) {
           console.log(receipt);
-          me.emit('deploy', receipt)
+          me.emit("deploy", receipt);
           me.print(`Contract deployed at ${receipt.contractAddress}`);
-          const link: string = await me.txDetailsLink(receipt.contractAddress)
-          me.print(link)
-      });
-      this.print('Deploying ...')
+          const link: string = await me.txDetailsLink(receipt.contractAddress);
+          me.print(link);
+        });
+      this.print("Deploying ...");
     } catch (e) {
       console.log("ERROR ", e);
-      this.print(`There are errors deploying.`)
+      this.print(`There are errors deploying: ${e}`);
+      throw new Error(`There are errors deploying: ${e}`)
     }
   }
 
   async send(abi: AbiItem, payload: any[], address: string) {
-
     try {
       if (!this.web3Provider) {
         this.print(
@@ -226,45 +249,68 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
-      await this.detectNetwork()
+      await this.detectNetwork();
 
-      let contract = new this.web3.eth.Contract(JSON.parse(JSON.stringify([abi])), address);
+      let contract = new this.web3.eth.Contract(
+        JSON.parse(JSON.stringify([abi])),
+        address
+      );
       let accounts = await this.web3.eth.getAccounts();
-      if (abi.stateMutability === 'view' || abi.stateMutability === 'pure') {
+      if (abi.stateMutability === "view" || abi.stateMutability === "pure") {
         try {
-          console.log("calling ", contract.methods[abi.name], payload, accounts[0])
-          this.print(`Calling method '${abi.name}' with ${JSON.stringify(payload)} from ${accounts[0]} at contract address ${address}`)
+          console.log(
+            "calling ",
+            contract.methods[abi.name],
+            payload,
+            this.web3.eth.defaultAccount
+          );
+          this.print(
+            `Calling method '${abi.name}' with ${JSON.stringify(
+              payload
+            )} from ${this.web3.eth.defaultAccount} at contract address ${address}`
+          );
           const txReceipt = abi.name
-            ? await contract.methods[abi.name](...payload).call({ from: accounts[0] })
+            ? await contract.methods[abi.name](...payload).call({
+                from: this.web3.eth.defaultAccount,
+              })
             : null;
           //this.emit('receipt', txReceipt)
-          console.log(txReceipt)
-          this.print(JSON.stringify(txReceipt))
-          return txReceipt
+          console.log(txReceipt);
+          this.print(JSON.stringify(txReceipt));
+          return txReceipt;
           // TODO: LOG
         } catch (e) {
-          console.error(e)
+          console.error(e);
+          throw new Error(`There are errors calling: ${e}`)
           
         }
       } else {
         try {
-          this.print(`Send data to method '${abi.name}' with ${JSON.stringify(payload)} from ${accounts[0]} at contract address ${address}`)
+          this.print(
+            `Send data to method '${abi.name}' with ${JSON.stringify(
+              payload
+            )} from ${this.web3.eth.defaultAccount} at contract address ${address}`
+          );
           const txReceipt = abi.name
-            ? await contract.methods[abi.name](...payload).send({ from: accounts[0] })
+            ? await contract.methods[abi.name](...payload).send({
+                from: this.web3.eth.defaultAccount,
+              })
             : null;
-          console.log(txReceipt)
+          console.log(txReceipt);
           //this.emit('receipt', txReceipt)
-          this.print(JSON.stringify(txReceipt))
-          return txReceipt
+          this.print(JSON.stringify(txReceipt));
+          return txReceipt;
           // TODO: LOG
         } catch (e) {
-          console.error(e)
-          
+          console.error(e);
+          throw new Error(`There are errors sending data: ${e}`)
+
         }
       }
     } catch (e) {
       console.log("ERROR ", e);
-      this.print(`There are errors sending data.`)
+      this.print(`There are errors sending data.`);
+      throw new Error(`There are errors sending data: ${e}`)
     }
   }
 }

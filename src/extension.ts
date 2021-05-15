@@ -39,6 +39,7 @@ import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/wallet";
 import { Web3ProviderModule } from "./plugins/web3provider";
+import OffsetToLineColumnConverter from "./plugins/offsetToLineColumnConverter";
 const queryString = require("query-string");
 
 class VscodeManager extends VscodeAppManager {
@@ -68,6 +69,7 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const deployModule = new DeployModule();
+  const OffsetToLineColumnConverterModule = new OffsetToLineColumnConverter();
   const web3Povider = new Web3ProviderModule();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
@@ -97,6 +99,7 @@ export async function activate(context: ExtensionContext) {
     editorPlugin,
     theme,
     importer,
+    OffsetToLineColumnConverterModule,
     web3Povider,
     deployModule,
     wallet,
@@ -104,7 +107,7 @@ export async function activate(context: ExtensionContext) {
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin(["web3Provider", "udapp"]);
+  await manager.activatePlugin(["web3Provider", "udapp","offsetToLineColumnConverter"]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 
@@ -115,15 +118,26 @@ export async function activate(context: ExtensionContext) {
     displayName: "Deploy & Run",
     methods: ["displayUri"],
     version: "0.0.1-dev",
-    url: "http://localhost:3000",
+    url: "https://vscoderemixudapp.web.app/",
+    description: "Connect to a network to run and deploy.",
+    icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+    location: "sidePanel",
+    kind: "",
+    canActivate: [],
+  },/* {
+    name: "debugger",
+    displayName: "Debugger",
+    methods: ["displayUri"],
+    version: "0.0.1-dev",
+    url: "http://127.0.0.1:8081/ipfs/QmYDDgS1qmub4kVqunGqtbysk5dB65YhUKCWDFy19JsFhz/",
     description: "Connect to a Wallet Connect app to run and deploy.",
     icon: "https://example.walletconnect.org/favicon.ico",
     location: "sidePanel",
     kind: "",
     canActivate: [],
-  });
+  } */);
   rmxPluginsProvider.setDefaultData(defaultPluginData);
-
+  
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([

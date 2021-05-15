@@ -162,6 +162,7 @@
 		"typescript": "^3.9.7"
 	},
 	"dependencies": {
+		"@remix-project/remix-debug": "^0.4.10",
 		"@remix-project/remix-url-resolver": "^0.0.18",
 		"@remixproject/engine": "^0.3.13-alpha.1",
 		"@remixproject/engine-vscode": "^0.3.13-alpha.1",

@@ -33,6 +33,7 @@ export default class WalletConnect extends Plugin {
         name: "Remix Extension",
       },
     });
+    await this.call("web3Provider", "setProvider", this.provider);
     await this.setListeners()
   }
 
@@ -53,6 +54,7 @@ export default class WalletConnect extends Plugin {
         this.print(`Wallet account : ${account}`)
       }
       this.emit('accountsChanged', accounts || [])
+      this.call("udapp" as any, "getAccounts");
       //this.call("walletconnect" as any, "dismiss");
       //this.provider.disconnect();
     });

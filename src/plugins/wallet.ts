@@ -40,11 +40,11 @@ export default class WalletConnect extends Plugin {
   async setListeners() {
     this.emit("disconnect")
     this.provider.connector.on("display_uri", (err, payload) => {
+      console.log("EXT display uri")
       const uri = payload.params[0];
       console.log(uri);
       this.print(`Connect to wallet with URI: ${uri}`)
-      this.emit('displayUri', uri)
-      //this.call("walletconnect" as any, "qr", uri);
+      this.call("vscodeudapp" as any, "qr", uri);
     });
 
     // Subscribe to accounts change

@@ -113,29 +113,6 @@ export async function activate(context: ExtensionContext) {
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData();
-  defaultPluginData.push({
-    name: "vscodewalletconnect",
-    displayName: "Deploy & Run",
-    methods: ["displayUri"],
-    version: "0.0.1-dev",
-    url: "https://vscoderemixudapp.web.app/",
-    description: "Connect to a network to run and deploy.",
-    icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
-    location: "sidePanel",
-    kind: "",
-    canActivate: [],
-  },/* {
-    name: "debugger",
-    displayName: "Debugger",
-    methods: ["displayUri"],
-    version: "0.0.1-dev",
-    url: "http://127.0.0.1:8081/ipfs/QmYDDgS1qmub4kVqunGqtbysk5dB65YhUKCWDFy19JsFhz/",
-    description: "Connect to a Wallet Connect app to run and deploy.",
-    icon: "https://example.walletconnect.org/favicon.ico",
-    location: "sidePanel",
-    kind: "",
-    canActivate: [],
-  } */);
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   
   // compile

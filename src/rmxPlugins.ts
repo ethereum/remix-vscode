@@ -33,7 +33,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   }
 
   refresh():void {
-    this.data = [... this.defaultData]
+    this.data = [... this.defaultData.sort((a,b) => (a.displayName < b.displayName)?-1:1)]
     this._onDidChangeTreeData.fire(null);
   }
 

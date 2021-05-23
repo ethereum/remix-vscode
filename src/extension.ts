@@ -41,7 +41,7 @@ import WalletConnect from "./plugins/wallet";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import OffsetToLineColumnConverter from "./plugins/offsetToLineColumnConverter";
 const queryString = require("query-string");
-
+const remixd = require("@remix-project/remixd");
 class VscodeManager extends VscodeAppManager {
   onActivation() {
     console.log("manager activated");
@@ -79,8 +79,7 @@ export async function activate(context: ExtensionContext) {
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
-    dark:
-      "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
+    dark: "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
@@ -103,18 +102,22 @@ export async function activate(context: ExtensionContext) {
     web3Povider,
     deployModule,
     wallet,
-    vscodeExtAPI
+    vscodeExtAPI,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin(["web3Provider", "udapp","offsetToLineColumnConverter"]);
+  await manager.activatePlugin([
+    "web3Provider",
+    "udapp",
+    "offsetToLineColumnConverter",
+  ]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData();
   rmxPluginsProvider.setDefaultData(defaultPluginData);
-  
+
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
@@ -158,7 +161,13 @@ export async function activate(context: ExtensionContext) {
       engine.register(plugin);
     }
 
-    manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor', 'vscodeExtAPI']);
+    manager.activatePlugin([
+      pluginId,
+      "solidity",
+      "fileManager",
+      "editor",
+      "vscodeExtAPI",
+    ]);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(
       `${profile.displayName} v${profile.version} activated.`
@@ -172,6 +181,46 @@ export async function activate(context: ExtensionContext) {
     //await web3Module.deploy()
   });
 
+  let sharedFolderClient = new remixd.services.sharedFolder();
+  let gitClient = new remixd.services.GitClient();
+  const services = {
+    git: () => {
+      gitClient.options.customApi = {};
+      return gitClient;
+    },
+    folder: () => {
+      sharedFolderClient.options.customApi = {};
+      return sharedFolderClient;
+    },
+  };
+
+  const remixIdeUrl = "https://remix.ethereum.org/";
+
+  const ports = {
+    git: 65521,
+    folder: 65520,
+  };
+
+  function startService(service, callback) {
+    try {
+      const socket = new remixd.Websocket(ports[service], { remixIdeUrl }, () =>
+        services[service]()
+      );
+      socket.start(callback);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  commands.registerCommand("rmxPlugins.remixd", async () => {
+    const currentFolder = workspace.workspaceFolders[0].uri.fsPath;
+    startService("folder", (ws, client) => {
+      client.setWebSocket(ws)
+      client.sharedFolder(currentFolder, false)
+      client.setupNotifications(currentFolder)
+    });
+  });
+
   commands.registerCommand("rmxPlugins.walletDisconnect", async () => {
     //await manager.activatePlugin(['walletconnect']);
     await wallet.disconnect();
@@ -181,20 +230,18 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.deploy", async () => {
     // await wallet.connect();
     const contracts = Object.keys(deployModule.compiledContracts);
-    console.log(contracts)
-    const opts: Array<QuickPickItem> = contracts.map(
-      (v): QuickPickItem => {
-        const vopt: QuickPickItem = {
-          label: v,
-          description: `Deploy contract: ${v}`,
-        };
-        return vopt;
-      }
-    );
+    console.log(contracts);
+    const opts: Array<QuickPickItem> = contracts.map((v): QuickPickItem => {
+      const vopt: QuickPickItem = {
+        label: v,
+        description: `Deploy contract: ${v}`,
+      };
+      return vopt;
+    });
     window.showQuickPick(opts).then(async (selected) => {
       if (selected) {
         console.log("deploy ", selected.label);
-        await deployModule.deploy(selected.label, [])
+        await deployModule.deploy(selected.label, []);
       }
     });
   });

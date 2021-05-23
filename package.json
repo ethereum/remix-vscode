@@ -1,9 +1,9 @@
 {
 	"name": "ethereum-remix",
-	"displayName": "Test Remix",
+	"displayName": "Ethereum Remix",
 	"description": "Ethereum Remix plugins in VSCode",
-	"version": "0.0.6",
-	"publisher": "bunsenstraat",
+	"version": "0.0.7",
+	"publisher": "RemixProject",
 	"enableProposedApi": true,
 	"icon": "media/icon.png",
 	"repository": {

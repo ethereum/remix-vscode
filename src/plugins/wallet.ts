@@ -85,9 +85,7 @@ export default class WalletConnect extends Plugin {
 
   async disconnect(){
     console.log("disconnect")
-
-    this.provider.disconnect();
-    this.provider.close()
+    await this.call("web3Provider", "disconnect");
     this.print(`Disconnected from wallet`)
     this.emit("disconnect")
   }

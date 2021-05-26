@@ -5,7 +5,7 @@ export const profile = {
   displayName: "Global Web3 Provider",
   description:
     "Represent the current web3 provider used by the app at global scope",
-  methods: ["sendAsync", "setProvider"],
+  methods: ["sendAsync", "setProvider", "disconnect"],
   version: "0.0.1",
   kind: "provider",
 };
@@ -19,6 +19,16 @@ export class Web3ProviderModule extends Plugin {
   setProvider(provider: any){
     console.log("add provider", provider)
     this.web3Provider = provider
+  }
+
+  disconnect(){
+    try{
+      //this.web3Provider.disconnect();
+      //this.web3Provider.close();
+      delete this.web3Provider
+    }catch(e){
+      console.log(e)
+    }
   }
 
   sendAsync(payload: any) {

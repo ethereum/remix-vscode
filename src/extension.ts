@@ -26,7 +26,7 @@ import {
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import DeployModule from "./plugins/deploy";
+import DeployModule from "./plugins/udapp";
 import {
   pluginActivate,
   pluginDeactivate,
@@ -40,6 +40,7 @@ import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/wallet";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import OffsetToLineColumnConverter from "./plugins/offsetToLineColumnConverter";
+import semver from "semver";
 const queryString = require("query-string");
 
 class VscodeManager extends VscodeAppManager {
@@ -49,6 +50,7 @@ class VscodeManager extends VscodeAppManager {
 }
 
 export async function activate(context: ExtensionContext) {
+  console.log(context.extension.packageJSON.version);
   let selectedVersion: string = "latest";
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
@@ -79,8 +81,7 @@ export async function activate(context: ExtensionContext) {
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
-    dark:
-      "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
+    dark: "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
@@ -103,18 +104,41 @@ export async function activate(context: ExtensionContext) {
     web3Povider,
     deployModule,
     wallet,
-    vscodeExtAPI
+    vscodeExtAPI,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin(["web3Provider", "udapp","offsetToLineColumnConverter"]);
+  await manager.activatePlugin([
+    "web3Provider",
+    "udapp",
+    "offsetToLineColumnConverter",
+  ]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData();
+/*   const defaultPluginData = [
+    {
+      name: "vscodeudapp",
+      displayName: "Deploy & Run",
+      events: [],
+      methods: ["displayUri"],
+      version: "0.1.0",
+      url: "http://localhost:3000",
+      documentation:
+        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+      description: "Connect to a network to run and deploy.",
+      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      },
+    },
+  ]; */
   rmxPluginsProvider.setDefaultData(defaultPluginData);
-  
+  //console.log(defaultPluginData);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
@@ -144,12 +168,28 @@ export async function activate(context: ExtensionContext) {
     }
   });
 
+  const checkSemver = async (pluginData: PluginInfo) => {
+    if (!(pluginData.targetVersion && pluginData.targetVersion.vscode))
+      return true;
+    return semver.satisfies(
+      context.extension.packageJSON.version,
+      pluginData.targetVersion.vscode
+    );
+  };
+
   const activatePlugin = async (pluginId: string) => {
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(
       pluginId,
       rmxPluginsProvider.getData()
     );
+    const versionCheck = await checkSemver(pluginData);
+    if (!versionCheck) {
+      window.showErrorMessage(
+        `This plugin requires an update of the extension. Please update now.`
+      );
+      return false;
+    }
     // choose window column for display
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
@@ -158,7 +198,13 @@ export async function activate(context: ExtensionContext) {
       engine.register(plugin);
     }
 
-    manager.activatePlugin([pluginId, 'solidity', 'fileManager', 'editor', 'vscodeExtAPI']);
+    manager.activatePlugin([
+      pluginId,
+      "solidity",
+      "fileManager",
+      "editor",
+      "vscodeExtAPI",
+    ]);
     const profile: Profile = await manager.getProfile(pluginId);
     window.showInformationMessage(
       `${profile.displayName} v${profile.version} activated.`
@@ -181,20 +227,18 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.deploy", async () => {
     // await wallet.connect();
     const contracts = Object.keys(deployModule.compiledContracts);
-    console.log(contracts)
-    const opts: Array<QuickPickItem> = contracts.map(
-      (v): QuickPickItem => {
-        const vopt: QuickPickItem = {
-          label: v,
-          description: `Deploy contract: ${v}`,
-        };
-        return vopt;
-      }
-    );
+    console.log(contracts);
+    const opts: Array<QuickPickItem> = contracts.map((v): QuickPickItem => {
+      const vopt: QuickPickItem = {
+        label: v,
+        description: `Deploy contract: ${v}`,
+      };
+      return vopt;
+    });
     window.showQuickPick(opts).then(async (selected) => {
       if (selected) {
         console.log("deploy ", selected.label);
-        await deployModule.deploy(selected.label, [])
+        await deployModule.deploy(selected.label, []);
       }
     });
   });

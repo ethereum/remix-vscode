@@ -22,7 +22,7 @@ const profile = {
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
-  methods: ["deploy", "send", "addNetwork", "getAccounts", "setAccount"],
+  methods: ["deploy", "send", "addNetwork", "getAccounts", "setAccount", "disconnect"],
   events: ["receipt", "deploy"],
   kind: "file-system",
 };
@@ -68,17 +68,19 @@ export default class DeployModule extends Plugin {
     this.call("web3Provider", "setProvider", networkprovider);
   }
 
-  async setAccount(account: string){
-    this.web3.eth.defaultAccount = account
-    this.print(`Account changed to ${this.web3.eth.defaultAccount}`)
+  async setAccount(account: string) {
+    this.web3.eth.defaultAccount = account;
+    this.print(`Account changed to ${this.web3.eth.defaultAccount}`);
   }
 
-  async getAccounts() {
+  async getAccounts(setAccount: boolean = true) {
     try {
       if (await this.web3.eth.net.isListening()) {
         let accounts = await this.web3.eth.getAccounts();
-        if(accounts.length > 0 )this.web3.eth.defaultAccount = accounts[0]
-        this.print(`Account changed to ${this.web3.eth.defaultAccount}`)
+        if (setAccount){
+          if (accounts.length > 0) this.web3.eth.defaultAccount = accounts[0];
+          this.print(`Account changed to ${this.web3.eth.defaultAccount}`);
+        }
         return accounts;
       }
     } catch (e) {
@@ -89,7 +91,6 @@ export default class DeployModule extends Plugin {
 
   // web3
   async addPluginProvider(profile) {
-    console.log(profile);
     if (profile.kind === "provider") {
       ((profile, app) => {
         let web3Provider = {
@@ -102,7 +103,6 @@ export default class DeployModule extends Plugin {
             }
           },
         };
-        console.log("ADD PROVIDER ", web3Provider);
         this.call("web3Provider", "setProvider", web3Provider);
         this.web3Provider = {
           async sendAsync(payload, callback) {
@@ -140,7 +140,6 @@ export default class DeployModule extends Plugin {
 
   async showContractPicker() {
     const keys = Object.keys(this.compiledContracts);
-    console.log(keys);
   }
 
   async detectNetwork() {
@@ -228,7 +227,7 @@ export default class DeployModule extends Plugin {
         })
         .on("receipt", async function (receipt) {
           console.log(receipt);
-          me.emit("deploy", receipt);
+          me.emit("deploy", { receipt: receipt, abi:c.abi, contractName: contractName })
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress);
           me.print(link);
@@ -237,7 +236,7 @@ export default class DeployModule extends Plugin {
     } catch (e) {
       console.log("ERROR ", e);
       this.print(`There are errors deploying: ${e}`);
-      throw new Error(`There are errors deploying: ${e}`)
+      throw new Error(`There are errors deploying: ${e}`);
     }
   }
 
@@ -267,7 +266,9 @@ export default class DeployModule extends Plugin {
           this.print(
             `Calling method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${this.web3.eth.defaultAccount} at contract address ${address}`
+            )} from ${
+              this.web3.eth.defaultAccount
+            } at contract address ${address}`
           );
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).call({
@@ -281,15 +282,16 @@ export default class DeployModule extends Plugin {
           // TODO: LOG
         } catch (e) {
           console.error(e);
-          throw new Error(`There are errors calling: ${e}`)
-          
+          throw new Error(`There are errors calling: ${e}`);
         }
       } else {
         try {
           this.print(
             `Send data to method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${this.web3.eth.defaultAccount} at contract address ${address}`
+            )} from ${
+              this.web3.eth.defaultAccount
+            } at contract address ${address}`
           );
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).send({
@@ -303,14 +305,13 @@ export default class DeployModule extends Plugin {
           // TODO: LOG
         } catch (e) {
           console.error(e);
-          throw new Error(`There are errors sending data: ${e}`)
-
+          throw new Error(`There are errors sending data: ${e}`);
         }
       }
     } catch (e) {
       console.log("ERROR ", e);
       this.print(`There are errors sending data.`);
-      throw new Error(`There are errors sending data: ${e}`)
+      throw new Error(`There are errors sending data: ${e}`);
     }
   }
 }

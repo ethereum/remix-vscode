@@ -26,7 +26,7 @@ import {
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import DeployModule from "./plugins/deploy";
+import DeployModule from "./plugins/udapp";
 import {
   pluginActivate,
   pluginDeactivate,
@@ -39,12 +39,11 @@ import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/wallet";
 import { Web3ProviderModule } from "./plugins/web3provider";
-import OffsetToLineColumnConverter from "./plugins/offsetToLineColumnConverter";
+import semver from "semver";
 const queryString = require("query-string");
 const remixd = require("@remix-project/remixd");
 class VscodeManager extends VscodeAppManager {
   onActivation() {
-    console.log("manager activated");
   }
 }
 
@@ -69,7 +68,6 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const deployModule = new DeployModule();
-  const OffsetToLineColumnConverterModule = new OffsetToLineColumnConverter();
   const web3Povider = new Web3ProviderModule();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
@@ -98,7 +96,6 @@ export async function activate(context: ExtensionContext) {
     editorPlugin,
     theme,
     importer,
-    OffsetToLineColumnConverterModule,
     web3Povider,
     deployModule,
     wallet,
@@ -109,15 +106,32 @@ export async function activate(context: ExtensionContext) {
   await manager.activatePlugin([
     "web3Provider",
     "udapp",
-    "offsetToLineColumnConverter",
   ]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData();
+  /* const defaultPluginData = [
+    {
+      name: "vscodeudapp",
+      displayName: "Deploy & Run",
+      events: [],
+      methods: ["displayUri"],
+      version: "0.1.0",
+      url: "http://localhost:3000",
+      documentation:
+        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+      description: "Connect to a network to run and deploy.",
+      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      },
+    },
+  ];  */
   rmxPluginsProvider.setDefaultData(defaultPluginData);
-
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
@@ -147,12 +161,28 @@ export async function activate(context: ExtensionContext) {
     }
   });
 
+  const checkSemver = async (pluginData: PluginInfo) => {
+    if (!(pluginData.targetVersion && pluginData.targetVersion.vscode))
+      return true;
+    return semver.satisfies(
+      context.extension.packageJSON.version,
+      pluginData.targetVersion.vscode
+    );
+  };
+
   const activatePlugin = async (pluginId: string) => {
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(
       pluginId,
       rmxPluginsProvider.getData()
     );
+    const versionCheck = await checkSemver(pluginData);
+    if (!versionCheck) {
+      window.showErrorMessage(
+        `This plugin requires an update of the extension. Please update now.`
+      );
+      return false;
+    }
     // choose window column for display
     const cl = ToViewColumn(pluginData);
     const plugin = new WebviewPlugin(pluginData, { context, column: cl });
@@ -230,7 +260,6 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.deploy", async () => {
     // await wallet.connect();
     const contracts = Object.keys(deployModule.compiledContracts);
-    console.log(contracts);
     const opts: Array<QuickPickItem> = contracts.map((v): QuickPickItem => {
       const vopt: QuickPickItem = {
         label: v,
@@ -240,7 +269,6 @@ export async function activate(context: ExtensionContext) {
     });
     window.showQuickPick(opts).then(async (selected) => {
       if (selected) {
-        console.log("deploy ", selected.label);
         await deployModule.deploy(selected.label, []);
       }
     });
@@ -254,7 +282,6 @@ export async function activate(context: ExtensionContext) {
     }
   );
   commands.registerCommand("rmxPlugins.refreshEntry", () => {
-    console.log("Remix Plugin will refresh plugin list.");
     rmxPluginsProvider.refresh();
   });
   commands.registerCommand("rmxPlugins.addEntry", () => {
@@ -296,11 +323,6 @@ export async function activate(context: ExtensionContext) {
     } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
-      //Uninstall: pluginUninstall,
-      // TODO: add following menu options
-      // install,
-      // uninstall,
-      // configure
     };
     if (pluginData.documentation)
       options["Documentation"] = pluginDocumentation;
@@ -324,7 +346,6 @@ export async function activate(context: ExtensionContext) {
     async (pluginId: string) => {
       manager.deactivatePlugin([pluginId]);
       editorPlugin.discardDecorations();
-      console.log(`${pluginId} plugin deactivated!`);
     }
   );
   // Version selector

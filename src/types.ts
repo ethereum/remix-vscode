@@ -13,7 +13,10 @@ export interface PluginInfo {
   documentation?: string | null;
   permission?: boolean;
   targets?: string[];
+  targetVersion?: any | null;
 }
+
+
 interface Notifications {
   solidity?: string[] | null;
   udapp?: string[] | null;

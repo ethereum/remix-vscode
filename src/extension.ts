@@ -283,11 +283,6 @@ export async function activate(context: ExtensionContext) {
     } = {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
-      //Uninstall: pluginUninstall,
-      // TODO: add following menu options
-      // install,
-      // uninstall,
-      // configure
     };
     if (pluginData.documentation)
       options["Documentation"] = pluginDocumentation;

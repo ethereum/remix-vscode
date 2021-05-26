@@ -39,7 +39,6 @@ import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/wallet";
 import { Web3ProviderModule } from "./plugins/web3provider";
-import OffsetToLineColumnConverter from "./plugins/offsetToLineColumnConverter";
 import semver from "semver";
 const queryString = require("query-string");
 
@@ -71,7 +70,6 @@ export async function activate(context: ExtensionContext) {
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
   const deployModule = new DeployModule();
-  const OffsetToLineColumnConverterModule = new OffsetToLineColumnConverter();
   const web3Povider = new Web3ProviderModule();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
@@ -100,7 +98,6 @@ export async function activate(context: ExtensionContext) {
     editorPlugin,
     theme,
     importer,
-    OffsetToLineColumnConverterModule,
     web3Povider,
     deployModule,
     wallet,
@@ -111,7 +108,6 @@ export async function activate(context: ExtensionContext) {
   await manager.activatePlugin([
     "web3Provider",
     "udapp",
-    "offsetToLineColumnConverter",
   ]);
   await deployModule.setListeners();
   await manager.activatePlugin(["walletconnect"]);

@@ -112,7 +112,7 @@ export async function activate(context: ExtensionContext) {
 
   // fetch default data from the plugins-directory filtered by engine
   const defaultPluginData = await manager.registeredPluginData();
-/*   const defaultPluginData = [
+  /* const defaultPluginData = [
     {
       name: "vscodeudapp",
       displayName: "Deploy & Run",
@@ -130,7 +130,7 @@ export async function activate(context: ExtensionContext) {
         vscode: ">=0.0.8",
       },
     },
-  ]; */
+  ];  */
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {

@@ -44,12 +44,10 @@ const queryString = require("query-string");
 
 class VscodeManager extends VscodeAppManager {
   onActivation() {
-    console.log("manager activated");
   }
 }
 
 export async function activate(context: ExtensionContext) {
-  console.log(context.extension.packageJSON.version);
   let selectedVersion: string = "latest";
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
@@ -134,7 +132,6 @@ export async function activate(context: ExtensionContext) {
     },
   ]; */
   rmxPluginsProvider.setDefaultData(defaultPluginData);
-  //console.log(defaultPluginData);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
@@ -223,7 +220,6 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.deploy", async () => {
     // await wallet.connect();
     const contracts = Object.keys(deployModule.compiledContracts);
-    console.log(contracts);
     const opts: Array<QuickPickItem> = contracts.map((v): QuickPickItem => {
       const vopt: QuickPickItem = {
         label: v,
@@ -233,7 +229,6 @@ export async function activate(context: ExtensionContext) {
     });
     window.showQuickPick(opts).then(async (selected) => {
       if (selected) {
-        console.log("deploy ", selected.label);
         await deployModule.deploy(selected.label, []);
       }
     });
@@ -247,7 +242,6 @@ export async function activate(context: ExtensionContext) {
     }
   );
   commands.registerCommand("rmxPlugins.refreshEntry", () => {
-    console.log("Remix Plugin will refresh plugin list.");
     rmxPluginsProvider.refresh();
   });
   commands.registerCommand("rmxPlugins.addEntry", () => {
@@ -317,7 +311,6 @@ export async function activate(context: ExtensionContext) {
     async (pluginId: string) => {
       manager.deactivatePlugin([pluginId]);
       editorPlugin.discardDecorations();
-      console.log(`${pluginId} plugin deactivated!`);
     }
   );
   // Version selector

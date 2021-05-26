@@ -17,7 +17,6 @@ export default class WalletConnect extends Plugin {
   provider: WalletConnectProvider;
   constructor() {
     super(profile);
-    console.log("new wallet");
     this.outputChannel = window.createOutputChannel("Remix IDE");
   }
 
@@ -40,16 +39,13 @@ export default class WalletConnect extends Plugin {
   async setListeners() {
     this.emit("disconnect")
     this.provider.connector.on("display_uri", (err, payload) => {
-      console.log("EXT display uri")
       const uri = payload.params[0];
-      console.log(uri);
       this.print(`Connect to wallet with URI: ${uri}`)
       this.call("vscodeudapp" as any, "qr", uri);
     });
 
     // Subscribe to accounts change
     this.provider.on("accountsChanged", (accounts: string[]) => {
-      console.log(accounts);
       for(const account of accounts){
         this.print(`Wallet account : ${account}`)
       }
@@ -63,7 +59,6 @@ export default class WalletConnect extends Plugin {
     this.provider.on("chainChanged", (chainId: number) => {
       this.print(`Wallet chain changed : ${chainId}`)
       this.emit("chainChanged", chainId)
-      console.log(chainId);
     });
 
     // Subscribe to session disconnection
@@ -75,7 +70,6 @@ export default class WalletConnect extends Plugin {
   }
 
   async connect() {
-    console.log("connect");
     await this.createProvider()
 
     this.provider.enable();
@@ -84,7 +78,6 @@ export default class WalletConnect extends Plugin {
   }
 
   async disconnect(){
-    console.log("disconnect")
     await this.call("web3Provider", "disconnect");
     this.print(`Disconnected from wallet`)
     this.emit("disconnect")
@@ -106,7 +99,6 @@ export default class WalletConnect extends Plugin {
     return new Promise((resolve, reject) => {
       if (this.provider) {
         this.provider.sendAsync(data, (error, message) => {
-          // console.log('in plugin', data, error, message)
           if (error) return reject(error);
           resolve(message);
         });

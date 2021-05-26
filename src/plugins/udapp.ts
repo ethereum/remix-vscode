@@ -41,7 +41,6 @@ export default class DeployModule extends Plugin {
 
   async setListeners() {
     // listen for plugins
-    console.log("set listeners");
     this.on(
       "manager",
       "pluginActivated",
@@ -56,9 +55,7 @@ export default class DeployModule extends Plugin {
       "solidity",
       "compilationFinished",
       (file, source, languageVersion, data) => {
-        console.log("compile finished", file, source, data);
         this.compiledContracts = data.contracts[file];
-        console.log(this.compiledContracts);
       }
     );
   }
@@ -180,7 +177,6 @@ export default class DeployModule extends Plugin {
     const selectedContractKey = Object.keys(this.compiledContracts).find(
       (name) => name == contractName
     );
-    console.log(selectedContractKey);
     const c = this.compiledContracts[selectedContractKey];
     console.log(c);
     return c;
@@ -202,18 +198,12 @@ export default class DeployModule extends Plugin {
         return;
       }
       let accounts = await this.web3.eth.getAccounts();
-      console.log(accounts);
       await this.detectNetwork();
-
-      console.log("content abi", c.abi);
       let contract = new this.web3.eth.Contract(c.abi);
-      console.log("content bytecode", c.evm.bytecode.object);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
         arguments: payload,
       });
-
-      console.log("deploy object ", deployObject);
       let gasValue = await deployObject.estimateGas();
       const gasBase = Math.ceil(gasValue * 1.2);
       const gas = gasBase;
@@ -226,7 +216,6 @@ export default class DeployModule extends Plugin {
           gas: gas,
         })
         .on("receipt", async function (receipt) {
-          console.log(receipt);
           me.emit("deploy", { receipt: receipt, abi:c.abi, contractName: contractName })
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress);
@@ -257,12 +246,6 @@ export default class DeployModule extends Plugin {
       let accounts = await this.web3.eth.getAccounts();
       if (abi.stateMutability === "view" || abi.stateMutability === "pure") {
         try {
-          console.log(
-            "calling ",
-            contract.methods[abi.name],
-            payload,
-            this.web3.eth.defaultAccount
-          );
           this.print(
             `Calling method '${abi.name}' with ${JSON.stringify(
               payload
@@ -275,8 +258,6 @@ export default class DeployModule extends Plugin {
                 from: this.web3.eth.defaultAccount,
               })
             : null;
-          //this.emit('receipt', txReceipt)
-          console.log(txReceipt);
           this.print(JSON.stringify(txReceipt));
           return txReceipt;
           // TODO: LOG
@@ -298,8 +279,6 @@ export default class DeployModule extends Plugin {
                 from: this.web3.eth.defaultAccount,
               })
             : null;
-          console.log(txReceipt);
-          //this.emit('receipt', txReceipt)
           this.print(JSON.stringify(txReceipt));
           return txReceipt;
           // TODO: LOG

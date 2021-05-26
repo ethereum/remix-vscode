@@ -2,7 +2,7 @@
 	"name": "ethereum-remix",
 	"displayName": "Ethereum Remix",
 	"description": "Ethereum Remix plugins in VSCode",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"publisher": "RemixProject",
 	"enableProposedApi": true,
 	"icon": "media/icon.png",
@@ -149,15 +149,18 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./"
+		"vscode:prepublish": "npm run -S esbuild-base -- --minify",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --external:electron --format=cjs --platform=node",
+		"esbuild": "npm run -S esbuild-base -- --sourcemap",
+		"esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch",
+		"test-compile": "tsc -p ./"
 	},
 	"devDependencies": {
 		"@types/mkdirp": "^0.5.2",
 		"@types/node": "^10.12.21",
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.47.0",
+		"esbuild": "^0.12.3",
 		"tslint": "^5.12.1",
 		"typescript": "^3.9.7"
 	},

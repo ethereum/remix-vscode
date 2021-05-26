@@ -12,6 +12,7 @@ For more info on what Remix is and what plugins do please visit our [Remix IDE](
   - [Select, activate, deactivate a plugin](#select-activate-deactivate-a-plugin)
   - [Load a development plugin](#load-a-development-plugin)
   - [Compiling Solidity & Yul](#compiling-solidity--yul)
+  - [Deploying contracts & Wallet Connect](#deploying-contracts--wallet-connect)
   - [Contributing and development](#contributing-and-development)
 
 ## A beta release. 
@@ -95,6 +96,9 @@ You can also change the compiler version of both compilers from the command pale
 </p>
 
 You can change to Yul development the same way using the language selector in the command palette.
+
+## Deploying contracts & Wallet Connect
+
 
 ## Contributing and development
 

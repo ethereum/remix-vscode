@@ -1,6 +1,7 @@
 import { Plugin } from "@remixproject/engine";
 import { OutputChannel, window, workspace } from "vscode";
 const remixd = require("@remix-project/remixd");
+const http = require("http");
 
 const profile = {
   name: "remixdprovider",
@@ -68,9 +69,33 @@ export default class RemixDProvider extends Plugin {
     this.call("terminal", "log", m)
   }
 
+  async testService(service) {
+    console.log("testing ", service)
+
+    return new Promise((resolve, reject) => {
+      let server = http.createServer((request, response) => {
+        console.log((new Date()) + ' Received request for ' + request.url);
+        response.writeHead(404);
+        response.end();
+      });
+
+      server.on('error', (e) => {
+        reject(e)
+      });
+    
+      const loopback = '127.0.0.1';
+      server.listen(this.ports[service], loopback, () => {
+        server.close()
+        resolve(true)
+      });
+    })
+
+  }
+
   async startService(service, callback) {
+    this.print(`starting service on ${this.remixIdeUrl}`);
     try {
-      this.print(`starting service on ${this.remixIdeUrl}`);
+      
       this.socket = new remixd.Websocket(
         this.ports[service],
         { remixIdeUrl: this.remixIdeUrl },
@@ -78,6 +103,7 @@ export default class RemixDProvider extends Plugin {
       );
       this.socket.start(callback);
     } catch (e) {
+      //console.log("remixd error")
       console.error(e);
     }
   }
@@ -151,7 +177,20 @@ export default class RemixDProvider extends Plugin {
 
       this.remixIdeUrl = network;
     }
-    await this.start();
+    try {
+      await this.testService("folder")
+      await this.start()
+    } catch (e) {
+      console.log("server error: ", e)
+      if (e.code === 'EADDRINUSE') {
+        window.showErrorMessage("There is already a remixd client running on this port!")
+        this.print("There is already a remixd client running on this port!")
+      } else {
+        window.showErrorMessage("An error has occured.")
+      }
+    }
+    
+    //await this.start();
     //await this.createProvider();
     //this.emit("connect")
   }

@@ -188,6 +188,7 @@
 		"@walletconnect/web3-provider": "^1.4.1",
 		"axios": "^0.21.1",
 		"ftp": "^0.3.10",
+		"http": "^0.0.1-security",
 		"ipfs-http-client": "47.0.1",
 		"isomorphic-git": "^1.8.1",
 		"jsonc-parser": "^0.4.2",

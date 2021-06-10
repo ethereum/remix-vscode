@@ -71,6 +71,9 @@ export default class DeployModule extends Plugin {
   }
 
   async getAccounts(setAccount: boolean = true) {
+    let provider = await this.call("web3Provider", "getProvider");
+    console.log("GET ACCOUNTS UDAPP", provider);
+    if(!provider) return []
     try {
       if (await this.web3.eth.net.isListening()) {
         let accounts = await this.web3.eth.getAccounts();

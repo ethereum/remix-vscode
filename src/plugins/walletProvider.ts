@@ -49,7 +49,7 @@ export default class WalletConnect extends Plugin {
       for(const account of accounts){
         this.print(`Wallet account : ${account}`)
       }
-      this.emit('accountsChanged', accounts || [])
+      //this.emit('accountsChanged', accounts || [])
       this.call("udapp" as any, "getAccounts");
       //this.call("walletconnect" as any, "dismiss");
       //this.provider.disconnect();
@@ -96,6 +96,7 @@ export default class WalletConnect extends Plugin {
   }
 
   sendAsync = (data) => {
+    console.log(data)
     return new Promise((resolve, reject) => {
       if (this.provider) {
         this.provider.sendAsync(data, (error, message) => {

@@ -68,6 +68,11 @@
 				"category": "Remix"
 			},
 			{
+				"command": "rmxPlugins.testaction",
+				"title": "test action",
+				"category": "Remix"
+			},
+			{
 				"command": "rmxPlugins.deploy",
 				"title": "Deploy compiled contract to Wallet Connect",
 				"category": "Remix"
@@ -172,6 +177,7 @@
 	},
 	"dependencies": {
 		"@remix-project/remix-url-resolver": "^0.0.18",
+		"@remix-project/remixd": "^0.3.5",
 		"@remixproject/engine": "^0.3.17",
 		"@remixproject/engine-vscode": "^0.3.17",
 		"@remixproject/plugin": "^0.3.17",

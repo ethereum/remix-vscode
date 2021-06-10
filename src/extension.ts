@@ -26,6 +26,7 @@ import {
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
+import Terminal from './plugins/terminal'
 import DeployModule from "./plugins/udapp";
 import {
   pluginActivate,
@@ -37,11 +38,12 @@ import { ExtAPIPlugin } from "./plugins/ext_api_plugin";
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
-import WalletConnect from "./plugins/wallet";
+import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
+import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
-const queryString = require("query-string");
-const remixd = require("@remix-project/remixd");
+
+
 class VscodeManager extends VscodeAppManager {
   onActivation() {
   }
@@ -67,8 +69,10 @@ export async function activate(context: ExtensionContext) {
   const engine = new Engine();
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
+  const terminal = new Terminal();
   const deployModule = new DeployModule();
   const web3Povider = new Web3ProviderModule();
+  const RemixD = new RemixDProvider();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
   const filemanager = new FileManagerPlugin();
@@ -92,6 +96,7 @@ export async function activate(context: ExtensionContext) {
   engine.register([
     manager,
     solpl,
+    terminal,
     filemanager,
     editorPlugin,
     theme,
@@ -100,6 +105,7 @@ export async function activate(context: ExtensionContext) {
     deployModule,
     wallet,
     vscodeExtAPI,
+    RemixD,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
@@ -108,11 +114,11 @@ export async function activate(context: ExtensionContext) {
     "udapp",
   ]);
   await deployModule.setListeners();
-  await manager.activatePlugin(["walletconnect"]);
+  await manager.activatePlugin(["walletconnect","remixdprovider"]);
 
   // fetch default data from the plugins-directory filtered by engine
-  const defaultPluginData = await manager.registeredPluginData();
-  /* const defaultPluginData = [
+  let defaultPluginData = await manager.registeredPluginData();
+  defaultPluginData = [
     {
       name: "vscodeudapp",
       displayName: "Deploy & Run",
@@ -130,7 +136,7 @@ export async function activate(context: ExtensionContext) {
         vscode: ">=0.0.8",
       },
     },
-  ];  */
+  ];  
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
@@ -145,6 +151,7 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.compile.solidity", async () => {
     await manager.activatePlugin([
       "solidity",
+      "terminal",
       "fileManager",
       "editor",
       "contentImport",
@@ -211,44 +218,13 @@ export async function activate(context: ExtensionContext) {
     //await web3Module.deploy()
   });
 
-  let sharedFolderClient = new remixd.services.sharedFolder();
-  let gitClient = new remixd.services.GitClient();
-  const services = {
-    git: () => {
-      gitClient.options.customApi = {};
-      return gitClient;
-    },
-    folder: () => {
-      sharedFolderClient.options.customApi = {};
-      return sharedFolderClient;
-    },
-  };
-
-  const remixIdeUrl = "https://remix.ethereum.org/";
-
-  const ports = {
-    git: 65521,
-    folder: 65520,
-  };
-
-  function startService(service, callback) {
-    try {
-      const socket = new remixd.Websocket(ports[service], { remixIdeUrl }, () =>
-        services[service]()
-      );
-      socket.start(callback);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  commands.registerCommand("rmxPlugins.testaction", async () => {
+    //sharedFolderClient.call("fileManager",'getCurrentFile')
+    RemixD.connect(undefined)  
+  });
 
   commands.registerCommand("rmxPlugins.remixd", async () => {
-    const currentFolder = workspace.workspaceFolders[0].uri.fsPath;
-    startService("folder", (ws, client) => {
-      client.setWebSocket(ws)
-      client.sharedFolder(currentFolder, false)
-      client.setupNotifications(currentFolder)
-    });
+    RemixD.start()
   });
 
   commands.registerCommand("rmxPlugins.walletDisconnect", async () => {

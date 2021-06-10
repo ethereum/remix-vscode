@@ -1,6 +1,6 @@
 import { Plugin } from "@remixproject/engine";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { OutputChannel, window } from "vscode";
+import { window } from "vscode";
 
 const profile = {
   name: "walletconnect",
@@ -13,11 +13,9 @@ const profile = {
   kind: "provider",
 };
 export default class WalletConnect extends Plugin {
-  private outputChannel: OutputChannel;
   provider: WalletConnectProvider;
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
   }
 
   async createProvider() {
@@ -84,15 +82,8 @@ export default class WalletConnect extends Plugin {
   }
 
   // terminal printing
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
-
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m)
   }
 
   sendAsync = (data) => {

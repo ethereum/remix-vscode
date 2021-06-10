@@ -60,13 +60,17 @@ export default class RemixDProvider extends Plugin {
       })
       .catch(async (e) => {
         console.log("ERROR CONNECTING", e);
-        await this.call("terminal","log", `Connect to Remix`);
+        this.print(`Connect to Remix`);
       });
+  }
+
+  private print(m: string) {
+    this.call("terminal", "log", m)
   }
 
   async startService(service, callback) {
     try {
-      await this.call("terminal","log", `starting service on ${this.remixIdeUrl}`);
+      this.print(`starting service on ${this.remixIdeUrl}`);
       this.socket = new remixd.Websocket(
         this.ports[service],
         { remixIdeUrl: this.remixIdeUrl },
@@ -95,18 +99,16 @@ export default class RemixDProvider extends Plugin {
       client.sharedFolder(currentFolder, false);
       client.setupNotifications(currentFolder);
       client.websocket.onclose = async function () {
-        await self.call("terminal","log", "Connection to Remix is closed now.");
+        self.print("Connection to Remix is closed now.");
         await self.disconnect();
       };
-      await this.call("terminal","log", `Connected to Remix`)
+      this.print(`Connected to Remix`)
       //await this.createProvider();
 
       //this.status = "connected";
       //this.emit("statusChanged", this.status);
     });
-    await this.call("terminal","log", (
-      `Connecting to Remix ... please go to ${this.remixIdeUrl} to connect to localhost in the File Explorer.`
-    );
+    this.print(`Connecting to Remix ... please go to ${this.remixIdeUrl} to connect to localhost in the File Explorer.`);
   }
 
   async createProvider() {
@@ -137,7 +139,7 @@ export default class RemixDProvider extends Plugin {
   }
 
   async getAccounts() {
-    await this.call("terminal","log", "Getting accounts");
+    this.print("Getting accounts");
     this.call("udapp" as any, "getAccounts");
   }
 
@@ -165,7 +167,7 @@ export default class RemixDProvider extends Plugin {
     } catch (error) {
       //console.log(error);
     }
-    await this.call("terminal","log", (`Disconnected`);
+    this.print(`Disconnected`);
     this.emit("disconnect");
     this.status = "disconnected";
     //this.emit("statusChanged", this.status);

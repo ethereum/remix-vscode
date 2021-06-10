@@ -27,11 +27,9 @@ interface ICompilationResult {
 export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = 'latest';
   private versions: Array<string>;
-  private outputChannel: OutputChannel;
   private compilationResult: ICompilationResult;
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
     this.loadSolidityVersions();
   }
   getVersion() {
@@ -44,14 +42,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
     // });
     return fork(path.join(__dirname, "compile_worker.js"));
   }
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m)
   }
   async compile(_version: string, opts: CompilerInputOptions) {
     this.print("Compilation started!")

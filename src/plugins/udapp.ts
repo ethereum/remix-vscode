@@ -27,7 +27,6 @@ const profile = {
   kind: "file-system",
 };
 export default class DeployModule extends Plugin {
-  private outputChannel: OutputChannel;
   private web3Provider;
   public compiledContracts;
   private accounts: string[] = [];
@@ -35,7 +34,6 @@ export default class DeployModule extends Plugin {
   private networkName: string;
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
     this.compiledContracts = {};
   }
 
@@ -127,15 +125,8 @@ export default class DeployModule extends Plugin {
     if (profile.kind === "provider") this.web3Provider = null;
   }
 
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
-
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m)
   }
 
   async showContractPicker() {

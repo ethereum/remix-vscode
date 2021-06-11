@@ -59,6 +59,7 @@ export default class DeployModule extends Plugin {
   }
 
   async addNetwork(network: string) {
+    this.print(`Adding network ${network}`)
     let networkprovider = new Web3.providers.HttpProvider(network);
     this.call("web3Provider", "setProvider", networkprovider);
   }

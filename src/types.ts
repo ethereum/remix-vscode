@@ -6,7 +6,7 @@ export interface PluginInfo {
   events?: null[] | null;
   version?: string | null;
   url: string;
-  icon: string;
+  icon: any;
   location: string;
   kind?: string | null;
   notifications?: Notifications | null;
@@ -14,6 +14,8 @@ export interface PluginInfo {
   permission?: boolean;
   targets?: string[];
   targetVersion?: any | null;
+  options?: any | null;
+  optionArgs?: any | null;
 }
 
 

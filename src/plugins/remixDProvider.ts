@@ -21,7 +21,7 @@ const profile = {
   kind: "provider",
 };
 
-export type remixdStatus = "connected" | "disconnected";
+export type remixdStatus = "connected" | "disconnected" | "waiting";
 
 export default class RemixDProvider extends Plugin {
   provider: any;
@@ -30,7 +30,7 @@ export default class RemixDProvider extends Plugin {
   socket: any;
   status: remixdStatus;
   remixIdeUrl = "https://remix.ethereum.org/";
-
+  
   ports = {
     git: 65521,
     folder: 65520,
@@ -38,6 +38,8 @@ export default class RemixDProvider extends Plugin {
 
   constructor() {
     super(profile);
+    setInterval(this.getStatus, 5000, this)
+   
   }
 
   async createClient() {
@@ -70,7 +72,7 @@ export default class RemixDProvider extends Plugin {
   }
 
   async testService(service) {
-    console.log("testing ", service)
+    //console.log("testing ", service)
 
     return new Promise((resolve, reject) => {
       let server = http.createServer((request, response) => {
@@ -92,6 +94,7 @@ export default class RemixDProvider extends Plugin {
 
   }
 
+
   async startService(service, callback) {
     this.print(`starting service on ${this.remixIdeUrl}`);
     try {
@@ -102,6 +105,7 @@ export default class RemixDProvider extends Plugin {
         () => this.services[service]()
       );
       this.socket.start(callback);
+      console.log("socket ", this.socket)
     } catch (e) {
       //console.log("remixd error")
       console.error(e);
@@ -172,7 +176,7 @@ export default class RemixDProvider extends Plugin {
   async setListeners() {}
 
   async connect(network: any | undefined) {
-    if (network !== this.remixIdeUrl) {
+    if (network && network !== this.remixIdeUrl) {
       await this.disconnect();
 
       this.remixIdeUrl = network;
@@ -195,6 +199,18 @@ export default class RemixDProvider extends Plugin {
     //this.emit("connect")
   }
 
+  async getStatus(self) {
+    if(self.status === "connected") return true
+    try {
+      await self.testService("folder")
+      self.status = "disconnected"
+      self.emit("statusChanged", self.status);
+    } catch (e) {
+      self.status = "waiting"
+      self.emit("statusChanged", self.status);
+    }
+  }
+
   async disconnect() {
     console.log("DISCONNECT");
     //await this.call("web3Provider", "disconnect");
@@ -209,7 +225,7 @@ export default class RemixDProvider extends Plugin {
     this.print(`Disconnected`);
     this.emit("disconnect");
     this.status = "disconnected";
-    //this.emit("statusChanged", this.status);
+    this.emit("statusChanged", this.status);
   }
 
   async debug(hash: string) {

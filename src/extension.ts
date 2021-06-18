@@ -10,19 +10,26 @@ import {
   Uri,
   extensions,
 } from "vscode";
+import {
+  absolutePath,
+  relativePath,
+} from "@remixproject/engine-vscode/util/path";
 import { PluginManager, Engine } from "@remixproject/engine";
 import { ThemeUrls } from "@remixproject/plugin-api";
 import {
   VscodeAppManager,
   WebviewPlugin,
   ThemePlugin,
-  FileManagerPlugin,
   EditorPlugin,
   EditorOptions,
   transformCmd,
   ThemeOptions,
   ContentImportPlugin,
 } from "@remixproject/engine-vscode";
+
+import 
+  VscodeFileManager 
+from './plugins/file_manager'
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
@@ -33,6 +40,7 @@ import {
   pluginDeactivate,
   pluginDocumentation,
   pluginUninstall,
+  runCommand,
 } from "./optionInputs";
 import { ExtAPIPlugin } from "./plugins/ext_api_plugin";
 import { ToViewColumn, GetPluginData } from "./utils";
@@ -43,6 +51,7 @@ import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
 
+const path = require('path');
 
 class VscodeManager extends VscodeAppManager {
   onActivation() {
@@ -75,7 +84,7 @@ export async function activate(context: ExtensionContext) {
   const RemixD = new RemixDProvider();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
-  const filemanager = new FileManagerPlugin();
+  const filemanager = new VscodeFileManager();
   const editorPlugin = new EditorPlugin(editoropt);
   const importer = new ContentImportPlugin();
   const themeURLs: Partial<ThemeUrls> = {
@@ -134,9 +143,37 @@ export async function activate(context: ExtensionContext) {
       targets: ["vscode"],
       targetVersion: {
         vscode: ">=0.0.8",
-      },
+      }
     },
-  ];  
+    {
+      name: "remixd",
+      displayName: "Start remixd client",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      documentation:
+        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+      description: "Start a remixd client",
+      icon: Uri.file(path.join(context.extensionPath, 'resources', 'redbutton.svg')),
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      },
+      options: {
+        Start: runCommand,
+        Stop: runCommand,
+      },
+      optionArgs: {
+        Start: "rmxPlugins.startRemixd",
+        Stop: "rmxPlugins.stopRemixd"
+      }
+    },
+  ];
+  
+
+  console.log(Uri.file(path.join(context.extensionPath, 'resources', 'redbutton.svg')))
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   // compile
   commands.registerCommand("rmxPlugins.compile", async () => {
@@ -220,11 +257,33 @@ export async function activate(context: ExtensionContext) {
 
   commands.registerCommand("rmxPlugins.testaction", async () => {
     //sharedFolderClient.call("fileManager",'getCurrentFile')
+    //RemixD.connect(undefined)  
+    let file = await filemanager.call('fileManager', 'getOpenedFiles')
+    console.log(file)
+    return
+    console.log("test")
+    for (let d of workspace.textDocuments) {
+      console.log( relativePath(d.fileName))
+    }
+    //console.log(file)
+  });
+
+  RemixD.on("remixdprovider" as any, "statusChanged", (x: any) => {
+    console.log("STATUS CHANGE", x)
+    const icons = {
+      "waiting": "yellowbutton.svg",
+      "connected": "greenbutton.svg",
+      "disconnected": "redbutton.svg"
+    }
+    rmxPluginsProvider.setDataForPlugin("remixd",{icon: Uri.file(path.join(context.extensionPath, 'resources', icons[x])), description: x})
+  })
+
+  commands.registerCommand("rmxPlugins.startRemixd", async () => {
     RemixD.connect(undefined)  
   });
 
-  commands.registerCommand("rmxPlugins.remixd", async () => {
-    RemixD.start()
+  commands.registerCommand("rmxPlugins.stopRemixd", async () => {
+    RemixD.disconnect()  
   });
 
   commands.registerCommand("rmxPlugins.walletDisconnect", async () => {
@@ -296,7 +355,7 @@ export async function activate(context: ExtensionContext) {
     const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
     const options: {
       [key: string]: (context: ExtensionContext, id: string) => Promise<void>;
-    } = {
+    } = pluginData.options || {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
     };
@@ -310,8 +369,9 @@ export async function activate(context: ExtensionContext) {
     const quickPick = window.createQuickPick();
     quickPick.items = Object.keys(options).map((label) => ({ label }));
     quickPick.onDidChangeSelection((selection) => {
+      const args = (pluginData.optionArgs && pluginData.optionArgs[selection[0].label]) || id
       if (selection[0]) {
-        options[selection[0].label](context, id).catch(console.error);
+        options[selection[0].label](context, args).catch(console.error);
       }
     });
     quickPick.onDidHide(() => quickPick.dispose());

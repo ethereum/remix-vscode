@@ -22,7 +22,7 @@ export class Web3ProviderModule extends Plugin {
   }
 
   getProvider(){
-    return this.web3Provider.sendAsync
+    return this.web3Provider
   }
 
   disconnect(){

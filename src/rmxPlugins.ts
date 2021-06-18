@@ -1,3 +1,4 @@
+import { time } from "console";
 import {TreeItem, TreeDataProvider, EventEmitter, Event, TreeItemCollapsibleState, Command} from "vscode";
 import { Uri } from "vscode";
 import { PluginInfo } from "./types";
@@ -14,6 +15,14 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   setDefaultData(data:any[]){
     this.defaultData = data
     this.refresh()
+  }
+
+  setDataForPlugin(name: string, newData: Partial<PluginInfo>) {
+    this.data.map((plugin: PluginInfo, index: number) => {
+      if(plugin.name === name)
+        this.data[index] = {...plugin,... newData}
+    })
+    this._onDidChangeTreeData.fire(null);
   }
 
   getData(){

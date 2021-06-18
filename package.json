@@ -122,8 +122,13 @@
 				"category": "Remix"
 			},
 			{
-				"command": "rmxPlugins.remixd",
+				"command": "rmxPlugins.startRemixd",
 				"title": "Connect to Remix with the remixd daemon",
+				"category": "Remix"
+			},
+			{
+				"command": "rmxPlugins.stopRemixd",
+				"title": "Stop the remixd daemon",
 				"category": "Remix"
 			}
 		],

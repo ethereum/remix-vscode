@@ -22,6 +22,7 @@ export default class Terminal extends Plugin {
   }
 
   async log(msg: any) {
+    if(!msg) return
     if (typeof msg == "string") {
       this.print(msg);
     } else {

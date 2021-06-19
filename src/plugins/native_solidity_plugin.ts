@@ -99,11 +99,13 @@ export default class NativeSolcPlugin extends CommandPlugin {
     });
     solcWorker.on("message", (m: any) => {
       console.log(`............................Solidity worker message............................`);
-      console.log(m);
       if (m.error) {
         this.print(m.error);
         console.error(m.error);
+      } else if (m.processMessage){
+        this.print(m.processMessage)
       } else if (m.data && m.path) {
+        this.print(`Compiling ${m.path}...`)
         sources[m.path] = {
           content: m.data.content,
         };
@@ -121,6 +123,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
           logError(compiled?.errors)
         }
         if (compiled.contracts) {
+          console.log("COMPILED");
           const source = { sources };
           const data = JSON.parse(m.compiled);
           this.compilationResult = {
@@ -130,7 +133,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
             },
             data
           }
-          this.print(`Compilation finished for ${fileName} with solidity version ${m?.version}.`);
+          const contracts = Object.keys(compiled.contracts).join(", ")
+          this.print(`Compilation finished for ${contracts} with solidity version ${m?.version}.`);
           this.emit('compilationFinished', fileName, source, languageVersion, data);
         }
       }

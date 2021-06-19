@@ -84,6 +84,7 @@ export default class DeployModule extends Plugin {
         return accounts;
       }
     } catch (e) {
+      this.print(`Can't get accounts...`)
       console.log(e);
     }
     return [];

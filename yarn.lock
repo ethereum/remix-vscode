@@ -408,12 +408,13 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
-"@remix-project/remix-url-resolver@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.18.tgz#e9239ff43954424093b4df462f6bf8d1239ba528"
-  integrity sha512-p37cC0j7JxhERDC3ur/ARdg1BfgWubB/+gpmrbTjcjzOpMZSO4kHXjtGI/NOy1rEd4CDzZllYb5wSQw94/SAFw==
+"@remix-project/remix-url-resolver@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.21.tgz#0e41e00a242fe43e9637487bd44ff68437ba7fbf"
+  integrity sha512-hKnCPy/k8AuxWQHlCrOsB1TgIgRS6szULnGHkNA5OTAl8lKERnJfDOgY+/OLPjsmBFGKOMt0aIZSqsQ8T3f1ag==
   dependencies:
-    axios "^0.18.0"
+    "@erebos/bzz-node" "^0.13.0"
+    axios ">=0.21.1"
     solc "^0.7.4"
     url "^0.11.0"
     valid-url "^1.0.9"

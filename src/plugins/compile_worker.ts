@@ -22,6 +22,7 @@ function handleLocal(pathString: string, root: string) {
 function findImports(path: any, root: string) {
 	// TODO: We need current solc file path here for relative local import
 	// @ts-ignore
+	
 	process.send({ processMessage: "importing file: " + path });
 	const FSHandler = [
 		{
@@ -39,10 +40,12 @@ function findImports(path: any, root: string) {
 	urlResolver.resolve(path, FSHandler)
 		.then((data: any) => {
 			// @ts-ignore
+			process.send({ processMessage: "importing file succesfull: " + path });
 			process.send({ data, path });
 		})
 		.catch((e: Error) => {
 			// @ts-ignore
+			process.send({ processMessage: "importing file error: " + path });
 			process.send({ error: e });
 		});
 	return { 'error': 'Deferred import' };

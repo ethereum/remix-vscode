@@ -43,12 +43,13 @@ export default class WalletConnect extends Plugin {
     });
 
     // Subscribe to accounts change
-    this.provider.on("accountsChanged", (accounts: string[]) => {
+    this.provider.on("accountsChanged", async (accounts: string[]) => {
       for(const account of accounts){
         this.print(`Wallet account : ${account}`)
       }
       //this.emit('accountsChanged', accounts || [])
-      this.call("udapp" as any, "getAccounts");
+      const acc = await this.call("udapp" as any, "getAccounts");
+      this.emit('accountsChanged', acc)
       //this.call("walletconnect" as any, "dismiss");
       //this.provider.disconnect();
     });

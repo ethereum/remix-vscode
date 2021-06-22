@@ -325,7 +325,7 @@ export async function activate(context: ExtensionContext) {
       displayName: "Remix plugin example",
       methods: [],
       version: "0.0.1-dev",
-      url: "",
+      url: "http://bafybeiesvwanzbpvsfby7fvgh4dnhliohnsvoqj7ld7q27smqu7rs43gee.ipfs.localhost:8081/",
       description: "Run remix plugin in your Remix project",
       icon: "",
       location: "sidePanel",

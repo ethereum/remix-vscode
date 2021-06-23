@@ -258,8 +258,7 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.testaction", async () => {
     //sharedFolderClient.call("fileManager",'getCurrentFile')
     //RemixD.connect(undefined)  
-    let file = await filemanager.call('fileManager', 'getOpenedFiles')
-    console.log(file)
+    //let file = await filemanager.call('fileManager', 'getOpenedFiles')
     return
     console.log("test")
     for (let d of workspace.textDocuments) {

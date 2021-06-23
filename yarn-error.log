@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/local/Cellar/node/14.9.0/bin/node /usr/local/Cellar/yarn/1.22.5/libexec/bin/yarn.js add @remix-project/remix-url-resolve
+  /usr/local/Cellar/node/14.9.0/bin/node /usr/local/Cellar/yarn/1.22.5/libexec/bin/yarn.js add @remixproject/remix-solidity
 
 PATH: 
-  /Users/filipmertens/Library/Python/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/var/folders/kt/q2x8x87n6dx5x4r3zrj2k2hr0000gn/T/yarn--1624011085153-0.8239115950672384:/Volumes/butbut/code/remix-walletconnect-yann/node_modules/.bin:/Users/filipmertens/.config/yarn/link/node_modules/.bin:/usr/local/Cellar/node/14.9.0/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/14.9.0/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/Cellar/node/14.9.0/bin/node_modules/npm/bin/node-gyp-bin
+  /Users/filipmertens/Library/Python/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands
 
 Yarn version: 
   1.22.5
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@remix-project%2fremix-url-resolve: Not found
+  Error: https://registry.yarnpkg.com/@remixproject%2fremix-solidity: Not found
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:66988:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:140749:22)
       at Request.emit (events.js:314:20)
@@ -210,7 +210,7 @@ npm manifest:
   		"typescript": "^3.9.7"
   	},
   	"dependencies": {
-  		"@remix-project/remix-url-resolver": "^0.0.18",
+  		"@remix-project/remix-url-resolver": "^0.0.21",
   		"@remix-project/remixd": "^0.3.5",
   		"@remixproject/engine": "^0.3.17",
   		"@remixproject/engine-vscode": "^0.3.17",
@@ -651,12 +651,13 @@ Lockfile:
       url "^0.11.0"
       valid-url "^1.0.9"
   
-  "@remix-project/remix-url-resolver@^0.0.18":
-    version "0.0.18"
-    resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.18.tgz#e9239ff43954424093b4df462f6bf8d1239ba528"
-    integrity sha512-p37cC0j7JxhERDC3ur/ARdg1BfgWubB/+gpmrbTjcjzOpMZSO4kHXjtGI/NOy1rEd4CDzZllYb5wSQw94/SAFw==
+  "@remix-project/remix-url-resolver@^0.0.21":
+    version "0.0.21"
+    resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.21.tgz#0e41e00a242fe43e9637487bd44ff68437ba7fbf"
+    integrity sha512-hKnCPy/k8AuxWQHlCrOsB1TgIgRS6szULnGHkNA5OTAl8lKERnJfDOgY+/OLPjsmBFGKOMt0aIZSqsQ8T3f1ag==
     dependencies:
-      axios "^0.18.0"
+      "@erebos/bzz-node" "^0.13.0"
+      axios ">=0.21.1"
       solc "^0.7.4"
       url "^0.11.0"
       valid-url "^1.0.9"

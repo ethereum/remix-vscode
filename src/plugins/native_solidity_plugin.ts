@@ -8,6 +8,8 @@ import {
   gatherImportsCallbackInterface,
   Source,
 } from "@remix-project/remix-solidity";
+
+const semver = require("semver");
 const profile = {
   name: "solidity",
   displayName: "Solidity compiler",
@@ -57,8 +59,10 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
 
   handleImportCall = (url, cb) => {
-    this.call('contentImport', 'resolveAndSave', url, '').then((result) => cb(null, result)).catch((error) => cb(error.message))
-  }
+    this.call("contentImport", "resolveAndSave", url, "")
+      .then((result) => cb(null, result))
+      .catch((error) => cb(error.message));
+  };
   /**
    * @dev Gather imports for compilation
    * @param files file sources
@@ -111,10 +115,11 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
 
   async compile(_version: string, opts: CompilerInputOptions, file?: string) {
-    this.print("Compilation started!");
-    this.version =
-      _version in this.versions ? this.versions[_version] : _version;
+    this.print("Compilation started with !" + _version);
     const fileName = file || (await this.call("fileManager", "getCurrentFile"));
+    this.version = _version ?_version in this.versions ? this.versions[_version] : _version : await this._setCompilerVersionFromPragma(fileName)
+    //
+    
     this.print(`Compiling ${fileName} ...`);
     const editorContent = file
       ? await this.call("fileManager", "readFile", file)
@@ -129,7 +134,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     }
     const solcWorker = this.createWorker();
     console.log(`Solidity compiler invoked with WorkerID: ${solcWorker.pid}`);
-    console.log(`Compiling with solidity version ${this.version}`);
+    this.print(`Compiling with version ${this.version}`);
     var input: CompilerInput = {
       language: opts.language,
       sources,
@@ -203,20 +208,20 @@ export default class NativeSolcPlugin extends CommandPlugin {
         const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
         console.log("missing inputs", m);
-        if(m.missingInputs && m.missingInputs.length > 0){
+        if (m.missingInputs && m.missingInputs.length > 0) {
           //return false
-          console.log("gathering imports")
-          this.gatherImports(m.sources, m.missingInputs, (error, files)=>{
-            console.log(files.sources)
+          console.log("gathering imports");
+          this.gatherImports(m.sources, m.missingInputs, (error, files) => {
+            console.log(files.sources);
 
-            input.sources = files.sources
+            input.sources = files.sources;
             solcWorker.send({
               command: "compile",
               root: workspace.workspaceFolders[0].uri.fsPath,
               payload: input,
               version: this.version,
             });
-          })
+          });
         }
         if (compiled.errors) {
           //console.log(compiled.errors)
@@ -255,7 +260,11 @@ export default class NativeSolcPlugin extends CommandPlugin {
     const logError = (errors: any[]) => {
       for (let i in errors) {
         if (["number", "string"].includes(typeof errors[i])) {
-          if (errorKeysToLog.includes(i) && !errors[i].includes('Deferred import')) this.print(errors[i]);
+          if (
+            errorKeysToLog.includes(i) &&
+            !errors[i].includes("Deferred import")
+          )
+            this.print(errors[i]);
         } else {
           logError(errors[i]);
         }
@@ -332,5 +341,35 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
   getSolidityVersions() {
     return this.versions;
+  }
+
+  // Load solc compiler version according to pragma in contract file
+  async _setCompilerVersionFromPragma(filename) {
+    
+    let data = await this.call("fileManager", "readFile", filename);
+    let versionFound;
+    const pragmaArr = data.match(/(pragma solidity (.+?);)/g);
+    if (pragmaArr && pragmaArr.length === 1) {
+      const pragmaStr = pragmaArr[0].replace("pragma solidity", "").trim();
+      const pragma = pragmaStr.substring(0, pragmaStr.length - 1);
+
+      console.log(pragma);
+      
+      //console.log(this.versions)
+      for(let version of Object.keys(this.versions)){
+        //console.log(version)
+        if(semver.satisfies(version, pragma)){
+          versionFound = this.versions[version]
+        }
+      }
+    }
+    return new Promise((resolve, reject)=>{
+      if(versionFound){
+        resolve(versionFound)
+      }else{
+        reject()
+      }
+    })
+    
   }
 }

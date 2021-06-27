@@ -15,8 +15,8 @@ import {
   relativePath,
 } from "@remixproject/engine-vscode/util/path";
 import { PluginManager, Engine } from "@remixproject/engine";
-import {  CompilerImports } from '@remix-core-plugin/compiler-content-imports'
-import {  CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
+import { CompilerImports } from "@remix-core-plugin/compiler-content-imports";
+import { CompilerArtefacts } from "@remix-core-plugin/compiler-artefacts";
 
 import { ThemeUrls } from "@remixproject/plugin-api";
 import {
@@ -29,13 +29,11 @@ import {
   ThemeOptions,
 } from "@remixproject/engine-vscode";
 
-import 
-  VscodeFileManager 
-from './plugins/file_manager'
+import VscodeFileManager from "./plugins/file_manager";
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
-import Terminal from './plugins/terminal'
+import Terminal from "./plugins/terminal";
 import DeployModule from "./plugins/udapp";
 import {
   pluginActivate,
@@ -52,21 +50,20 @@ import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
-import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
-import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
-import CompileTab from "./plugins/compiler/compileTab";
+import { CompilerAbstract } from "@remix-project/remix-solidity";
+import { FetchAndCompile } from "@remix-core-plugin/compiler-fetch-and-compile";
+import { OffsetToLineColumnConverter } from "@remix-core-plugin/offset-line-to-column-converter";
+
 import SettingsModule from "./plugins/settings";
 
-const path = require('path');
+const path = require("path");
 
 class VscodeManager extends VscodeAppManager {
-  onActivation() {
-  }
+  onActivation() {}
 }
 
 export async function activate(context: ExtensionContext) {
-  let selectedVersion: string = "latest";
+  let selectedVersion: string = null;
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
     optimize: false,
@@ -97,16 +94,15 @@ export async function activate(context: ExtensionContext) {
   // compiler
   const importer = new CompilerImports(filemanager);
   const artefacts = new CompilerArtefacts();
-  const fetchAndCompile = new FetchAndCompile() 
-  const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
-  const solidityLogic = new CompileTab()
+  const fetchAndCompile = new FetchAndCompile();
+  const offsetToLineColumnConverter = new OffsetToLineColumnConverter();
 
   const remix_solidity_1 = require("@remix-project/remix-solidity");
 
-  const ab = new CompilerAbstract("2","2","3")
-  console.log("ABSTRACT", ab)
-  const ac = new remix_solidity_1.CompilerAbstract("2","2","3")
-  console.log("ABSTRACT", ac)
+  const ab = new CompilerAbstract("2", "2", "3");
+  console.log("ABSTRACT", ab);
+  const ac = new remix_solidity_1.CompilerAbstract("2", "2", "3");
+  console.log("ABSTRACT", ac);
 
   const themeURLs: Partial<ThemeUrls> = {
     light:
@@ -116,7 +112,7 @@ export async function activate(context: ExtensionContext) {
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
 
-  filemanager.setContext(context)
+  filemanager.setContext(context);
 
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === "provider") return { queueTimeout: 60000 * 2 };
@@ -141,17 +137,22 @@ export async function activate(context: ExtensionContext) {
     artefacts,
     fetchAndCompile,
     offsetToLineColumnConverter,
-    solidityLogic,
-    settings
+    settings,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin([
-    "web3Provider",
-    "udapp",
-  ]);
+  await manager.activatePlugin(["web3Provider", "udapp"]);
   await deployModule.setListeners();
-  await manager.activatePlugin(["walletconnect","remixdprovider","fileManager", "settings", "contentImport","compilerArtefacts","fetchAndCompile","offsetToLineColumnConverter","solidity-logic"]);
+  await manager.activatePlugin([
+    "walletconnect",
+    "remixdprovider",
+    "fileManager",
+    "settings",
+    "contentImport",
+    "compilerArtefacts",
+    "fetchAndCompile",
+    "offsetToLineColumnConverter",
+  ]);
 
   // fetch default data from the plugins-directory filtered by engine
   let defaultPluginData = await manager.registeredPluginData();
@@ -171,7 +172,7 @@ export async function activate(context: ExtensionContext) {
       targets: ["vscode"],
       targetVersion: {
         vscode: ">=0.0.8",
-      }
+      },
     },
     {
       name: "remixd",
@@ -183,7 +184,9 @@ export async function activate(context: ExtensionContext) {
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Start a remixd client",
-      icon: Uri.file(path.join(context.extensionPath, 'resources', 'redbutton.svg')),
+      icon: Uri.file(
+        path.join(context.extensionPath, "resources", "redbutton.svg")
+      ),
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
@@ -195,8 +198,8 @@ export async function activate(context: ExtensionContext) {
       },
       optionArgs: {
         Start: "rmxPlugins.startRemixd",
-        Stop: "rmxPlugins.stopRemixd"
-      }
+        Stop: "rmxPlugins.stopRemixd",
+      },
     },
     {
       name: "solidityversion",
@@ -217,7 +220,7 @@ export async function activate(context: ExtensionContext) {
       },
       optionArgs: {
         Select: "rmxPlugins.versionSelector",
-      }
+      },
     },
     {
       name: "compiler",
@@ -238,11 +241,11 @@ export async function activate(context: ExtensionContext) {
       },
       optionArgs: {
         Select: "rmxPlugins.compileFiles",
-      }
+      },
     },
     {
       name: "debugger",
-      displayName: "debugger",
+      displayName: "Debugger",
       events: [],
       methods: [],
       version: "0.1.0",
@@ -255,29 +258,29 @@ export async function activate(context: ExtensionContext) {
       targets: ["vscode"],
       targetVersion: {
         vscode: ">=0.0.8",
-      }
+      },
     },
   ];
-  
 
-  console.log(Uri.file(path.join(context.extensionPath, 'resources', 'redbutton.svg')))
+  console.log(
+    Uri.file(path.join(context.extensionPath, "resources", "redbutton.svg"))
+  );
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   // compile
-
 
   commands.registerCommand("rmxPlugins.compileFiles", async () => {
     try {
       const files = filemanager.getOpenedFiles();
-      
-      const opts: Array<QuickPickItem> = Object.values(files).filter((x: any) => path.extname(x) === ".sol").map(
-        (v): QuickPickItem => {
+
+      const opts: Array<QuickPickItem> = Object.values(files)
+        .filter((x: any) => path.extname(x) === ".sol")
+        .map((v): QuickPickItem => {
           const vopt: QuickPickItem = {
             label: v,
             description: `Compile ${v}`,
           };
           return vopt;
-        }
-      );
+        });
       window.showQuickPick(opts).then(async (selected) => {
         if (selected) {
           await manager.activatePlugin([
@@ -285,10 +288,10 @@ export async function activate(context: ExtensionContext) {
             "fileManager",
             "editor",
             "contentImport",
-            "compilerArtefacts"
+            "compilerArtefacts",
           ]);
-          await filemanager.switchFile(selected.label)
-          
+          await filemanager.switchFile(selected.label);
+
           solpl.compile(selectedVersion, compilerOpts, selected.label);
         }
       });
@@ -303,7 +306,7 @@ export async function activate(context: ExtensionContext) {
       "fileManager",
       "editor",
       "contentImport",
-      "compilerArtefacts"
+      "compilerArtefacts",
     ]);
     solpl.compile(selectedVersion, compilerOpts);
   });
@@ -379,10 +382,10 @@ export async function activate(context: ExtensionContext) {
 
   commands.registerCommand("rmxPlugins.testaction", async () => {
     //sharedFolderClient.call("fileManager",'getCurrentFile')
-    //RemixD.connect(undefined)  
+    //RemixD.connect(undefined)
     //let file = await filemanager.call('fileManager', 'getOpenedFiles')
-    console.log("test")
-    try{
+    console.log("test");
+    try {
       //await filemanager.call('fileManager', 'writeFile', 'deps/test/something/burp','burp')
       // filemanager.exists('deps/test/something/burp').then((x)=>{
       //   console.log(x)
@@ -391,34 +394,38 @@ export async function activate(context: ExtensionContext) {
       //console.log(await filemanager.call('contentImport', 'resolveAndSave', '@openzeppelin/contracts/token/ERC1155/ERC1155.sol', ''))
       //console.log(await filemanager.call('solidity-logic', 'compile', 's.sol'))
       //importer.resolveAndSave('@openzeppelin/contracts/token/ERC1155/ERC1155.sol','')
-      solidityLogic.compile('s.sol')
-    }catch(e){
-      console.log(e)
+      await manager.activatePlugin(["solidity"]);
+      console.log(await solpl._setCompilerVersionFromPragma("s.sol"));
+    } catch (e) {
+      console.log(e);
     }
-    return
-    console.log("test")
+    return;
+    console.log("test");
     for (let d of workspace.textDocuments) {
-      console.log( relativePath(d.fileName))
+      console.log(relativePath(d.fileName));
     }
     //console.log(file)
   });
 
   RemixD.on("remixdprovider" as any, "statusChanged", (x: any) => {
-    console.log("STATUS CHANGE", x)
+    console.log("STATUS CHANGE", x);
     const icons = {
-      "waiting": "yellowbutton.svg",
-      "connected": "greenbutton.svg",
-      "disconnected": "redbutton.svg"
-    }
-    rmxPluginsProvider.setDataForPlugin("remixd",{icon: Uri.file(path.join(context.extensionPath, 'resources', icons[x])), description: x})
-  })
+      waiting: "yellowbutton.svg",
+      connected: "greenbutton.svg",
+      disconnected: "redbutton.svg",
+    };
+    rmxPluginsProvider.setDataForPlugin("remixd", {
+      icon: Uri.file(path.join(context.extensionPath, "resources", icons[x])),
+      description: x,
+    });
+  });
 
   commands.registerCommand("rmxPlugins.startRemixd", async () => {
-    RemixD.connect(undefined)  
+    RemixD.connect(undefined);
   });
 
   commands.registerCommand("rmxPlugins.stopRemixd", async () => {
-    RemixD.disconnect()  
+    RemixD.disconnect();
   });
 
   commands.registerCommand("rmxPlugins.walletDisconnect", async () => {
@@ -501,16 +508,27 @@ export async function activate(context: ExtensionContext) {
       !pluginData.targets
     )
       options["Uninstall"] = pluginUninstall;
-    const quickPick = window.createQuickPick();
-    quickPick.items = Object.keys(options).map((label) => ({ label }));
-    quickPick.onDidChangeSelection((selection) => {
-      const args = (pluginData.optionArgs && pluginData.optionArgs[selection[0].label]) || id
-      if (selection[0]) {
-        options[selection[0].label](context, args).catch(console.error);
-      }
-    });
-    quickPick.onDidHide(() => quickPick.dispose());
-    quickPick.show();
+    if (Object.keys(options).length == 1) { 
+      const args =
+      (pluginData.optionArgs &&
+        pluginData.optionArgs[Object.keys(options)[0]]) ||
+      id;
+      options[Object.keys(options)[0]](context, args)
+    } else {
+      const quickPick = window.createQuickPick();
+      quickPick.items = Object.keys(options).map((label) => ({ label }));
+      quickPick.onDidChangeSelection((selection) => {
+        const args =
+          (pluginData.optionArgs &&
+            pluginData.optionArgs[selection[0].label]) ||
+          id;
+        if (selection[0]) {
+          options[selection[0].label](context, args).catch(console.error);
+        }
+      });
+      quickPick.onDidHide(() => quickPick.dispose());
+      quickPick.show();
+    }
   });
   commands.registerCommand(
     "extension.deActivateRmxPlugin",

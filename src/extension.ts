@@ -15,6 +15,9 @@ import {
   relativePath,
 } from "@remixproject/engine-vscode/util/path";
 import { PluginManager, Engine } from "@remixproject/engine";
+import {  CompilerImports } from '@remix-core-plugin/compiler-content-imports'
+import {  CompilerArtefacts } from '@remix-core-plugin/compiler-artefacts'
+
 import { ThemeUrls } from "@remixproject/plugin-api";
 import {
   VscodeAppManager,
@@ -24,7 +27,6 @@ import {
   EditorOptions,
   transformCmd,
   ThemeOptions,
-  ContentImportPlugin,
 } from "@remixproject/engine-vscode";
 
 import 
@@ -50,6 +52,11 @@ import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { FetchAndCompile } from '@remix-core-plugin/compiler-fetch-and-compile'
+import { OffsetToLineColumnConverter } from '@remix-core-plugin/offset-line-to-column-converter'
+import CompileTab from "./plugins/compiler/compileTab";
+import SettingsModule from "./plugins/settings";
 
 const path = require('path');
 
@@ -86,7 +93,21 @@ export async function activate(context: ExtensionContext) {
   const wallet = new WalletConnect();
   const filemanager = new VscodeFileManager();
   const editorPlugin = new EditorPlugin(editoropt);
-  const importer = new ContentImportPlugin();
+  const settings = new SettingsModule();
+  // compiler
+  const importer = new CompilerImports(filemanager);
+  const artefacts = new CompilerArtefacts();
+  const fetchAndCompile = new FetchAndCompile() 
+  const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
+  const solidityLogic = new CompileTab()
+
+  const remix_solidity_1 = require("@remix-project/remix-solidity");
+
+  const ab = new CompilerAbstract("2","2","3")
+  console.log("ABSTRACT", ab)
+  const ac = new remix_solidity_1.CompilerAbstract("2","2","3")
+  console.log("ABSTRACT", ac)
+
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
@@ -94,6 +115,8 @@ export async function activate(context: ExtensionContext) {
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
+
+  filemanager.setContext(context)
 
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === "provider") return { queueTimeout: 60000 * 2 };
@@ -109,12 +132,17 @@ export async function activate(context: ExtensionContext) {
     filemanager,
     editorPlugin,
     theme,
-    importer,
     web3Povider,
     deployModule,
     wallet,
     vscodeExtAPI,
     RemixD,
+    importer,
+    artefacts,
+    fetchAndCompile,
+    offsetToLineColumnConverter,
+    solidityLogic,
+    settings
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
@@ -123,7 +151,7 @@ export async function activate(context: ExtensionContext) {
     "udapp",
   ]);
   await deployModule.setListeners();
-  await manager.activatePlugin(["walletconnect","remixdprovider"]);
+  await manager.activatePlugin(["walletconnect","remixdprovider","fileManager", "settings", "contentImport","compilerArtefacts","fetchAndCompile","offsetToLineColumnConverter","solidity-logic"]);
 
   // fetch default data from the plugins-directory filtered by engine
   let defaultPluginData = await manager.registeredPluginData();
@@ -170,18 +198,112 @@ export async function activate(context: ExtensionContext) {
         Stop: "rmxPlugins.stopRemixd"
       }
     },
+    {
+      name: "solidityversion",
+      displayName: "Solidity version",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "Solidity version",
+      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.versionSelector",
+      }
+    },
+    {
+      name: "compiler",
+      displayName: "Compiler",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "Compile sol/yul",
+      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.compileFiles",
+      }
+    },
+    {
+      name: "debugger",
+      displayName: "debugger",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "http://bafybeiesvwanzbpvsfby7fvgh4dnhliohnsvoqj7ld7q27smqu7rs43gee.ipfs.localhost:8081/",
+      documentation:
+        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+      description: "Debugger",
+      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.8",
+      }
+    },
   ];
   
 
   console.log(Uri.file(path.join(context.extensionPath, 'resources', 'redbutton.svg')))
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   // compile
+
+
+  commands.registerCommand("rmxPlugins.compileFiles", async () => {
+    try {
+      const files = filemanager.getOpenedFiles();
+      
+      const opts: Array<QuickPickItem> = Object.values(files).filter((x: any) => path.extname(x) === ".sol").map(
+        (v): QuickPickItem => {
+          const vopt: QuickPickItem = {
+            label: v,
+            description: `Compile ${v}`,
+          };
+          return vopt;
+        }
+      );
+      window.showQuickPick(opts).then(async (selected) => {
+        if (selected) {
+          await manager.activatePlugin([
+            "solidity",
+            "fileManager",
+            "editor",
+            "contentImport",
+            "compilerArtefacts"
+          ]);
+          await filemanager.switchFile(selected.label)
+          
+          solpl.compile(selectedVersion, compilerOpts, selected.label);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
       "solidity",
       "fileManager",
       "editor",
       "contentImport",
+      "compilerArtefacts"
     ]);
     solpl.compile(selectedVersion, compilerOpts);
   });
@@ -259,6 +381,20 @@ export async function activate(context: ExtensionContext) {
     //sharedFolderClient.call("fileManager",'getCurrentFile')
     //RemixD.connect(undefined)  
     //let file = await filemanager.call('fileManager', 'getOpenedFiles')
+    console.log("test")
+    try{
+      //await filemanager.call('fileManager', 'writeFile', 'deps/test/something/burp','burp')
+      // filemanager.exists('deps/test/something/burp').then((x)=>{
+      //   console.log(x)
+      // })
+      //importer.resolveAndSave('https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol','')
+      //console.log(await filemanager.call('contentImport', 'resolveAndSave', '@openzeppelin/contracts/token/ERC1155/ERC1155.sol', ''))
+      //console.log(await filemanager.call('solidity-logic', 'compile', 's.sol'))
+      //importer.resolveAndSave('@openzeppelin/contracts/token/ERC1155/ERC1155.sol','')
+      solidityLogic.compile('s.sol')
+    }catch(e){
+      console.log(e)
+    }
     return
     console.log("test")
     for (let d of workspace.textDocuments) {

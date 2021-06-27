@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
 import { RemixURLResolver } from "@remix-project/remix-url-resolver";
-
+let missingInputs: string[] = []
 function handleLocal(pathString: string, root: string) {
 	try {
 		const o = { encoding: "UTF-8" };
@@ -20,6 +20,7 @@ function handleLocal(pathString: string, root: string) {
 }
 
 function findImports(path: any, root: string) {
+	/*
 	// TODO: We need current solc file path here for relative local import
 	// @ts-ignore
 	
@@ -48,6 +49,8 @@ function findImports(path: any, root: string) {
 			process.send({ processMessage: "importing file error: " + path });
 			process.send({ error: e });
 		});
+	*/
+	missingInputs.push(path)
 	return { 'error': 'Deferred import' };
 }
 
@@ -58,12 +61,13 @@ process.on("message", async m => {
 		// @ts-ignore
 		const vn = 'v' + (vnRegArr ? vnRegArr[1] : '');
 		const input = m.payload;
+		missingInputs = []
 		if (m.version === vn || m.version === 'latest') {
 			try {
 				console.log("compiling with local version: ", solc.version());
 				const output = await solc.compile(JSON.stringify(input), { import: (path) => findImports(path, m.root) });
 				// @ts-ignore
-				process.send({ compiled: output, version:solc.version() });
+				process.send({ compiled: output, version:solc.version(),  sources: input.sources, missingInputs });
 				// we should not exit process here as findImports still might be running
 			} catch (e) {
 				console.error(e);
@@ -85,7 +89,7 @@ process.on("message", async m => {
 					try {
 						const output = await newSolc.compile(JSON.stringify(input), { import: (path) => findImports(path, m.root) });
 						// @ts-ignore
-						process.send({ compiled: output, version:newSolc.version() });
+						process.send({ compiled: output, version:solc.version(), sources: input.sources, missingInputs });
 					} catch (e) {
 						console.error(e);
 						// @ts-ignore

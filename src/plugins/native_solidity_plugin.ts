@@ -115,7 +115,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
 
   async compile(_version: string, opts: CompilerInputOptions, file?: string) {
-    this.print("Compilation started with !" + _version);
+    this.print("Compilation started with !");
     const fileName = file || (await this.call("fileManager", "getCurrentFile"));
     this.version = _version ?_version in this.versions ? this.versions[_version] : _version : await this._setCompilerVersionFromPragma(fileName)
     //
@@ -232,7 +232,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
         }
         if (compiled.contracts) {
           console.log("COMPILED");
-          const source = { sources };
+          const source = { sources, target: fileName };
           const data = JSON.parse(m.compiled);
           this.compilationResult = {
             source: {

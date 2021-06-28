@@ -189,6 +189,7 @@
 		"@remix-core-plugin/compiler-artefacts": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-artefacts",
 		"@remix-core-plugin/compiler-content-imports": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-content-imports",
 		"@remix-core-plugin/compiler-fetch-and-compile": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-fetch-and-compile",
+		"@remix-core-plugin/compiler-metadata": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-metadata",
 		"@remix-core-plugin/offset-line-to-column-converter": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/offset-line-to-column-converter",
 		"@remix-project/remix-lib": "file:../../remix-project/dist/libs/remix-lib",
 		"@remix-project/remix-solidity": "file:../../remix-project/dist/libs/remix-solidity",

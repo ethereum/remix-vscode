@@ -684,11 +684,11 @@
     "@ethereumjs/common" "^2.3.1"
     "@ethereumjs/tx" "^3.2.1"
     "@ethereumjs/vm" "^5.4.1"
-    "@remix-project/remix-lib" "0.5.0"
-    "@remix-project/remix-simulator" "0.2.0"
-    "@remix-project/remix-solidity" "link:../../remix-project/dist/libs/remix-solidity"
-    "@remix-project/remix-tests" "0.2.0"
-    "@remix-project/remix-url-resolver" "0.0.21"
+    "@remix-project/remix-lib" "0.5.2"
+    "@remix-project/remix-simulator" "0.2.2"
+    "@remix-project/remix-solidity" "0.4.2"
+    "@remix-project/remix-tests" "0.2.2"
+    "@remix-project/remix-url-resolver" "0.0.23"
     "@remixproject/engine" "^0.3.17"
     ansi-gray "^0.1.1"
     async "^2.6.2"
@@ -712,6 +712,19 @@
     "@ethereumjs/tx" "^3.2.1"
     "@remix-project/remix-lib" "0.5.0"
     "@remix-project/remix-solidity" "link:../../remix-project/dist/libs/remix-solidity"
+    "@remixproject/engine" "^0.3.17"
+    async "^2.6.2"
+    ethereumjs-util "^7.0.10"
+    ethers "^5.1.4"
+    web3 "1.2.4"
+
+"@remix-core-plugin/compiler-metadata@file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-metadata":
+  version "0.0.1"
+  dependencies:
+    "@ethereumjs/block" "^3.3.0"
+    "@ethereumjs/tx" "^3.2.1"
+    "@remix-project/remix-lib" "0.5.2"
+    "@remix-project/remix-solidity" "0.4.2"
     "@remixproject/engine" "^0.3.17"
     async "^2.6.2"
     ethereumjs-util "^7.0.10"
@@ -802,6 +815,21 @@
     solc "^0.7.4"
     web3 "^1.2.4"
 
+"@remix-project/remix-lib@0.5.2", "@remix-project/remix-lib@^0.5.0", "@remix-project/remix-lib@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.5.2.tgz#0e08279dec95bf1d39d8f895ee3b124f70c25c65"
+  integrity sha512-QiQXOERzmGFxTXx6chzd+lwqUJ0HCtxLUL9IZSu56633UOr2IGD4RHVYYDSDHCdRs3KQpzBK9tKqVwdtDdXFgQ==
+  dependencies:
+    "@ethereumjs/block" "^3.3.0"
+    "@ethereumjs/tx" "^3.2.1"
+    "@ethereumjs/vm" "^5.4.1"
+    async "^2.1.2"
+    ethereumjs-util "^7.0.10"
+    ethers "^4.0.40"
+    events "^3.0.0"
+    solc "^0.7.4"
+    web3 "^1.2.4"
+
 "@remix-project/remix-lib@^0.4.31":
   version "0.4.34"
   resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.4.34.tgz#118be3f1107f4ba12ca473c2fce76cb6886a1c85"
@@ -812,21 +840,6 @@
     ethereumjs-tx "^2.1.2"
     ethereumjs-util "^6.2.0"
     ethereumjs-vm "4.1.3"
-    ethers "^4.0.40"
-    events "^3.0.0"
-    solc "^0.7.4"
-    web3 "^1.2.4"
-
-"@remix-project/remix-lib@^0.5.0", "@remix-project/remix-lib@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.5.2.tgz#0e08279dec95bf1d39d8f895ee3b124f70c25c65"
-  integrity sha512-QiQXOERzmGFxTXx6chzd+lwqUJ0HCtxLUL9IZSu56633UOr2IGD4RHVYYDSDHCdRs3KQpzBK9tKqVwdtDdXFgQ==
-  dependencies:
-    "@ethereumjs/block" "^3.3.0"
-    "@ethereumjs/tx" "^3.2.1"
-    "@ethereumjs/vm" "^5.4.1"
-    async "^2.1.2"
-    ethereumjs-util "^7.0.10"
     ethers "^4.0.40"
     events "^3.0.0"
     solc "^0.7.4"
@@ -845,31 +858,7 @@
     solc "^0.7.4"
     web3 "^1.2.4"
 
-"@remix-project/remix-simulator@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-simulator/-/remix-simulator-0.2.0.tgz#839d15eb5546c8cba46d913d09811447d7118950"
-  integrity sha512-y0Vt8ys24ipEqoKsMQpWuxSjqFgdNjkNI60vcp4sYQGciJ1OWE++xk1jng4tf7z0bQgz+GxcO+MuvlrvhfVH6A==
-  dependencies:
-    "@ethereumjs/block" "^3.2.1"
-    "@ethereumjs/common" "^2.2.0"
-    "@ethereumjs/tx" "^3.1.3"
-    "@ethereumjs/vm" "^5.3.2"
-    "@remix-project/remix-lib" "^0.5.0"
-    ansi-gray "^0.1.1"
-    async "^3.1.0"
-    body-parser "^1.18.2"
-    color-support "^1.1.3"
-    commander "^2.19.0"
-    cors "^2.8.5"
-    ethereumjs-util "^7.0.10"
-    ethers "^5.1.4"
-    express "^4.16.3"
-    express-ws "^4.0.0"
-    merge "^1.2.0"
-    time-stamp "^2.0.0"
-    web3 "^1.2.4"
-
-"@remix-project/remix-simulator@^0.2.0":
+"@remix-project/remix-simulator@0.2.2", "@remix-project/remix-simulator@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@remix-project/remix-simulator/-/remix-simulator-0.2.2.tgz#7034ff4a223831fe2df2ad6697df32ceac42e265"
   integrity sha512-BnfHybi/wFrKbl6S85bN74nrKFAh9C6kSltopdMjsBauNt8ct+akXhQEDfShQNi58HtU+wlQppsDqfVU++FKrQ==
@@ -893,7 +882,11 @@
     time-stamp "^2.0.0"
     web3 "^1.2.4"
 
-"@remix-project/remix-solidity@^0.4.0":
+"@remix-project/remix-solidity@0.4.2":
+  version "0.0.0"
+  uid ""
+
+"@remix-project/remix-solidity@^0.4.2":
   version "0.0.0"
   uid ""
 
@@ -916,18 +909,18 @@
   version "0.0.0"
   uid ""
 
-"@remix-project/remix-tests@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-tests/-/remix-tests-0.2.0.tgz#68b1ea9769d6eb72e608138b8fd447e4bf616341"
-  integrity sha512-ewbil5N0WFmhxrLu7dO8lrapS1oK0RhEUPoqXSPDh09huCtJ1WNsOH9nYikT4gxIZUl0unt/f5xe3t7DlaGkug==
+"@remix-project/remix-tests@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-tests/-/remix-tests-0.2.2.tgz#d9e7173b20182d17c4e93bda10b8160dc7f200ea"
+  integrity sha512-3NKiStsvraCExCxMVuagfbhScX6CksD2NMiqFizTu1JydQCBTjDQTDtnp66BV1Sn86pIbsMwDjyCH7crnQVy8A==
   dependencies:
-    "@ethereumjs/block" "^3.2.1"
+    "@ethereumjs/block" "^3.3.0"
     "@ethereumjs/common" "^2.2.0"
-    "@ethereumjs/tx" "^3.1.3"
-    "@ethereumjs/vm" "^5.3.2"
-    "@remix-project/remix-lib" "^0.5.0"
-    "@remix-project/remix-simulator" "^0.2.0"
-    "@remix-project/remix-solidity" "^0.4.0"
+    "@ethereumjs/tx" "^3.2.1"
+    "@ethereumjs/vm" "^5.4.1"
+    "@remix-project/remix-lib" "^0.5.2"
+    "@remix-project/remix-simulator" "^0.2.2"
+    "@remix-project/remix-solidity" "^0.4.2"
     ansi-gray "^0.1.1"
     async "^2.6.0"
     axios ">=0.21.1"
@@ -941,6 +934,7 @@
     merge "^1.2.0"
     signale "^1.4.0"
     time-stamp "^2.2.0"
+    tslib "^2.3.0"
     web3 "^1.2.4"
     winston "^3.0.0"
 
@@ -955,7 +949,18 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
-"@remix-project/remix-url-resolver@0.0.21", "@remix-project/remix-url-resolver@^0.0.21":
+"@remix-project/remix-url-resolver@0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.23.tgz#dc3954e746fa9d2588f7ce298ce4a1ee7d4126b4"
+  integrity sha512-e0DovhxQ9RxUI6kbB2oGCWJs8Ibhn3yeRMIfZY1WOGkwNL2tUDl5+gfbRdhvLMIQnuYylktR3JEjQxEcPnh+qw==
+  dependencies:
+    "@erebos/bzz-node" "^0.13.0"
+    axios ">=0.21.1"
+    solc "^0.7.4"
+    url "^0.11.0"
+    valid-url "^1.0.9"
+
+"@remix-project/remix-url-resolver@^0.0.21":
   version "0.0.21"
   resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.21.tgz#0e41e00a242fe43e9637487bd44ff68437ba7fbf"
   integrity sha512-hKnCPy/k8AuxWQHlCrOsB1TgIgRS6szULnGHkNA5OTAl8lKERnJfDOgY+/OLPjsmBFGKOMt0aIZSqsQ8T3f1ag==
@@ -7751,7 +7756,7 @@ tslib@^1.8.0, tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0, tslib@^2.0.3:
+tslib@^2.0.0, tslib@^2.0.3, tslib@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.0.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
   integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==

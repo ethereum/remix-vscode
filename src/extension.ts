@@ -55,6 +55,7 @@ import { FetchAndCompile } from "@remix-core-plugin/compiler-fetch-and-compile";
 import { OffsetToLineColumnConverter } from "@remix-core-plugin/offset-line-to-column-converter";
 
 import SettingsModule from "./plugins/settings";
+import { CompilerMetadata } from "@remix-core-plugin/compiler-metadata";
 
 const path = require("path");
 
@@ -96,6 +97,7 @@ export async function activate(context: ExtensionContext) {
   const artefacts = new CompilerArtefacts();
   const fetchAndCompile = new FetchAndCompile();
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter();
+  const metadata = new CompilerMetadata()
 
   const remix_solidity_1 = require("@remix-project/remix-solidity");
 
@@ -138,6 +140,7 @@ export async function activate(context: ExtensionContext) {
     fetchAndCompile,
     offsetToLineColumnConverter,
     settings,
+    metadata,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
@@ -152,6 +155,7 @@ export async function activate(context: ExtensionContext) {
     "compilerArtefacts",
     "fetchAndCompile",
     "offsetToLineColumnConverter",
+    'compilerMetadata',
   ]);
 
   // fetch default data from the plugins-directory filtered by engine
@@ -203,7 +207,7 @@ export async function activate(context: ExtensionContext) {
     },
     {
       name: "solidityversion",
-      displayName: "Solidity version",
+      displayName: "Set compiler version",
       events: [],
       methods: [],
       version: "0.1.0",
@@ -249,7 +253,7 @@ export async function activate(context: ExtensionContext) {
       events: [],
       methods: [],
       version: "0.1.0",
-      url: "http://bafybeiesvwanzbpvsfby7fvgh4dnhliohnsvoqj7ld7q27smqu7rs43gee.ipfs.localhost:8081/",
+      url: "http://localhost:4200/",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Debugger",
@@ -338,6 +342,8 @@ export async function activate(context: ExtensionContext) {
       pluginData.targetVersion.vscode
     );
   };
+
+  
 
   const activatePlugin = async (pluginId: string) => {
     // Get plugininfo from plugin array

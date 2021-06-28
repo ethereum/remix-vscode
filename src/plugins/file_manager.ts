@@ -10,7 +10,7 @@ export default class VscodeFileManager extends FileManagerPlugin {
   constructor() {
     super();
     this.type = "localhost";
-    this.methods = [...this.methods, "getOpenedFiles"];
+    this.methods = [...this.methods, "getOpenedFiles", "exists"];
   }
 
   setContext(context: ExtensionContext){

@@ -2,7 +2,7 @@ import { Plugin } from "@remixproject/engine";
 const profile = {
 	name: 'settings',
 	displayName: 'Settings',
-	methods: ['getGithubAccessToken'],
+	methods: ['getGithubAccessToken', 'get'],
 	events: [],
 	icon: 'assets/img/settings.webp',
 	description: 'Remix-IDE settings',
@@ -18,4 +18,11 @@ const profile = {
 	getGithubAccessToken () {
 		return ''
 	}
+
+	get(key: string){
+		if(key === 'settings/generate-contract-metadata'){
+			return true
+		} 
+	}
+
   }

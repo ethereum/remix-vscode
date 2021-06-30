@@ -115,6 +115,7 @@ export async function activate(context: ExtensionContext) {
   const theme = new ThemePlugin(themeOpts);
 
   filemanager.setContext(context);
+  settings.setContext(context);
 
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === "provider") return { queueTimeout: 60000 * 2 };

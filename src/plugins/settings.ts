@@ -1,4 +1,6 @@
 import { Plugin } from "@remixproject/engine";
+import { workspace, Uri, ExtensionContext } from "vscode";
+
 const profile = {
 	name: 'settings',
 	displayName: 'Settings',
@@ -12,6 +14,7 @@ const profile = {
   }
 
   export default class SettingsModule extends Plugin {
+	context: ExtensionContext
 	constructor() {
 		super(profile);
 	}
@@ -19,10 +22,19 @@ const profile = {
 		return ''
 	}
 
+	setContext(context: ExtensionContext){
+		this.context = context
+	}
+
 	get(key: string){
 		if(key === 'settings/generate-contract-metadata'){
 			return true
-		} 
+		}
+		return this.context.workspaceState.get(key) 
+	}
+
+	set(key: string, value: any){
+		this.context.workspaceState.update(key, value)
 	}
 
   }

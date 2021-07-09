@@ -14,7 +14,7 @@ import {
   QuickPickItem,
 } from "vscode";
 import Web3 from "web3";
-import { AbiInput, AbiItem } from "web3-utils";
+import { AbiInput, AbiItem, Unit } from "web3-utils";
 
 const profile = {
   name: "udapp",
@@ -22,7 +22,14 @@ const profile = {
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
-  methods: ["deploy", "send", "addNetwork", "getAccounts", "setAccount", "disconnect"],
+  methods: [
+    "deploy",
+    "send",
+    "addNetwork",
+    "getAccounts",
+    "setAccount",
+    "disconnect",
+  ],
   events: ["receipt", "deploy"],
   kind: "file-system",
 };
@@ -59,7 +66,7 @@ export default class DeployModule extends Plugin {
   }
 
   async addNetwork(network: string) {
-    this.print(`Adding network ${network}`)
+    this.print(`Adding network ${network}`);
     let networkprovider = new Web3.providers.HttpProvider(network);
     this.call("web3Provider", "setProvider", networkprovider);
   }
@@ -71,20 +78,20 @@ export default class DeployModule extends Plugin {
 
   async getAccounts(setAccount: boolean = true) {
     let provider = await this.call("web3Provider", "getProvider");
-    this.print("Get accounts...")
+    this.print("Get accounts...");
     console.log("GET ACCOUNTS UDAPP", provider);
-    if(!provider) return []
+    if (!provider) return [];
     try {
       if (await this.web3.eth.net.isListening()) {
         let accounts = await this.web3.eth.getAccounts();
-        if (setAccount){
+        if (setAccount) {
           if (accounts.length > 0) this.web3.eth.defaultAccount = accounts[0];
           this.print(`Account changed to ${this.web3.eth.defaultAccount}`);
         }
         return accounts;
       }
     } catch (e) {
-      this.print(`Can't get accounts...`)
+      this.print(`Can't get accounts...`);
       console.log(e);
     }
     return [];
@@ -129,7 +136,7 @@ export default class DeployModule extends Plugin {
   }
 
   private print(m: string) {
-    this.call("terminal", "log", m)
+    this.call("terminal", "log", m);
   }
 
   async showContractPicker() {
@@ -213,7 +220,11 @@ export default class DeployModule extends Plugin {
           gas: gas,
         })
         .on("receipt", async function (receipt) {
-          me.emit("deploy", { receipt: receipt, abi:c.abi, contractName: contractName })
+          me.emit("deploy", {
+            receipt: receipt,
+            abi: c.abi,
+            contractName: contractName,
+          });
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress);
           me.print(link);
@@ -226,7 +237,14 @@ export default class DeployModule extends Plugin {
     }
   }
 
-  async send(abi: AbiItem, payload: any[], address: string) {
+  async send(
+    abi: AbiItem,
+    payload: any[],
+    address: string,
+    value: string,
+    unit: Unit,
+    gaslimit: number
+  ) {
     try {
       if (!this.web3Provider) {
         this.print(
@@ -253,6 +271,7 @@ export default class DeployModule extends Plugin {
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).call({
                 from: this.web3.eth.defaultAccount,
+                gas: gaslimit,
               })
             : null;
           this.print(JSON.stringify(txReceipt));
@@ -271,9 +290,17 @@ export default class DeployModule extends Plugin {
               this.web3.eth.defaultAccount
             } at contract address ${address}`
           );
+          console.log({
+            from: this.web3.eth.defaultAccount,
+            gas: gaslimit,
+            value: this.web3.utils.toWei(value, unit),
+          });
+          await contract.methods[abi.name](...payload);
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).send({
                 from: this.web3.eth.defaultAccount,
+                gas: gaslimit,
+                value: this.web3.utils.toWei(value, unit),
               })
             : null;
           this.print(JSON.stringify(txReceipt));

@@ -55,7 +55,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
       return Promise.resolve(children);
     });
   }
-  private toPlugin = (pluginName: string, id: string, text: string, icon: string): PluginInterface => {
+  private toPlugin = (pluginName: string, id: string, text: string, icon: any): PluginInterface => {
     return new PluginInterface(
       pluginName,
       id,
@@ -66,7 +66,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
         title: pluginName,
         arguments: [id],
       },
-      Uri.parse(icon)
+      icon
     );
   };
 
@@ -75,6 +75,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
       const plugins = this.data
         ? this.data.map((plugin) => this.toPlugin(plugin.displayName, plugin.name, plugin.description, plugin.icon))
         : [];
+      console.log(plugins);
       return Promise.resolve(plugins);
     } catch (error) {
       throw error;
@@ -89,15 +90,15 @@ export class PluginInterface extends TreeItem {
     private text: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly command?: Command,
-    public readonly iconURI?: Uri
+    public readonly icon?: any
   ) {
     super(label, collapsibleState);
   }
   tooltip = `${this.label}-${this.text}`;
   description = this.text;
   iconPath = {
-    light: this.iconURI,
-    dark: this.iconURI,
+    light: (this.icon.light? Uri.parse(this.icon.light):Uri.parse(this.icon)),
+    dark: (this.icon.dark? Uri.parse(this.icon.dark):Uri.parse(this.icon)),
   };
   contextValue = "options";
 }

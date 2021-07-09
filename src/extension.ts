@@ -15,8 +15,6 @@ import {
   relativePath,
 } from "@remixproject/engine-vscode/util/path";
 import { PluginManager, Engine } from "@remixproject/engine";
-import { CompilerImports } from "@remix-core-plugin/compiler-content-imports";
-import { CompilerArtefacts } from "@remix-core-plugin/compiler-artefacts";
 
 import { ThemeUrls } from "@remixproject/plugin-api";
 import {
@@ -51,11 +49,10 @@ import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
 import { CompilerAbstract } from "@remix-project/remix-solidity";
-import { FetchAndCompile } from "@remix-core-plugin/compiler-fetch-and-compile";
-import { OffsetToLineColumnConverter } from "@remix-core-plugin/offset-line-to-column-converter";
+import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
 
 import SettingsModule from "./plugins/settings";
-import { CompilerMetadata } from "@remix-core-plugin/compiler-metadata";
+
 
 const path = require("path");
 
@@ -64,6 +61,7 @@ class VscodeManager extends VscodeAppManager {
 }
 
 export async function activate(context: ExtensionContext) {
+  console.log("CONTEXT", context)
   let selectedVersion: string = null;
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
@@ -77,6 +75,9 @@ export async function activate(context: ExtensionContext) {
     return false;
   }
   const rmxPluginsProvider = new RmxPluginsProvider(
+    workspace.workspaceFolders[0].uri.fsPath
+  );
+  const rmxControlsProvider = new RmxPluginsProvider(
     workspace.workspaceFolders[0].uri.fsPath
   );
   const editoropt: EditorOptions = { language: "solidity", transformCmd };
@@ -93,7 +94,7 @@ export async function activate(context: ExtensionContext) {
   const editorPlugin = new EditorPlugin(editoropt);
   const settings = new SettingsModule();
   // compiler
-  const importer = new CompilerImports(filemanager);
+  const importer = new CompilerImports();
   const artefacts = new CompilerArtefacts();
   const fetchAndCompile = new FetchAndCompile();
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter();
@@ -109,7 +110,7 @@ export async function activate(context: ExtensionContext) {
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
-    dark: "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
+    dark: "https://remix.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
@@ -144,7 +145,7 @@ export async function activate(context: ExtensionContext) {
     metadata,
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
-
+  window.registerTreeDataProvider("rmxControls", rmxControlsProvider);
   await manager.activatePlugin(["web3Provider", "udapp"]);
   await deployModule.setListeners();
   await manager.activatePlugin([
@@ -161,9 +162,9 @@ export async function activate(context: ExtensionContext) {
 
   // fetch default data from the plugins-directory filtered by engine
   let defaultPluginData = await manager.registeredPluginData();
-  defaultPluginData = [
+  let rmxControls = [
     {
-      name: "vscodeudapp",
+      name: "vscodeudapp2",
       displayName: "Deploy & Run",
       events: [],
       methods: ["displayUri"],
@@ -172,11 +173,14 @@ export async function activate(context: ExtensionContext) {
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Connect to a network to run and deploy.",
-      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "deployAndRun.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "deployAndRun.webp"))
+      },
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
     },
     {
@@ -195,7 +199,7 @@ export async function activate(context: ExtensionContext) {
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
       options: {
         Start: runCommand,
@@ -214,11 +218,14 @@ export async function activate(context: ExtensionContext) {
       version: "0.1.0",
       url: "",
       description: "Solidity version",
-      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
+      },
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
       options: {
         Select: runCommand,
@@ -235,11 +242,14 @@ export async function activate(context: ExtensionContext) {
       version: "0.1.0",
       url: "",
       description: "Compile sol/yul",
-      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
+      },
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
       options: {
         Select: runCommand,
@@ -252,17 +262,20 @@ export async function activate(context: ExtensionContext) {
       name: "debugger",
       displayName: "Debugger",
       events: [],
-      methods: [],
+      methods: ['debug', 'getTrace'],
       version: "0.1.0",
       url: "http://localhost:4200/",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Debugger",
-      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "debugger.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "debugger.webp"))
+      },
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
     },
   ];
@@ -271,6 +284,7 @@ export async function activate(context: ExtensionContext) {
     Uri.file(path.join(context.extensionPath, "resources", "redbutton.svg"))
   );
   rmxPluginsProvider.setDefaultData(defaultPluginData);
+  rmxControlsProvider.setDefaultData(rmxControls);
   // compile
 
   commands.registerCommand("rmxPlugins.compileFiles", async () => {
@@ -278,7 +292,7 @@ export async function activate(context: ExtensionContext) {
       const files = filemanager.getOpenedFiles();
 
       const opts: Array<QuickPickItem> = Object.values(files)
-        .filter((x: any) => path.extname(x) === ".sol")
+        .filter((x: any) => ( path.extname(x) === ".sol" || path.extname(x) === ".yul"))
         .map((v): QuickPickItem => {
           const vopt: QuickPickItem = {
             label: v,
@@ -338,6 +352,7 @@ export async function activate(context: ExtensionContext) {
   const checkSemver = async (pluginData: PluginInfo) => {
     if (!(pluginData.targetVersion && pluginData.targetVersion.vscode))
       return true;
+      console.log(context)
     return semver.satisfies(
       context.extension.packageJSON.version,
       pluginData.targetVersion.vscode
@@ -350,7 +365,7 @@ export async function activate(context: ExtensionContext) {
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(
       pluginId,
-      rmxPluginsProvider.getData()
+      [...rmxPluginsProvider.getData(), ...rmxControlsProvider.getData()]
     );
     const versionCheck = await checkSemver(pluginData);
     if (!versionCheck) {
@@ -421,7 +436,7 @@ export async function activate(context: ExtensionContext) {
       connected: "greenbutton.svg",
       disconnected: "redbutton.svg",
     };
-    rmxPluginsProvider.setDataForPlugin("remixd", {
+    rmxControlsProvider.setDataForPlugin("remixd", {
       icon: Uri.file(path.join(context.extensionPath, "resources", icons[x])),
       description: x,
     });
@@ -501,7 +516,7 @@ export async function activate(context: ExtensionContext) {
     let id = "";
     if (plugin instanceof Object) id = plugin.id;
     else id = plugin;
-    const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
+    const pluginData = GetPluginData(id, [...rmxPluginsProvider.getData(), ...rmxControlsProvider.getData()]);
     const options: {
       [key: string]: (context: ExtensionContext, id: string) => Promise<void>;
     } = pluginData.options || {

@@ -40,9 +40,15 @@ export default class NativeSolcPlugin extends CommandPlugin {
   private version: string = "latest";
   private versions: Array<string>;
   private compilationResult: ICompilationResult;
+  private compilerOpts: CompilerInputOptions
   constructor() {
     super(profile);
     this.loadSolidityVersions();
+    this.compilerOpts = {
+      language: "Solidity",
+      optimize: false,
+      runs: 200,
+    };
   }
   getVersion() {
     return 0.1;
@@ -117,8 +123,16 @@ export default class NativeSolcPlugin extends CommandPlugin {
   async compile(_version: string, opts: CompilerInputOptions, file?: string) {
     this.print("Compilation started with !");
     const fileName = file || (await this.call("fileManager", "getCurrentFile"));
-    this.version = _version ?_version in this.versions ? this.versions[_version] : _version : await this._setCompilerVersionFromPragma(fileName)
-    //
+    let versionFromPragma;
+    try{
+      versionFromPragma = await this._setCompilerVersionFromPragma(fileName)
+    }catch{
+      versionFromPragma = 'latest'
+    }
+    this.version = _version ? (_version in this.versions ? this.versions[_version] : _version ): versionFromPragma
+    
+    this.compilerOpts = opts? opts:this.compilerOpts
+    opts = this.compilerOpts
     
     this.print(`Compiling ${fileName} ...`);
     const editorContent = file
@@ -212,7 +226,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
           //return false
           console.log("gathering imports");
           this.gatherImports(m.sources, m.missingInputs, (error, files) => {
-            console.log(files.sources);
+
+            console.log("FILES", files);
 
             input.sources = files.sources;
             solcWorker.send({
@@ -221,6 +236,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
               payload: input,
               version: this.version,
             });
+          
           });
         }
         if (compiled.errors) {

@@ -2,7 +2,7 @@ import * as solc from "solc";
 import * as path from "path";
 import * as fs from "fs";
 import axios from "axios";
-import { RemixURLResolver } from "@remix-project/remix-url-resolver";
+
 let missingInputs: string[] = []
 
 function findImports(path: any, root: string) {

@@ -2,7 +2,7 @@
 	"name": "ethereum-remix",
 	"displayName": "Ethereum Remix",
 	"description": "Ethereum Remix plugins in VSCode",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"publisher": "RemixProject",
 	"enableProposedApi": true,
 	"icon": "media/icon.png",
@@ -31,6 +31,11 @@
 				"view": "remix-plugins",
 				"contents": "No remix plugins found [learn more](https://remix.ethereum.org/).\n[Add Plugin](command:rmxPlugins.addEntry)",
 				"when": "view == remix-plugins"
+			},
+			{
+				"view": "remix-controls",
+				"contents": "No remix plugins found [learn more](https://remix.ethereum.org/).\n[Add Plugin](command:rmxPlugins.addEntry)",
+				"when": "view == remix-controls"
 			}
 		],
 		"viewsContainers": {
@@ -44,9 +49,16 @@
 		},
 		"views": {
 			"remix-plugins": [
+
+				{
+					"id": "rmxControls",
+					"name": "REMIX",
+					"icon": "media/remix.svg",
+					"contextualTitle": "Remix"
+				},
 				{
 					"id": "rmxPlugins",
-					"name": "Plugins",
+					"name": "REMIX Plugins",
 					"icon": "media/remix.svg",
 					"contextualTitle": "Remix"
 				}
@@ -99,11 +111,6 @@
 			{
 				"command": "rmxPlugins.compile.solidity",
 				"title": "Compile with Solidity extension",
-				"category": "Remix"
-			},
-			{
-				"command": "rmxPlugins.compile",
-				"title": "Compile with Remix Solidity/YUL compiler",
 				"category": "Remix"
 			},
 			{
@@ -186,14 +193,10 @@
 		"typescript": "^3.9.7"
 	},
 	"dependencies": {
-		"@remix-core-plugin/compiler-artefacts": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-artefacts",
-		"@remix-core-plugin/compiler-content-imports": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-content-imports",
-		"@remix-core-plugin/compiler-fetch-and-compile": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-fetch-and-compile",
-		"@remix-core-plugin/compiler-metadata": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/compiler-metadata",
-		"@remix-core-plugin/offset-line-to-column-converter": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin/offset-line-to-column-converter",
-		"@remix-project/remix-lib": "file:../../remix-project/dist/libs/remix-lib",
-		"@remix-project/remix-solidity": "file:../../remix-project/dist/libs/remix-solidity",
-		"@remix-project/remix-url-resolver": "^0.0.21",
+		"@remix-project/core-plugin": "file:/Volumes/butbut/code/remix-project/dist/libs/core-plugin",
+		"@remix-project/remix-lib": "file:/Volumes/butbut/code/remix-project/dist/libs/remix-lib",
+		"@remix-project/remix-solidity": "file:/Volumes/butbut/code/remix-project/libs/remix-solidity",
+		"@remix-project/remix-url-resolver": "file:/Volumes/butbut/code/remix-project/dist/libs/remix-url-resolver",
 		"@remix-project/remixd": "^0.3.5",
 		"@remixproject/engine": "^0.3.17",
 		"@remixproject/engine-vscode": "^0.3.17",

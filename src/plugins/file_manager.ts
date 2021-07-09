@@ -6,28 +6,58 @@ import {
 import { workspace, Uri, ExtensionContext } from "vscode";
 export default class VscodeFileManager extends FileManagerPlugin {
   type: string;
-  context: ExtensionContext
+  context: ExtensionContext;
   constructor() {
     super();
     this.type = "localhost";
-    this.methods = [...this.methods, "getOpenedFiles", "exists"];
+    this.methods = [
+      ...this.methods,
+      "getOpenedFiles",
+      "exists",
+      "getProviderByName",
+      "getProviderOf",
+      "getProviderByName",
+    ];
   }
 
-  setContext(context: ExtensionContext){
-    this.context = context
+  /**
+   * Async API method getProviderOf
+   * @param {string} file
+   *
+   */
+
+  async getProviderOf(file: string) {
+    return this.currentFileProvider()
   }
 
-  addNormalizedName (path, url) {
-    this.context.workspaceState.update(this.type + '/' + path, url)
-    this.context.workspaceState.update('reverse-' + url, this.type + '/' + path)
+  /**
+   * Async API method getProviderByName
+   * @param {string} name
+   *
+   */
+
+  async getProviderByName(name: string) {
+    return this.currentFileProvider()
   }
 
-  getNormalizedName (path) {
-    return this.context.workspaceState.get(path)
+  setContext(context: ExtensionContext) {
+    this.context = context;
   }
 
-  getPathFromUrl (url) {
-    return this.context.workspaceState.get('reverse-' + url)
+  addNormalizedName(path, url) {
+    this.context.workspaceState.update(this.type + "/" + path, url);
+    this.context.workspaceState.update(
+      "reverse-" + url,
+      this.type + "/" + path
+    );
+  }
+
+  getNormalizedName(path) {
+    return this.context.workspaceState.get(path);
+  }
+
+  getPathFromUrl(url) {
+    return this.context.workspaceState.get("reverse-" + url);
   }
 
   currentFileProvider() {
@@ -52,8 +82,8 @@ export default class VscodeFileManager extends FileManagerPlugin {
   }
 
   exists(path) {
-    path = this.getPathFromUrl(path) || path
-    var unprefixedpath = this.removePrefix(path)
+    path = this.getPathFromUrl(path) || path;
+    var unprefixedpath = this.removePrefix(path);
     const absPath = absolutePath(unprefixedpath);
     const uri = Uri.file(absPath);
     return new Promise((resolve, reject) => {
@@ -72,16 +102,16 @@ export default class VscodeFileManager extends FileManagerPlugin {
     });
   }
 
-  removePrefix (path) {
-    path = path.indexOf(this.type) === 0 ? path.replace(this.type, '') : path
-    if (path === '') return '/'
-    return path
+  removePrefix(path) {
+    path = path.indexOf(this.type) === 0 ? path.replace(this.type, "") : path;
+    if (path === "") return "/";
+    return path;
   }
 
   get(path: any, cb) {
-    cb = cb || function () {}
-    path = this.getPathFromUrl(path) || path 
-    var unprefixedpath = this.removePrefix(path)
+    cb = cb || function () {};
+    path = this.getPathFromUrl(path) || path;
+    var unprefixedpath = this.removePrefix(path);
     this.exists(unprefixedpath).then(
       () => {
         this.readFile(unprefixedpath).then(
@@ -101,9 +131,9 @@ export default class VscodeFileManager extends FileManagerPlugin {
 
   set(path: string, content: string, cb) {
     cb = cb || function () {};
-    var unprefixedpath = this.removePrefix(path)
+    var unprefixedpath = this.removePrefix(path);
     try {
-      console.log("write to", unprefixedpath)
+      console.log("write to", unprefixedpath);
       this.writeFile(unprefixedpath, content).then(() => {
         cb();
       });
@@ -113,7 +143,7 @@ export default class VscodeFileManager extends FileManagerPlugin {
   }
 
   addExternal(path, content, url) {
-    if (url) this.addNormalizedName(path, url)
+    if (url) this.addNormalizedName(path, url);
     return this.set(path, content, undefined);
   }
 }

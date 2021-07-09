@@ -663,7 +663,7 @@
     enc-utils "^3.0.0"
     randombytes "^2.1.0"
 
-"@remix-project/core-plugin@file:../../remix-project/dist/libs/core-plugin":
+"@remix-project/core-plugin@file:src/plugins/remix-project/core-plugin":
   version "0.0.1"
   dependencies:
     "@erebos/bzz-node" "^0.13.0"
@@ -673,12 +673,12 @@
     "@ethereumjs/vm" "^5.4.1"
     "@remix-project/remix-astwalker" "0.0.32"
     "@remix-project/remix-debug" "0.5.2"
-    "@remix-project/remix-lib" "0.5.2"
+    "@remix-project/remix-lib" "file:../../../../../Users/filipmertens/Library/Caches/Yarn/v6/npm-@remix-project-core-plugin-0.0.1-ee82fcf4-7c00-4bc4-8997-c552c0d4cbc1-1625829105902/node_modules/@remix-project/remix-lib"
     "@remix-project/remix-simulator" "0.2.2"
-    "@remix-project/remix-solidity" "0.4.2"
+    "@remix-project/remix-solidity" "file:../../../../../Users/filipmertens/Library/Caches/Yarn/v6/npm-@remix-project-core-plugin-0.0.1-ee82fcf4-7c00-4bc4-8997-c552c0d4cbc1-1625829105902/node_modules/@remix-project/remix-solidity"
     "@remix-project/remix-tests" "0.2.2"
-    "@remix-project/remix-url-resolver" "0.0.23"
-    "@remixproject/engine" "^0.3.17"
+    "@remix-project/remix-url-resolver" "file:../../../../../Users/filipmertens/Library/Caches/Yarn/v6/npm-@remix-project-core-plugin-0.0.1-ee82fcf4-7c00-4bc4-8997-c552c0d4cbc1-1625829105902/node_modules/@remix-project/remix-url-resolver"
+    "@remixproject/engine" "^0.3.19"
     ansi-gray "^0.1.1"
     async "^2.6.2"
     axios ">=0.21.1"
@@ -748,21 +748,6 @@
     ethers "^5.1.4"
     web3 "^1.2.4"
 
-"@remix-project/remix-lib@0.5.2", "@remix-project/remix-lib@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.5.2.tgz#0e08279dec95bf1d39d8f895ee3b124f70c25c65"
-  integrity sha512-QiQXOERzmGFxTXx6chzd+lwqUJ0HCtxLUL9IZSu56633UOr2IGD4RHVYYDSDHCdRs3KQpzBK9tKqVwdtDdXFgQ==
-  dependencies:
-    "@ethereumjs/block" "^3.3.0"
-    "@ethereumjs/tx" "^3.2.1"
-    "@ethereumjs/vm" "^5.4.1"
-    async "^2.1.2"
-    ethereumjs-util "^7.0.10"
-    ethers "^4.0.40"
-    events "^3.0.0"
-    solc "^0.7.4"
-    web3 "^1.2.4"
-
 "@remix-project/remix-lib@^0.4.31":
   version "0.4.34"
   resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.4.34.tgz#118be3f1107f4ba12ca473c2fce76cb6886a1c85"
@@ -778,7 +763,22 @@
     solc "^0.7.4"
     web3 "^1.2.4"
 
-"@remix-project/remix-lib@file:../../remix-project/dist/libs/remix-lib":
+"@remix-project/remix-lib@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@remix-project/remix-lib/-/remix-lib-0.5.2.tgz#0e08279dec95bf1d39d8f895ee3b124f70c25c65"
+  integrity sha512-QiQXOERzmGFxTXx6chzd+lwqUJ0HCtxLUL9IZSu56633UOr2IGD4RHVYYDSDHCdRs3KQpzBK9tKqVwdtDdXFgQ==
+  dependencies:
+    "@ethereumjs/block" "^3.3.0"
+    "@ethereumjs/tx" "^3.2.1"
+    "@ethereumjs/vm" "^5.4.1"
+    async "^2.1.2"
+    ethereumjs-util "^7.0.10"
+    ethers "^4.0.40"
+    events "^3.0.0"
+    solc "^0.7.4"
+    web3 "^1.2.4"
+
+"@remix-project/remix-lib@file:src/plugins/remix-project/remix-lib":
   version "0.5.2"
   dependencies:
     "@ethereumjs/block" "^3.3.0"
@@ -816,7 +816,7 @@
     time-stamp "^2.0.0"
     web3 "^1.2.4"
 
-"@remix-project/remix-solidity@0.4.2", "@remix-project/remix-solidity@^0.4.2":
+"@remix-project/remix-solidity@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@remix-project/remix-solidity/-/remix-solidity-0.4.2.tgz#c9a95951cbb1558acc21ec54700d14532addb3b3"
   integrity sha512-CENqwxhB2O+J6sYCiqWnivuvs3tphQmFugfYImMLpzkvt/TnQgfat8QUoyo7zZf9AflqjNomRhGfyNWARR9tmQ==
@@ -833,13 +833,13 @@
     web3 "1.2.4"
     webworkify-webpack "^2.1.5"
 
-"@remix-project/remix-solidity@file:../../remix-project/dist/libs/remix-solidity":
+"@remix-project/remix-solidity@file:src/plugins/remix-project/remix-solidity":
   version "0.4.2"
   dependencies:
     "@ethereumjs/block" "^3.3.0"
     "@ethereumjs/tx" "^3.2.1"
     "@ethereumjs/vm" "^5.4.1"
-    "@remix-project/remix-lib" "^0.5.2"
+    "@remix-project/remix-lib" "file:../../../../../Users/filipmertens/Library/Caches/Yarn/v6/npm-@remix-project-remix-solidity-0.4.2-9c350d69-8e26-4dc2-b5ba-2cfd0d274de3-1625829106142/node_modules/@remix-project/remix-lib"
     async "^2.6.2"
     eslint-scope "^5.0.0"
     ethereumjs-util "^7.0.10"
@@ -889,18 +889,7 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
-"@remix-project/remix-url-resolver@0.0.23":
-  version "0.0.23"
-  resolved "https://registry.yarnpkg.com/@remix-project/remix-url-resolver/-/remix-url-resolver-0.0.23.tgz#dc3954e746fa9d2588f7ce298ce4a1ee7d4126b4"
-  integrity sha512-e0DovhxQ9RxUI6kbB2oGCWJs8Ibhn3yeRMIfZY1WOGkwNL2tUDl5+gfbRdhvLMIQnuYylktR3JEjQxEcPnh+qw==
-  dependencies:
-    "@erebos/bzz-node" "^0.13.0"
-    axios ">=0.21.1"
-    solc "^0.7.4"
-    url "^0.11.0"
-    valid-url "^1.0.9"
-
-"@remix-project/remix-url-resolver@file:../../remix-project/dist/libs/remix-url-resolver":
+"@remix-project/remix-url-resolver@file:src/plugins/remix-project/remix-url-resolver":
   version "0.0.23"
   dependencies:
     "@erebos/bzz-node" "^0.13.0"
@@ -909,10 +898,10 @@
     url "^0.11.0"
     valid-url "^1.0.9"
 
-"@remix-project/remixd@^0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@remix-project/remixd/-/remixd-0.3.5.tgz#5493cfd57a594960a5b8bc3c67710f828f2705cf"
-  integrity sha512-8roj3YOSPq8TBBlTn7SboVkNH0w85IWNAbgc1qPJpZrhuK1ClaQzOTu55WaT6FngZB2UX+DbLUnx3v6CpH2hrA==
+"@remix-project/remixd@^0.4.1":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@remix-project/remixd/-/remixd-0.4.2.tgz#25c3fa2adfd93d63bcecb4bae9d0c61742181bf9"
+  integrity sha512-O369uvdfk2TrC2jlgRKtcR5m8L3TLjfVKiJgnJ59U7ZVzLH7GE7jKEIArtFjRTZTd7hNHd+EQx2VhEWFEJhbgg==
   dependencies:
     "@remixproject/plugin" "^0.3.11"
     "@remixproject/plugin-api" "^0.3.11"
@@ -923,49 +912,65 @@
     commander "^2.20.3"
     fs-extra "^3.0.1"
     isbinaryfile "^3.0.2"
+    latest-version "^5.1.0"
+    semver "^6.3.0"
     ws "^7.3.0"
 
-"@remixproject/engine-vscode@^0.3.17":
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.17.tgz#da5216c9735eb7a8d0bed69ffd16ffa785a7c55b"
-  integrity sha512-ytjqELKPRIT3Q7iGA7SVM9Y378fJ8yURsIeG8A27f/p1VruavOh/NbGTSGARhdiwReTqy5cs8GZXVEUMeHg96w==
+"@remixproject/engine-vscode@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine-vscode/-/engine-vscode-0.3.19.tgz#28eaf66d072998f253655e7c62d18405c20d7102"
+  integrity sha512-f+qLYKg8uV7WSkRW1J/eONZw+TW4asJnhEfhiCrqKFLgkK7ooq0D2MtaIdsZiXJqhbVnj3R0i3pqX9WyxvLP9w==
   dependencies:
     "@remix-project/remix-url-resolver" "0.0.19"
-    "@remixproject/engine" "0.3.17"
-    "@remixproject/plugin-api" "0.3.17"
-    "@remixproject/plugin-utils" "0.3.17"
+    "@remixproject/engine" "0.3.19"
+    "@remixproject/plugin-api" "0.3.19"
+    "@remixproject/plugin-utils" "0.3.19"
     axios "^0.21.1"
 
-"@remixproject/engine@0.3.17", "@remixproject/engine@^0.3.17":
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.17.tgz#d7ddf0d9bcd73a83caea346a50e0aef92e0d808c"
-  integrity sha512-mKpGZohw/rF/1CE/kr84DsPk5GVgFJKsd+U+H3PyMy35bhkfHuEthUC0pi+fFM1SjpC1UDyQQ1z4gk+3lmrDZg==
+"@remixproject/engine@0.3.19", "@remixproject/engine@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/engine/-/engine-0.3.19.tgz#374cdf5ac8201c90b0845d0e3dea52b2a7a508b8"
+  integrity sha512-ZUF/KJp/4sULJXKGqRN5e033RGpzI6zknaWR6jEK5cBJi4aoveOpfKvKUBUhUgb3ugYKQoe3d+EGjYPvafjucQ==
   dependencies:
-    "@remixproject/plugin-api" "0.3.17"
-    "@remixproject/plugin-utils" "0.3.17"
+    "@remixproject/plugin-api" "0.3.19"
+    "@remixproject/plugin-utils" "0.3.19"
 
-"@remixproject/plugin-api@0.3.17", "@remixproject/plugin-api@^0.3.11", "@remixproject/plugin-api@^0.3.17":
+"@remixproject/plugin-api@0.3.17", "@remixproject/plugin-api@^0.3.11":
   version "0.3.17"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.17.tgz#e554dfa676e518b6491280dcdc6ac1d0b6362eda"
   integrity sha512-RHTo4ypiBfSiK963L5Hgjm1QzjhOVfjczAdS124JqZx1IckcCHTXyzxT509j+6ofCw39uAUrh+/AqaHPU2hzMQ==
   dependencies:
     "@remixproject/plugin-utils" "0.3.17"
 
-"@remixproject/plugin-utils@0.3.17", "@remixproject/plugin-utils@^0.3.11", "@remixproject/plugin-utils@^0.3.17":
+"@remixproject/plugin-api@0.3.19", "@remixproject/plugin-api@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.19.tgz#4c6ecb6f7bdfb1fb14815aed1dd3333d87e249e9"
+  integrity sha512-MDCiGYA++5ydncSJUSNe5Fg0qh2fADbMdlCDP8BGsvUfhPEDBRIm8Iw6gYYGu9d5S4xDCs0EBMcExqvdweOGEw==
+  dependencies:
+    "@remixproject/plugin-utils" "0.3.19"
+
+"@remixproject/plugin-utils@0.3.17", "@remixproject/plugin-utils@^0.3.11":
   version "0.3.17"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.17.tgz#7f6038684aba73580ebf1a37a39792e501fc77e4"
   integrity sha512-h01pjk8RvSRTCIcmoPq8bBXQGyIBlD4LWQ++5B9y3U2olgN+Mq7OZU4CkKS2IhFmj3IvCKn07DgJhMzMYnxGKg==
   dependencies:
     tslib "2.0.1"
 
-"@remixproject/plugin-vscode@^0.3.17":
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.17.tgz#a7a59e5127961d52a675449e3583f4653bb0402c"
-  integrity sha512-jrrrsD4ROTaNhCNTfKcjc50GMRsOS/dffUxkbmZpPJY4XXKnNYnRa3MCCHhBdfz+9kkrxGOIgJi6sOhi/BGpPA==
+"@remixproject/plugin-utils@0.3.19", "@remixproject/plugin-utils@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.19.tgz#639a2a9860ef7ae43f8d6378a82e1b469086f4b7"
+  integrity sha512-++L83MmSeV4Hri4uldOB0iNqwOAN/3eAnYorpiSCpKJbeQzT08KyorQ6B3FAiG/EM0pF/o+sPZbNtSJuHCUfIw==
   dependencies:
-    "@remixproject/plugin" "0.3.17"
-    "@remixproject/plugin-api" "0.3.17"
-    "@remixproject/plugin-utils" "0.3.17"
+    tslib "2.0.1"
+
+"@remixproject/plugin-vscode@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-vscode/-/plugin-vscode-0.3.19.tgz#0f8ef7e72d55ddee0f47a058e41f52c3ac37b97a"
+  integrity sha512-iwDGyET3DtuWCsSN9RubZ0JcGjGfGPMN7uOwhwaQff1NDZ+bqrpRqEwtpVMGY1YYCDjcoRPfjDfKEvvoY5U6Uw==
+  dependencies:
+    "@remixproject/plugin" "0.3.19"
+    "@remixproject/plugin-api" "0.3.19"
+    "@remixproject/plugin-utils" "0.3.19"
 
 "@remixproject/plugin-ws@^0.3.11":
   version "0.3.17"
@@ -976,13 +981,22 @@
     "@remixproject/plugin-api" "0.3.17"
     "@remixproject/plugin-utils" "0.3.17"
 
-"@remixproject/plugin@0.3.17", "@remixproject/plugin@^0.3.11", "@remixproject/plugin@^0.3.17":
+"@remixproject/plugin@0.3.17", "@remixproject/plugin@^0.3.11":
   version "0.3.17"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.17.tgz#43b4c644bed8edfed4c01409b9b569379b4fc9a7"
   integrity sha512-mSg9OiFwAvaKfqV9UL8zLjxxBiypSeiUkW8K4w0TqiEt5MUDNK+mPngEpP43WLfCe4OO9aH4fxNe+A1TyOfRAQ==
   dependencies:
     "@remixproject/plugin-api" "0.3.17"
     "@remixproject/plugin-utils" "0.3.17"
+    events "3.2.0"
+
+"@remixproject/plugin@0.3.19", "@remixproject/plugin@^0.3.19":
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin/-/plugin-0.3.19.tgz#a3be12c15e6b1ea812f1e31f2a7b20f36d7b3dfe"
+  integrity sha512-jEG0ge0ku1TfFU/46ckvzB0Q7WyeUEQhvatv1oMrVTHUj2o8B0u500V92AcI0YNcxXjn5UNNrHGQBgLcNvYG6Q==
+  dependencies:
+    "@remixproject/plugin-api" "0.3.19"
+    "@remixproject/plugin-utils" "0.3.19"
     events "3.2.0"
 
 "@sindresorhus/is@^0.14.0":
@@ -2552,6 +2566,11 @@ deep-equal@^1.0.1, deep-equal@~1.1.1:
     object-keys "^1.1.1"
     regexp.prototype.flags "^1.2.0"
 
+deep-extend@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
+  integrity sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==
+
 default-require-extensions@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/default-require-extensions/-/default-require-extensions-2.0.0.tgz#f5f8fbb18a7d6d50b21f641f649ebb522cfe24f7"
@@ -3929,7 +3948,7 @@ globals@^11.1.0:
   resolved "https://registry.yarnpkg.com/globals/-/globals-11.12.0.tgz#ab8795338868a0babd8525758018c2a7eb95c42e"
   integrity sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==
 
-got@9.6.0:
+got@9.6.0, got@^9.6.0:
   version "9.6.0"
   resolved "https://registry.yarnpkg.com/got/-/got-9.6.0.tgz#edf45e7d67f99545705de1f7bbeeeb121765ed85"
   integrity sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==
@@ -4218,6 +4237,11 @@ inherits@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
+
+ini@~1.3.0:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
+  integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 invert-kv@^2.0.0:
   version "2.0.0"
@@ -5061,6 +5085,13 @@ kuler@^2.0.0:
   resolved "https://registry.yarnpkg.com/kuler/-/kuler-2.0.0.tgz#e2c570a3800388fb44407e851531c1d670b061b3"
   integrity sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==
 
+latest-version@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/latest-version/-/latest-version-5.1.0.tgz#119dfe908fe38d15dfa43ecd13fa12ec8832face"
+  integrity sha512-weT+r0kTkRQdCdYCNtkMwWXQTMEswKrFBkm4ckQOMVhhqhIMI1UT2hMj+1iigIhgSZm5gTmrRXBNoGUgaTY1xA==
+  dependencies:
+    package-json "^6.3.0"
+
 lcid@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/lcid/-/lcid-2.0.0.tgz#6ef5d2df60e52f82eb228a4c373e8d1f397253cf"
@@ -5581,7 +5612,7 @@ minimatch@*, minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimist@^1.2.5, minimist@~1.2.5:
+minimist@^1.2.0, minimist@^1.2.5, minimist@~1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
@@ -6188,6 +6219,16 @@ package-hash@^3.0.0:
     lodash.flattendeep "^4.4.0"
     release-zalgo "^1.0.0"
 
+package-json@^6.3.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/package-json/-/package-json-6.5.0.tgz#6feedaca35e75725876d0b0e64974697fed145b0"
+  integrity sha512-k3bdm2n25tkyxcjSKzB5x8kfVxlMdgsbPr0GkZcwHsLpba6cBjqCt1KlcChKEvxHIcTB1FVMuwoijZ26xex5MQ==
+  dependencies:
+    got "^9.6.0"
+    registry-auth-token "^4.0.0"
+    registry-url "^5.0.0"
+    semver "^6.2.0"
+
 pako@^1.0.10:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
@@ -6595,6 +6636,16 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+rc@^1.2.8:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
+  integrity sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==
+  dependencies:
+    deep-extend "^0.6.0"
+    ini "~1.3.0"
+    minimist "^1.2.0"
+    strip-json-comments "~2.0.1"
+
 read-pkg-up@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/read-pkg-up/-/read-pkg-up-4.0.0.tgz#1b221c6088ba7799601c808f91161c66e58f8978"
@@ -6690,6 +6741,20 @@ regexp.prototype.flags@^1.2.0:
   dependencies:
     call-bind "^1.0.2"
     define-properties "^1.1.3"
+
+registry-auth-token@^4.0.0:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/registry-auth-token/-/registry-auth-token-4.2.1.tgz#6d7b4006441918972ccd5fedcd41dc322c79b250"
+  integrity sha512-6gkSb4U6aWJB4SF2ZvLb76yCBjcvufXBqvvEx1HbmKPkutswjW1xNVRY0+daljIYRbogN7O0etYSlbiaEQyMyw==
+  dependencies:
+    rc "^1.2.8"
+
+registry-url@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/registry-url/-/registry-url-5.1.0.tgz#e98334b50d5434b81136b44ec638d9c2009c5009"
+  integrity sha512-8acYXXTI0AkQv6RAOjE3vOaIXZkT9wo4LOFbBKYQEEnnMNBpKqdUrI6S4NT0KPIo/WVvJ5tE/X5LF/TQUf0ekw==
+  dependencies:
+    rc "^1.2.8"
 
 release-zalgo@^1.0.0:
   version "1.0.0"
@@ -6942,7 +7007,7 @@ semver@7.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.0.0.tgz#5f3ca35761e47e05b206c6daff2cf814f0316b8e"
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
-semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.3.0:
+semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.2.0, semver@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
@@ -7459,6 +7524,11 @@ strip-hex-prefix@1.0.0:
   integrity sha1-DF8VX+8RUTczd96du1iNoFUA428=
   dependencies:
     is-hex-prefixed "1.0.0"
+
+strip-json-comments@~2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
+  integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
 supports-color@^5.3.0:
   version "5.5.0"

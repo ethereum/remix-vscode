@@ -18,7 +18,7 @@
     "@ethereumjs/block": "^3.3.0",
     "@ethereumjs/tx": "^3.2.1",
     "@ethereumjs/vm": "^5.4.1",
-    "@remix-project/remix-lib": "../remix-lib",
+    "@remix-project/remix-lib": "file:../remix-lib",
     "async": "^2.6.2",
     "eslint-scope": "^5.0.0",
     "ethereumjs-util": "^7.0.10",

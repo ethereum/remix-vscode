@@ -10,8 +10,8 @@
   "license": "ISC",
   "typings": "index.d.ts",
   "dependencies": {
-		"@remix-project/remix-solidity": "../remix-solidity",
-		"@remix-project/remix-lib": "../remix-lib",
+		"@remix-project/remix-solidity": "file:../remix-solidity",
+		"@remix-project/remix-lib": "file:../remix-lib",
     "ethers": "^5.1.4",
     "async": "^2.6.2",
     "ethereumjs-util": "^7.0.10",
@@ -19,7 +19,7 @@
     "@ethereumjs/block": "^3.3.0",
     "web3": "1.2.4",
     "string-similarity": "^4.0.4",
-		"@remix-project/remix-url-resolver": "../remix-url-resolver",
+		"@remix-project/remix-url-resolver": "file:../remix-url-resolver",
     "axios": ">=0.21.1",
     "@erebos/bzz-node": "^0.13.0",
     "@remix-project/remix-tests": "0.2.2",
@@ -38,6 +38,6 @@
     "@remix-project/remix-debug": "0.5.2",
     "@remix-project/remix-astwalker": "0.0.32",
     "deep-equal": "^1.0.1",
-    "@remixproject/engine": "^0.3.17"
+    "@remixproject/engine": "^0.3.19"
   }
 }

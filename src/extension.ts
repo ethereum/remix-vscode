@@ -162,7 +162,7 @@ export async function activate(context: ExtensionContext) {
       events: [],
       methods: ["displayUri"],
       version: "0.1.0",
-      url: "http://localhost:3000",
+      url: "https://vscoderemixudapp.web.app",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Connect to a network to run and deploy.",
@@ -184,7 +184,7 @@ export async function activate(context: ExtensionContext) {
       version: "0.1.0",
       url: "",
       documentation:
-        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+        "",
       description: "Start a remixd client",
       icon: Uri.file(
         path.join(context.extensionPath, "resources", "redbutton.svg")
@@ -257,9 +257,9 @@ export async function activate(context: ExtensionContext) {
       events: [],
       methods: ['debug', 'getTrace'],
       version: "0.1.0",
-      url: "http://localhost:4200/",
+      url: "https://debuggervscode.web.app/",
       documentation:
-        "https://github.com/bunsenstraat/remix-vscode-walletconnect",
+        "https://remix-ide.readthedocs.io/en/latest/debugger.html",
       description: "Transaction debugger",
       icon: { 
         light:Uri.file(path.join(context.extensionPath, "resources/light", "debugger.webp")),

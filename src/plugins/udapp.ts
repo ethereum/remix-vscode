@@ -201,7 +201,7 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
-      let accounts = await this.web3.eth.getAccounts();
+
       await this.detectNetwork();
       let contract = new this.web3.eth.Contract(c.abi);
       let deployObject = contract.deploy({

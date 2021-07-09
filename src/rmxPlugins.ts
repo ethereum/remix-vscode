@@ -75,7 +75,6 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
       const plugins = this.data
         ? this.data.map((plugin) => this.toPlugin(plugin.displayName, plugin.name, plugin.description, plugin.icon))
         : [];
-      console.log(plugins);
       return Promise.resolve(plugins);
     } catch (error) {
       throw error;

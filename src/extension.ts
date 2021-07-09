@@ -100,13 +100,6 @@ export async function activate(context: ExtensionContext) {
   const offsetToLineColumnConverter = new OffsetToLineColumnConverter();
   const metadata = new CompilerMetadata()
 
-  const remix_solidity_1 = require("@remix-project/remix-solidity");
-
-  const ab = new CompilerAbstract("2", "2", "3");
-  console.log("ABSTRACT", ab);
-  const ac = new remix_solidity_1.CompilerAbstract("2", "2", "3");
-  console.log("ABSTRACT", ac);
-
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
@@ -164,8 +157,8 @@ export async function activate(context: ExtensionContext) {
   let defaultPluginData = await manager.registeredPluginData();
   let rmxControls = [
     {
-      name: "vscodeudapp2",
-      displayName: "Deploy & Run",
+      name: "vscodeudapp",
+      displayName: "Run & Deploy",
       events: [],
       methods: ["displayUri"],
       version: "0.1.0",
@@ -217,7 +210,7 @@ export async function activate(context: ExtensionContext) {
       methods: [],
       version: "0.1.0",
       url: "",
-      description: "Solidity version",
+      description: "",
       icon: { 
         light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
         dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
@@ -241,7 +234,7 @@ export async function activate(context: ExtensionContext) {
       methods: [],
       version: "0.1.0",
       url: "",
-      description: "Compile sol/yul",
+      description: "Compile contracts",
       icon: { 
         light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
         dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
@@ -267,7 +260,7 @@ export async function activate(context: ExtensionContext) {
       url: "http://localhost:4200/",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
-      description: "Debugger",
+      description: "Transaction debugger",
       icon: { 
         light:Uri.file(path.join(context.extensionPath, "resources/light", "debugger.webp")),
         dark:Uri.file(path.join(context.extensionPath, "resources/dark", "debugger.webp"))
@@ -280,9 +273,6 @@ export async function activate(context: ExtensionContext) {
     },
   ];
 
-  console.log(
-    Uri.file(path.join(context.extensionPath, "resources", "redbutton.svg"))
-  );
   rmxPluginsProvider.setDefaultData(defaultPluginData);
   rmxControlsProvider.setDefaultData(rmxControls);
   // compile
@@ -352,7 +342,6 @@ export async function activate(context: ExtensionContext) {
   const checkSemver = async (pluginData: PluginInfo) => {
     if (!(pluginData.targetVersion && pluginData.targetVersion.vscode))
       return true;
-      console.log(context)
     return semver.satisfies(
       context.extension.packageJSON.version,
       pluginData.targetVersion.vscode
@@ -430,7 +419,7 @@ export async function activate(context: ExtensionContext) {
   });
 
   RemixD.on("remixdprovider" as any, "statusChanged", (x: any) => {
-    console.log("STATUS CHANGE", x);
+    //console.log("STATUS CHANGE", x);
     const icons = {
       waiting: "yellowbutton.svg",
       connected: "greenbutton.svg",
@@ -576,6 +565,9 @@ export async function activate(context: ExtensionContext) {
       window.showQuickPick(opts).then((selected) => {
         if (selected) {
           selectedVersion = selected.label;
+          rmxControlsProvider.setDataForPlugin("solidityversion",{
+            description: selectedVersion
+          })
         }
       });
     } catch (error) {

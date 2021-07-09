@@ -16,7 +16,6 @@ export default class VscodeFileManager extends FileManagerPlugin {
       "exists",
       "getProviderByName",
       "getProviderOf",
-      "getProviderByName",
     ];
   }
 

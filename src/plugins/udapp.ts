@@ -1,20 +1,6 @@
 import { Plugin } from "@remixproject/engine";
-import {
-  absolutePath,
-  relativePath,
-} from "@remixproject/engine-vscode/util/path";
-import {
-  window,
-  workspace,
-  Uri,
-  commands,
-  ViewColumn,
-  InputBoxOptions,
-  OutputChannel,
-  QuickPickItem,
-} from "vscode";
 import Web3 from "web3";
-import { AbiInput, AbiItem, Unit } from "web3-utils";
+import { AbiItem, Unit } from "web3-utils";
 
 const profile = {
   name: "udapp",

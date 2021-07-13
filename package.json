@@ -4,7 +4,7 @@
 	"description": "Ethereum Remix plugins in VSCode",
 	"version": "0.0.9",
 	"publisher": "RemixProject",
-	"enableProposedApi": true,
+	"enableProposedApi": false,
 	"icon": "media/icon.png",
 	"repository": {
 		"type": "git",

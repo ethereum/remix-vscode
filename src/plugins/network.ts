@@ -89,6 +89,7 @@ export class NetworkModule extends Plugin {
   async detectNetwork() {
     
       await this.web3.eth.net.getId((err, id) => {
+        console.log(id)
         this.networkName = null;
         if (err) {
           this.print(`Could not detect network! Please connnect.`);
@@ -101,6 +102,7 @@ export class NetworkModule extends Plugin {
         else if (id === 4) this.networkName = "Rinkeby";
         else if (id === 5) this.networkName = "Goerli";
         else if (id === 42) this.networkName = "Kovan";
+        else if (id === 1337) this.networkName = "RemixVM";
         else this.networkName = "Custom";
         this.print(`Network is ${this.networkName}!`);
       });

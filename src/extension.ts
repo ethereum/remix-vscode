@@ -52,6 +52,7 @@ import { CompilerAbstract } from "@remix-project/remix-solidity";
 import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
 
 import SettingsModule from "./plugins/settings";
+import { NetworkModule } from "./plugins/network";
 
 
 const path = require("path");
@@ -61,7 +62,7 @@ class VscodeManager extends VscodeAppManager {
 }
 
 export async function activate(context: ExtensionContext) {
-  console.log("CONTEXT", context)
+  console.log("CONTEXT 2", context)
   let selectedVersion: string = null;
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
@@ -87,6 +88,7 @@ export async function activate(context: ExtensionContext) {
   const terminal = new Terminal();
   const deployModule = new DeployModule();
   const web3Povider = new Web3ProviderModule();
+  const networkModule = new NetworkModule();
   const RemixD = new RemixDProvider();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
@@ -127,6 +129,7 @@ export async function activate(context: ExtensionContext) {
     theme,
     web3Povider,
     deployModule,
+    networkModule,
     wallet,
     vscodeExtAPI,
     RemixD,
@@ -139,8 +142,9 @@ export async function activate(context: ExtensionContext) {
   ]);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
   window.registerTreeDataProvider("rmxControls", rmxControlsProvider);
-  await manager.activatePlugin(["web3Provider", "udapp"]);
+  await manager.activatePlugin(["web3Provider", "udapp", "network"]);
   await deployModule.setListeners();
+  await networkModule.setListeners();
   await manager.activatePlugin([
     "walletconnect",
     "remixdprovider",
@@ -162,7 +166,8 @@ export async function activate(context: ExtensionContext) {
       events: [],
       methods: ["displayUri"],
       version: "0.1.0",
-      url: "https://vscoderemixudapp.web.app",
+      //url: "https://vscoderemixudapp.web.app",
+      url: "http://localhost:3000",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Connect to a network to run and deploy.",
@@ -478,7 +483,7 @@ export async function activate(context: ExtensionContext) {
       displayName: "Remix plugin example",
       methods: [],
       version: "0.0.1-dev",
-      url: "http://bafybeiesvwanzbpvsfby7fvgh4dnhliohnsvoqj7ld7q27smqu7rs43gee.ipfs.localhost:8081/",
+      url: "http://localhost:3000",
       description: "Run remix plugin in your Remix project",
       icon: "",
       location: "sidePanel",

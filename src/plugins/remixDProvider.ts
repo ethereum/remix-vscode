@@ -30,7 +30,7 @@ export default class RemixDProvider extends Plugin {
   socket: any;
   status: remixdStatus;
   remixIdeUrl = "https://remix.ethereum.org/";
-  
+
   ports = {
     git: 65521,
     folder: 65520,
@@ -38,8 +38,7 @@ export default class RemixDProvider extends Plugin {
 
   constructor() {
     super(profile);
-    setInterval(this.getStatus, 5000, this)
-   
+    setInterval(this.getStatus, 5000, this);
   }
 
   async createClient() {
@@ -65,10 +64,13 @@ export default class RemixDProvider extends Plugin {
         console.log("ERROR CONNECTING", e);
         this.print(`Connect to Remix`);
       });
+    this.sharedFolderClient.on("network", "providerChanged", function (p) {
+      console.log("provider changed", p);
+    });
   }
 
   private print(m: string) {
-    this.call("terminal", "log", m)
+    this.call("terminal", "log", m);
   }
 
   async testService(service) {
@@ -76,36 +78,33 @@ export default class RemixDProvider extends Plugin {
 
     return new Promise((resolve, reject) => {
       let server = http.createServer((request, response) => {
-        console.log((new Date()) + ' Received request for ' + request.url);
+        console.log(new Date() + " Received request for " + request.url);
         response.writeHead(404);
         response.end();
       });
 
-      server.on('error', (e) => {
-        reject(e)
+      server.on("error", (e) => {
+        reject(e);
       });
-    
-      const loopback = '127.0.0.1';
+
+      const loopback = "127.0.0.1";
       server.listen(this.ports[service], loopback, () => {
-        server.close()
-        resolve(true)
+        server.close();
+        resolve(true);
       });
-    })
-
+    });
   }
-
 
   async startService(service, callback) {
     this.print(`starting service on ${this.remixIdeUrl}`);
     try {
-      
       this.socket = new remixd.Websocket(
         this.ports[service],
         { remixIdeUrl: this.remixIdeUrl },
         () => this.services[service]()
       );
       this.socket.start(callback);
-      console.log("socket ", this.socket)
+      console.log("socket ", this.socket);
     } catch (e) {
       //console.log("remixd error")
       console.error(e);
@@ -132,13 +131,15 @@ export default class RemixDProvider extends Plugin {
         self.print("Connection to Remix is closed now.");
         await self.disconnect();
       };
-      this.print(`Connected to Remix`)
+      this.print(`Connected to Remix`);
       //await this.createProvider();
 
       //this.status = "connected";
       //this.emit("statusChanged", this.status);
     });
-    this.print(`Connecting to Remix ... please go to ${this.remixIdeUrl} to connect to localhost in the File Explorer.`);
+    this.print(
+      `Connecting to Remix ... please go to ${this.remixIdeUrl} to connect to localhost in the File Explorer.`
+    );
   }
 
   async createProvider() {
@@ -182,31 +183,33 @@ export default class RemixDProvider extends Plugin {
       this.remixIdeUrl = network;
     }
     try {
-      await this.testService("folder")
-      await this.start()
+      await this.testService("folder");
+      await this.start();
     } catch (e) {
-      console.log("server error: ", e)
-      if (e.code === 'EADDRINUSE') {
-        window.showErrorMessage("There is already a remixd client running on this port!")
-        this.print("There is already a remixd client running on this port!")
+      console.log("server error: ", e);
+      if (e.code === "EADDRINUSE") {
+        window.showErrorMessage(
+          "There is already a remixd client running on this port!"
+        );
+        this.print("There is already a remixd client running on this port!");
       } else {
-        window.showErrorMessage("An error has occured.")
+        window.showErrorMessage("An error has occured.");
       }
     }
-    
+
     //await this.start();
     //await this.createProvider();
     //this.emit("connect")
   }
 
   async getStatus(self) {
-    if(self.status === "connected") return true
+    if (self.status === "connected") return true;
     try {
-      await self.testService("folder")
-      self.status = "disconnected"
+      await self.testService("folder");
+      self.status = "disconnected";
       self.emit("statusChanged", self.status);
     } catch (e) {
-      self.status = "waiting"
+      self.status = "waiting";
       self.emit("statusChanged", self.status);
     }
   }

@@ -11,7 +11,6 @@ const profile = {
   methods: [
     "deploy",
     "send",
-    "addNetwork",
     "getAccounts",
     "setAccount",
     "disconnect",
@@ -31,17 +30,6 @@ export default class DeployModule extends Plugin {
   }
 
   async setListeners() {
-    // listen for plugins
-    this.on(
-      "manager",
-      "pluginActivated",
-      await this.addPluginProvider.bind(this)
-    );
-    this.on(
-      "manager",
-      "pluginDeactivated",
-      await this.removePluginProvider.bind(this)
-    );
     this.on(
       "solidity",
       "compilationFinished",
@@ -49,12 +37,22 @@ export default class DeployModule extends Plugin {
         this.compiledContracts = data.contracts[file];
       }
     );
-  }
-
-  async addNetwork(network: string) {
-    this.print(`Adding network ${network}`);
-    let networkprovider = new Web3.providers.HttpProvider(network);
-    this.call("web3Provider", "setProvider", networkprovider);
+    const me = this;
+    this.web3Provider = {
+      async sendAsync(payload, callback) {
+        try {
+          const result = await me.call(
+            "web3Provider",
+            "sendAsync",
+            payload
+          );
+          callback(null, result);
+        } catch (e) {
+          callback(e);
+        }
+      },
+    };
+    this.web3 = new Web3(this.web3Provider);
   }
 
   async setAccount(account: string) {
@@ -83,43 +81,7 @@ export default class DeployModule extends Plugin {
     return [];
   }
 
-  // web3
-  async addPluginProvider(profile) {
-    if (profile.kind === "provider") {
-      ((profile, app) => {
-        let web3Provider = {
-          async sendAsync(payload, callback) {
-            try {
-              const result = await app.call(profile.name, "sendAsync", payload);
-              callback(null, result);
-            } catch (e) {
-              callback(e);
-            }
-          },
-        };
-        this.call("web3Provider", "setProvider", web3Provider);
-        this.web3Provider = {
-          async sendAsync(payload, callback) {
-            try {
-              const result = await app.call(
-                "web3Provider",
-                "sendAsync",
-                payload
-              );
-              callback(null, result);
-            } catch (e) {
-              callback(e);
-            }
-          },
-        };
-        this.web3 = new Web3(this.web3Provider);
-        //app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
-      })(profile, this);
-    }
-  }
-  async removePluginProvider(profile) {
-    if (profile.kind === "provider") this.web3Provider = null;
-  }
+
 
   private print(m: string) {
     this.call("terminal", "log", m);
@@ -129,27 +91,8 @@ export default class DeployModule extends Plugin {
     const keys = Object.keys(this.compiledContracts);
   }
 
-  async detectNetwork() {
-    await this.web3.eth.net.getId((err, id) => {
-      this.networkName = null;
-      if (err) {
-        this.print(`Could not detect network! Please connnect to your wallet.`);
-        return;
-      }
-      // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-      else if (id === 1) this.networkName = "Main";
-      else if (id === 2) this.networkName = "Morden (deprecated)";
-      else if (id === 3) this.networkName = "Ropsten";
-      else if (id === 4) this.networkName = "Rinkeby";
-      else if (id === 5) this.networkName = "Goerli";
-      else if (id === 42) this.networkName = "Kovan";
-      else this.networkName = "Custom";
-      this.print(`Network is ${this.networkName}!`);
-    });
-  }
-
   async txDetailsLink(hash: string) {
-    await this.detectNetwork();
+    await this.call("network", "detectNetwork");
     const transactionDetailsLinks = {
       Main: "https://www.etherscan.io/address/",
       Rinkeby: "https://rinkeby.etherscan.io/address/",
@@ -188,7 +131,7 @@ export default class DeployModule extends Plugin {
         return;
       }
 
-      await this.detectNetwork();
+      await this.call("network", "detectNetwork")
       let contract = new this.web3.eth.Contract(c.abi);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
@@ -238,7 +181,7 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
-      await this.detectNetwork();
+      await this.call("network", "detectNetwork")
 
       let contract = new this.web3.eth.Contract(
         JSON.parse(JSON.stringify([abi])),

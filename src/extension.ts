@@ -48,7 +48,6 @@ import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
 import semver from "semver";
-import { CompilerAbstract } from "@remix-project/remix-solidity";
 import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
 
 import SettingsModule from "./plugins/settings";
@@ -62,7 +61,7 @@ class VscodeManager extends VscodeAppManager {
 }
 
 export async function activate(context: ExtensionContext) {
-  console.log("CONTEXT 2", context)
+  console.log("CONTEXT 2", context)  
   let selectedVersion: string = null;
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
@@ -140,8 +139,10 @@ export async function activate(context: ExtensionContext) {
     settings,
     metadata,
   ]);
-  window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+  window.registerTreeDataProvider("rmxControls2", rmxControlsProvider);
   window.registerTreeDataProvider("rmxControls", rmxControlsProvider);
+  window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
+
   await manager.activatePlugin(["web3Provider", "udapp", "network"]);
   await deployModule.setListeners();
   await networkModule.setListeners();

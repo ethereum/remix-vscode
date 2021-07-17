@@ -103,7 +103,7 @@ export class NetworkModule extends Plugin {
         else if (id === 5) this.networkName = "Goerli";
         else if (id === 42) this.networkName = "Kovan";
         else if (id === 1337) this.networkName = "RemixVM";
-        else this.networkName = "Custom";
+        else this.networkName = "a local or custom network";
         this.print(`Network is ${this.networkName}!`);
       });
 

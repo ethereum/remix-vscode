@@ -106,6 +106,15 @@ export default class DeployModule extends Plugin {
     }
   }
 
+  async printReceipt(receipt: any) {
+    for (let key of Object.keys(receipt)) {
+      if (receipt[key] && typeof receipt[key]!=undefined) {
+        this.print(`${key.toUpperCase()} :`)
+        this.print(JSON.stringify(receipt[key]))
+      }
+    }
+  }
+
   async getContract(contractName: string) {
     const selectedContractKey = Object.keys(this.compiledContracts).find(
       (name) => name == contractName
@@ -193,15 +202,14 @@ export default class DeployModule extends Plugin {
           this.print(
             `Calling method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${
-              this.web3.eth.defaultAccount
+            )} from ${this.web3.eth.defaultAccount
             } at contract address ${address}`
           );
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).call({
-                from: this.web3.eth.defaultAccount,
-                gas: gaslimit,
-              })
+              from: this.web3.eth.defaultAccount,
+              gas: gaslimit,
+            })
             : null;
           this.print(JSON.stringify(txReceipt));
           return txReceipt;
@@ -215,8 +223,7 @@ export default class DeployModule extends Plugin {
           this.print(
             `Send data to method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${
-              this.web3.eth.defaultAccount
+            )} from ${this.web3.eth.defaultAccount
             } at contract address ${address}`
           );
           console.log({
@@ -227,12 +234,13 @@ export default class DeployModule extends Plugin {
           await contract.methods[abi.name](...payload);
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).send({
-                from: this.web3.eth.defaultAccount,
-                gas: gaslimit,
-                value: this.web3.utils.toWei(value, unit),
-              })
+              from: this.web3.eth.defaultAccount,
+              gas: gaslimit,
+              value: this.web3.utils.toWei(value, unit),
+            })
             : null;
-          this.print(JSON.stringify(txReceipt));
+          this.printReceipt(txReceipt)
+          //this.print(JSON.stringify(txReceipt));
           return txReceipt;
           // TODO: LOG
         } catch (e) {

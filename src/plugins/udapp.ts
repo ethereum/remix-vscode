@@ -107,7 +107,9 @@ export default class DeployModule extends Plugin {
   }
 
   async printReceipt(receipt: any) {
-    for (let key of Object.keys(receipt)) {
+    let allowedKeys = ['hash','gas','from','to']
+    let keys = Object.keys(receipt).filter((k)=> allowedKeys.findIndex((v)=> k.toLowerCase().indexOf(v)> -1) > -1)
+    for (let key of keys) {
       if (receipt[key] && typeof receipt[key]!=undefined) {
         this.print(`${key.toUpperCase()} :`)
         this.print(JSON.stringify(receipt[key]))

@@ -81,7 +81,8 @@ export default class NativeSolcPlugin extends CommandPlugin {
     importHints?: string[],
     cb?: gatherImportsCallbackInterface
   ): void {
-    console.log("gather imports", files, importHints);
+    //console.log("gather imports", files, importHints);
+    //this.print("Processing imports " + JSON.stringify(Object.keys(files)))
     importHints = importHints || [];
     // FIXME: This will only match imports if the file begins with one '.'
     // It should tokenize by lines and check each.
@@ -120,8 +121,12 @@ export default class NativeSolcPlugin extends CommandPlugin {
     }
   }
 
+  async setVersion(_version: string){
+    this.version = _version == 'latest'? 'latest' : (_version in this.versions ? this.versions[_version] : this.version )
+  }
+
   async compile(_version: string, opts: CompilerInputOptions, file?: string) {
-    this.print("Compilation started with !");
+    //this.print("Compile with " + _version + " or cached " + this.version)
     const fileName = file || (await this.call("fileManager", "getCurrentFile"));
     let versionFromPragma;
     try{
@@ -129,12 +134,12 @@ export default class NativeSolcPlugin extends CommandPlugin {
     }catch{
       versionFromPragma = 'latest'
     }
-    this.version = _version ? (_version in this.versions ? this.versions[_version] : _version ): versionFromPragma
+    this.version = this.version ? (_version in this.versions ? this.versions[_version] : this.version ): versionFromPragma
     
     this.compilerOpts = opts? opts:this.compilerOpts
     opts = this.compilerOpts
     
-    this.print(`Compiling ${fileName} ...`);
+    //this.print(`Compiling ${fileName} ... with version ${this.version}`);
     const editorContent = file
       ? await this.call("fileManager", "readFile", file)
       : undefined || window.activeTextEditor
@@ -199,9 +204,6 @@ export default class NativeSolcPlugin extends CommandPlugin {
       version: this.version,
     });
     solcWorker.on("message", (m: any) => {
-      console.log(
-        `............................Solidity worker message............................`
-      );
       if (m.error) {
         this.print(m.error);
         console.error(m.error);
@@ -221,13 +223,13 @@ export default class NativeSolcPlugin extends CommandPlugin {
       } else if (m.compiled) {
         const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
-        console.log("missing inputs", m);
+        //console.log("missing inputs", m);
         if (m.missingInputs && m.missingInputs.length > 0) {
           //return false
-          console.log("gathering imports");
+          //console.log("gathering imports");
           this.gatherImports(m.sources, m.missingInputs, (error, files) => {
 
-            console.log("FILES", files);
+            //console.log("FILES", files);
 
             input.sources = files.sources;
             solcWorker.send({
@@ -247,7 +249,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
           logError(compiled?.errors);
         }
         if (compiled.contracts) {
-          console.log("COMPILED");
+          //console.log("COMPILED");
           const source = { sources, target: fileName };
           const data = JSON.parse(m.compiled);
           this.compilationResult = {
@@ -259,7 +261,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
           };
           const contracts = Object.keys(compiled.contracts).join(", ");
           this.print(
-            `Compilation finished for ${contracts} with solidity version ${m?.version}.`
+            `Compilation finished for ${fileName} with solidity version ${m?.version}.`
           );
           this.emit(
             "compilationFinished",

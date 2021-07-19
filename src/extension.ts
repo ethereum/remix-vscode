@@ -167,8 +167,8 @@ export async function activate(context: ExtensionContext) {
       events: [],
       methods: ["displayUri"],
       version: "0.1.0",
-      //url: "https://vscoderemixudapp.web.app",
-      url: "http://localhost:3000",
+      url: "https://vscoderemixudapp.web.app",
+      //url: "http://localhost:3000",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Connect to a network to run and deploy.",
@@ -558,7 +558,9 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.versionSelector", async () => {
     try {
       await manager.activatePlugin(["solidity"]);
-      const versions = solpl.getSolidityVersions();
+      
+      const versions = {...{'latest':'latest'},...solpl.getSolidityVersions()};
+
       const opts: Array<QuickPickItem> = Object.keys(versions).map(
         (v): QuickPickItem => {
           const vopt: QuickPickItem = {
@@ -571,6 +573,7 @@ export async function activate(context: ExtensionContext) {
       window.showQuickPick(opts).then((selected) => {
         if (selected) {
           selectedVersion = selected.label;
+          solpl.setVersion(selectedVersion)
           rmxControlsProvider.setDataForPlugin("solidityversion",{
             description: selectedVersion
           })

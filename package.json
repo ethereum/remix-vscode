@@ -100,6 +100,16 @@
         "category": "Remix"
       },
       {
+				"command": "rmxPlugins.clone",
+				"title": "Clone from IPFS",
+				"category": "Remix"
+			},
+			{
+				"command": "rmxPlugins.push",
+				"title": "Send to IPFS",
+				"category": "Remix"
+			},
+      {
         "command": "rmxPlugins.walletConnect",
         "title": "Connect to mobile Wallet",
         "category": "Remix"

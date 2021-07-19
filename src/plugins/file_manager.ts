@@ -3,7 +3,7 @@ import {
   relativePath,
   absolutePath,
 } from "@remixproject/engine-vscode/util/path";
-import { workspace, Uri, ExtensionContext } from "vscode";
+import { workspace, Uri, ExtensionContext, FileStat, FileType } from "vscode";
 export default class VscodeFileManager extends FileManagerPlugin {
   type: string;
   context: ExtensionContext;
@@ -16,6 +16,7 @@ export default class VscodeFileManager extends FileManagerPlugin {
       "exists",
       "getProviderByName",
       "getProviderOf",
+      "isDirectory"
     ];
   }
 
@@ -80,15 +81,39 @@ export default class VscodeFileManager extends FileManagerPlugin {
     return true;
   }
 
+  isDirectory(path){
+    path = this.getPathFromUrl(path) || path;
+    var unprefixedpath = this.removePrefix(path);
+    const absPath = absolutePath(unprefixedpath);
+    const uri = Uri.file(absPath);
+    //console.log(uri);
+    return new Promise((resolve, reject) => {
+      try {
+        workspace.fs.stat(uri).then(
+
+          (value: FileStat) => {
+            resolve(value.type === FileType.Directory);
+          },
+          () => {
+            resolve(false);
+          }
+        );
+      } catch (e) {
+        reject();
+      }
+    });
+  }
+
   exists(path) {
     path = this.getPathFromUrl(path) || path;
     var unprefixedpath = this.removePrefix(path);
     const absPath = absolutePath(unprefixedpath);
     const uri = Uri.file(absPath);
+    //console.log(uri);
     return new Promise((resolve, reject) => {
       try {
         workspace.fs.stat(uri).then(
-          () => {
+          (value: FileStat) => {
             resolve(true);
           },
           () => {

@@ -47,6 +47,7 @@ import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
+import DGitProvider from './plugins/dgitProvider'
 import semver from "semver";
 import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
 
@@ -89,6 +90,7 @@ export async function activate(context: ExtensionContext) {
   const web3Povider = new Web3ProviderModule();
   const networkModule = new NetworkModule();
   const RemixD = new RemixDProvider();
+  const dgitprovider = new DGitProvider();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
   const filemanager = new VscodeFileManager();
@@ -138,6 +140,7 @@ export async function activate(context: ExtensionContext) {
     offsetToLineColumnConverter,
     settings,
     metadata,
+    dgitprovider
   ]);
   window.registerTreeDataProvider("rmxControls2", rmxControlsProvider);
   window.registerTreeDataProvider("rmxControls", rmxControlsProvider);
@@ -258,6 +261,30 @@ export async function activate(context: ExtensionContext) {
       },
     },
     {
+      name: "ipfs",
+      displayName: "IPFS",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "Publish to IPFS",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "ipfs-logo.svg")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "ipfs-logo.svg"))
+      },
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.11",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.push",
+      },
+    },
+    {
       name: "debugger",
       displayName: "Debugger",
       events: [],
@@ -343,6 +370,18 @@ export async function activate(context: ExtensionContext) {
     } catch (e) {
       window.showErrorMessage("The Solidity extension is not installed.");
     }
+  });
+
+
+  commands.registerCommand("rmxPlugins.push", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.push()
+    console.log("pushed",cid)
+  });
+
+  commands.registerCommand("rmxPlugins.clone", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.pull('')
   });
 
   const checkSemver = async (pluginData: PluginInfo) => {

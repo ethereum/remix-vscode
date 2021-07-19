@@ -5,6 +5,8 @@ export type TerminalMessage = {
   type: "html" | "log" | "info" | "warn" | "error";
 };
 
+let cache: string = ""
+
 const profile = {
   displayName: "Terminal",
   name: "terminal",
@@ -37,6 +39,8 @@ export default class Terminal extends Plugin {
   }
 
   private print(m: string) {
+    if(cache === m) return
+    cache = m
     const now = this.getNow();
     this.outputChannel.appendLine(`[${now}]: ${m}`);
     this.outputChannel.show();

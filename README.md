@@ -8,11 +8,13 @@ For more info on what Remix is and what plugins do please visit our [Remix IDE](
   - [A beta release.](#a-beta-release)
   - [Installation from the Visual Studio Code Marketplace](#installation-from-the-visual-studio-code-marketplace)
   - [Requirements](#requirements)
+  - [Compiling Solidity & Yul](#compiling-solidity--yul)
+  - [Imports](#imports)
+  - [Deploying contracts](#deploying-contracts)
+  - [RemixD](#remixd)
   - [The plugins](#the-plugins)
   - [Select, activate, deactivate a plugin](#select-activate-deactivate-a-plugin)
   - [Load a development plugin](#load-a-development-plugin)
-  - [Compiling Solidity & Yul](#compiling-solidity--yul)
-  - [Deploying contracts & Wallet Connect](#deploying-contracts--wallet-connect)
   - [Contributing and development](#contributing-and-development)
 
 ## A beta release. 
@@ -26,6 +28,28 @@ As we are continuing development of Remix and the Plugin API more functionalitie
 ## Requirements
 
 Before being able to use the extension, you need to have at least a folder opened or a workspace.
+
+## Compiling Solidity & Yul
+
+Our extension provides some basic functionality to get started with Solidity and Yul development.<br>Quite a few remix plugins use the results of compilation to generate content for you. So this is extremely useful.
+
+At this time you can compile your files using two methods:
+* the internal Remix compiler
+* the compiler provided by the Solidity Extension (https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity)
+
+The compiler can be accessed via the menu. Just open a solidity file in the editor and click on compile, you will be able to select a file to compile.
+
+## Imports 
+
+Just like Remix the extension handles any imports you may have in your files.
+
+## Deploying contracts
+
+The Run & Deploy app provides several options for you to connect to a network, deploy contracts and run transactions.
+
+## RemixD
+
+RemixD is a daemon which allows you to connect your local filesystem to Remix IDE. In the context of this extension it also allows you to deploy to the Remix VM or to Metamask if this has been installed in your browser.
 
 ## The plugins
 
@@ -67,37 +91,6 @@ As you develop your own plugin or you want to try out a plugin by using a custom
 <p align="justify">
   <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-addplugin2.png">
 </p>
-
-## Compiling Solidity & Yul
-
-Our extension provides some basic functionality to get started with Solidity and Yul development.<br>Quite a few remix plugins use the results of compilation to generate content for you. So this is extremely useful.
-
-At this time you can compile your files using two methods:
-* the internal Remix compiler
-* the compiler provided by the Solidity Extension (https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity)
-
-Compiling with the Solidity extension provides some extra features that are included in the Solidity extension.
-
-*Warning: when you have the Solidity extension installed you usually hit F5 to compile.<br>This will not work (yet) in conjunction with Remix.<br>You
-should compile with the 'Compile with Solidity extension'. This way you get the benefits of both extensions.*
-
-*You should have a sol file actively selected when compiling. If you have the plugin in focus it won't be able to tell which file you want to compile.*
-
-To compile use the command palette ( Shift+cmd+p ) and type in REMIX. You will see both options there.
-
-<p align="justify">
-  <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-compile.png">
-</p>
-
-You can also change the compiler version of both compilers from the command palette.
-
-<p align="justify">
-  <img src="https://raw.githubusercontent.com/ethereum/remix-vscode/master/media/doc-selectversion.png">
-</p>
-
-You can change to Yul development the same way using the language selector in the command palette.
-
-## Deploying contracts & Wallet Connect
 
 
 ## Contributing and development

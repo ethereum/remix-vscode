@@ -38,3 +38,7 @@ export async function pluginUninstall(context: ExtensionContext, pluginId: strin
 export async function pluginDocumentation(context: ExtensionContext, pluginId: string) {
 	commands.executeCommand('rmxPlugins.openDocumentation', pluginId);
 }
+
+export async function runCommand(context: ExtensionContext, cmd: string) {
+	commands.executeCommand(cmd);
+}

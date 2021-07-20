@@ -3,17 +3,29 @@ import { window, OutputChannel, workspace, commands } from "vscode";
 import { fork, ChildProcess } from "child_process";
 import * as path from "path";
 import { ISources, CompilerInput, CompilerInputOptions } from "../types";
-import { relativePath } from '@remixproject/engine-vscode/util/path'
+import { relativePath } from "@remixproject/engine-vscode/util/path";
+import {
+  gatherImportsCallbackInterface,
+  Source,
+} from "@remix-project/remix-solidity";
+
+const semver = require("semver");
 const profile = {
-  name: 'solidity',
-  displayName: 'Solidity compiler',
-  description: 'Compile solidity contracts',
-  kind: 'compiler',
+  name: "solidity",
+  displayName: "Solidity compiler",
+  description: "Compile solidity contracts",
+  kind: "compiler",
   permission: true,
-  location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/solidity_editor.html',
-  version: '0.0.1',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig']
+  location: "sidePanel",
+  documentation:
+    "https://remix-ide.readthedocs.io/en/latest/solidity_editor.html",
+  version: "0.0.1",
+  methods: [
+    "getCompilationResult",
+    "compile",
+    "compileWithParameters",
+    "setCompilerConfig",
+  ],
 };
 
 interface ICompilationResult {
@@ -25,14 +37,18 @@ interface ICompilationResult {
 }
 
 export default class NativeSolcPlugin extends CommandPlugin {
-  private version: string = 'latest';
+  private version: string = "latest";
   private versions: Array<string>;
-  private outputChannel: OutputChannel;
   private compilationResult: ICompilationResult;
+  private compilerOpts: CompilerInputOptions
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
     this.loadSolidityVersions();
+    this.compilerOpts = {
+      language: "Solidity",
+      optimize: false,
+      runs: 200,
+    };
   }
   getVersion() {
     return 0.1;
@@ -44,21 +60,91 @@ export default class NativeSolcPlugin extends CommandPlugin {
     // });
     return fork(path.join(__dirname, "compile_worker.js"));
   }
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m);
   }
-  async compile(_version: string, opts: CompilerInputOptions) {
-    this.print("Compilation started!")
-    this.version = _version in this.versions ? this.versions[_version] : _version;
-    const fileName = await this.call('fileManager', 'getCurrentFile')
-    this.print(`Compiling ${fileName} ...`);
-    const editorContent = window.activeTextEditor ? window.activeTextEditor.document.getText() : undefined;
+
+  handleImportCall = (url, cb) => {
+    this.call("contentImport", "resolveAndSave", url, "")
+      .then((result) => cb(null, result))
+      .catch((error) => cb(error.message));
+  };
+  /**
+   * @dev Gather imports for compilation
+   * @param files file sources
+   * @param importHints import file list
+   * @param cb callback
+   */
+
+  gatherImports(
+    files: Source,
+    importHints?: string[],
+    cb?: gatherImportsCallbackInterface
+  ): void {
+    //console.log("gather imports", files, importHints);
+    //this.print("Processing imports " + JSON.stringify(Object.keys(files)))
+    importHints = importHints || [];
+    // FIXME: This will only match imports if the file begins with one '.'
+    // It should tokenize by lines and check each.
+    const importRegex = /^\s*import\s*['"]([^'"]+)['"];/g;
+    for (const fileName in files) {
+      let match: RegExpExecArray | null;
+      while ((match = importRegex.exec(files[fileName].content))) {
+        let importFilePath = match[1];
+        if (importFilePath.startsWith("./")) {
+          const path: RegExpExecArray | null = /(.*\/).*/.exec(fileName);
+          importFilePath = path
+            ? importFilePath.replace("./", path[1])
+            : importFilePath.slice(2);
+        }
+        if (!importHints.includes(importFilePath))
+          importHints.push(importFilePath);
+      }
+    }
+    while (importHints.length > 0) {
+      const m: string = importHints.pop() as string;
+      if (m && m in files) continue;
+
+      if (this.handleImportCall) {
+        this.handleImportCall(m, (err, content: string) => {
+          if (err && cb) cb(err);
+          else {
+            files[m] = { content };
+            this.gatherImports(files, importHints, cb);
+          }
+        });
+      }
+      return;
+    }
+    if (cb) {
+      cb(null, { sources: files });
+    }
+  }
+
+  async setVersion(_version: string){
+    this.version = _version == 'latest'? 'latest' : (_version in this.versions ? this.versions[_version] : this.version )
+  }
+
+  async compile(_version: string, opts: CompilerInputOptions, file?: string) {
+    //this.print("Compile with " + _version + " or cached " + this.version)
+    const fileName = file || (await this.call("fileManager", "getCurrentFile"));
+    let versionFromPragma;
+    try{
+      versionFromPragma = await this._setCompilerVersionFromPragma(fileName)
+    }catch{
+      versionFromPragma = 'latest'
+    }
+    this.version = this.version ? (_version in this.versions ? this.versions[_version] : this.version ): versionFromPragma
+    
+    this.compilerOpts = opts? opts:this.compilerOpts
+    opts = this.compilerOpts
+    
+    //this.print(`Compiling ${fileName} ... with version ${this.version}`);
+    const editorContent = file
+      ? await this.call("fileManager", "readFile", file)
+      : undefined || window.activeTextEditor
+      ? window.activeTextEditor.document.getText()
+      : undefined;
     const sources: ISources = {};
     if (fileName) {
       sources[fileName] = {
@@ -67,7 +153,7 @@ export default class NativeSolcPlugin extends CommandPlugin {
     }
     const solcWorker = this.createWorker();
     console.log(`Solidity compiler invoked with WorkerID: ${solcWorker.pid}`);
-    console.log(`Compiling with solidity version ${this.version}`);
+    this.print(`Compiling with version ${this.version}`);
     var input: CompilerInput = {
       language: opts.language,
       sources,
@@ -75,30 +161,42 @@ export default class NativeSolcPlugin extends CommandPlugin {
         outputSelection: {
           "*": {
             "": ["ast"],
-            '*': ['abi', 'metadata', 'devdoc', 'userdoc', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates', 'evm.assembly']
+            "*": [
+              "abi",
+              "metadata",
+              "devdoc",
+              "userdoc",
+              "evm.legacyAssembly",
+              "evm.bytecode",
+              "evm.deployedBytecode",
+              "evm.methodIdentifiers",
+              "evm.gasEstimates",
+              "evm.assembly",
+            ],
           },
         },
         optimizer: {
           enabled: opts.optimize === true || opts.optimize === 1,
           runs: opts.runs || 200,
           details: {
-            yul: Boolean(opts.language === 'Yul' && opts.optimize)
-          }
+            yul: Boolean(opts.language === "Yul" && opts.optimize),
+          },
         },
         libraries: opts.libraries,
       },
     };
     if (opts.evmVersion) {
-      input.settings.evmVersion = opts.evmVersion
+      input.settings.evmVersion = opts.evmVersion;
     }
     if (opts.language) {
-      input.language = opts.language
+      input.language = opts.language;
     }
-    if (opts.language === 'Yul' && input.settings.optimizer.enabled) {
+    if (opts.language === "Yul" && input.settings.optimizer.enabled) {
       if (!input.settings.optimizer.details)
-        input.settings.optimizer.details = {}
-      input.settings.optimizer.details.yul = true
+        input.settings.optimizer.details = {};
+      input.settings.optimizer.details.yul = true;
     }
+    console.clear();
     solcWorker.send({
       command: "compile",
       root: workspace.workspaceFolders[0].uri.fsPath,
@@ -106,12 +204,13 @@ export default class NativeSolcPlugin extends CommandPlugin {
       version: this.version,
     });
     solcWorker.on("message", (m: any) => {
-      console.log(`............................Solidity worker message............................`);
-      console.log(m);
       if (m.error) {
         this.print(m.error);
         console.error(m.error);
+      } else if (m.processMessage) {
+        this.print(m.processMessage);
       } else if (m.data && m.path) {
+        this.print(`Compiling ${m.path}...`);
         sources[m.path] = {
           content: m.data.content,
         };
@@ -124,76 +223,128 @@ export default class NativeSolcPlugin extends CommandPlugin {
       } else if (m.compiled) {
         const languageVersion = this.version;
         const compiled = JSON.parse(m.compiled);
+        //console.log("missing inputs", m);
+        if (m.missingInputs && m.missingInputs.length > 0) {
+          //return false
+          //console.log("gathering imports");
+          this.gatherImports(m.sources, m.missingInputs, (error, files) => {
+
+            //console.log("FILES", files);
+
+            input.sources = files.sources;
+            solcWorker.send({
+              command: "compile",
+              root: workspace.workspaceFolders[0].uri.fsPath,
+              payload: input,
+              version: this.version,
+            });
+          
+          });
+        }
         if (compiled.errors) {
-          this.print(`Compilation error while compiling ${fileName} with solidity version ${m?.version}.`);
-          logError(compiled?.errors)
+          //console.log(compiled.errors)
+          // this.print(
+          //   `Compilation error while compiling ${fileName} with solidity version ${m?.version}.`
+          // );
+          logError(compiled?.errors);
         }
         if (compiled.contracts) {
-          const source = { sources };
+          //console.log("COMPILED");
+          const source = { sources, target: fileName };
           const data = JSON.parse(m.compiled);
           this.compilationResult = {
             source: {
               sources,
-              target: fileName
+              target: fileName,
             },
+            data,
+          };
+          const contracts = Object.keys(compiled.contracts).join(", ");
+          this.print(
+            `Compilation finished for ${fileName} with solidity version ${m?.version}.`
+          );
+          this.emit(
+            "compilationFinished",
+            fileName,
+            source,
+            languageVersion,
             data
-          }
-          this.print(`Compilation finished for ${fileName} with solidity version ${m?.version}.`);
-          this.emit('compilationFinished', fileName, source, languageVersion, data);
+          );
         }
       }
-    })
+    });
 
-    const errorKeysToLog = ['formattedMessage']
+    const errorKeysToLog = ["formattedMessage"];
     const logError = (errors: any[]) => {
       for (let i in errors) {
-        if (['number', 'string'].includes(typeof errors[i])) {
-          if (errorKeysToLog.includes(i))
-            this.print(errors[i])
+        if (["number", "string"].includes(typeof errors[i])) {
+          if (
+            errorKeysToLog.includes(i) &&
+            !errors[i].includes("Deferred import")
+          )
+            this.print(errors[i]);
         } else {
-          logError(errors[i])
+          logError(errors[i]);
         }
       }
-    }
+    };
   }
 
   async compileWithSolidityExtension() {
-    commands.executeCommand("solidity.compile.active").then(async (listOFiles: string[]) => {
-      if (listOFiles)
-        for (let file of listOFiles) {
-          await this.parseSolcOutputFile(file)
-        }
-    })
+    commands
+      .executeCommand("solidity.compile.active")
+      .then(async (listOFiles: string[]) => {
+        if (listOFiles)
+          for (let file of listOFiles) {
+            await this.parseSolcOutputFile(file);
+          }
+      });
   }
 
   async parseSolcOutputFile(file: string) {
-    console.log(file)
-    this.print(`Compiling with Solidity Extension`)
-    const content = await this.call("fileManager", "readFile", file)
-    const parsedContent = JSON.parse(content)
-    const sourcePath = parsedContent.sourcePath
-    const solcOutput = `${path.basename(parsedContent.sourcePath).split('.').slice(0, -1).join('.')}-solc-output.json`
-    const outputDir = path.dirname(file)
-    let raw = await this.call("fileManager", "readFile", `${outputDir}/${solcOutput}`)
+    console.log(file);
+    this.print(`Compiling with Solidity Extension`);
+    const content = await this.call("fileManager", "readFile", file);
+    const parsedContent = JSON.parse(content);
+    const sourcePath = parsedContent.sourcePath;
+    const solcOutput = `${path
+      .basename(parsedContent.sourcePath)
+      .split(".")
+      .slice(0, -1)
+      .join(".")}-solc-output.json`;
+    const outputDir = path.dirname(file);
+    let raw = await this.call(
+      "fileManager",
+      "readFile",
+      `${outputDir}/${solcOutput}`
+    );
     console.log(`${outputDir}/${solcOutput}`);
-    const relativeFilePath = relativePath(sourcePath)
+    const relativeFilePath = relativePath(sourcePath);
     var re = new RegExp(`${sourcePath}`, "gi");
-    raw = raw.replace(re, relativeFilePath)
-    const compiled = JSON.parse(raw)
-    let source = {}
-    const fileKeys = Object.keys(compiled.sources)
+    raw = raw.replace(re, relativeFilePath);
+    const compiled = JSON.parse(raw);
+    let source = {};
+    const fileKeys = Object.keys(compiled.sources);
     for (let s of fileKeys) {
-      source[s] = { content: await this.call("fileManager", "readFile", s) }
+      source[s] = { content: await this.call("fileManager", "readFile", s) };
     }
     this.compilationResult = {
       source: {
         sources: source,
-        target: relativeFilePath
+        target: relativeFilePath,
       },
-      data: compiled
-    }
-    this.print(`Compilation finished for ${relativeFilePath} with solidity version ${parsedContent?.compiler.version}.`);
-    this.emit('compilationFinished', relativeFilePath, { sources: source }, parsedContent?.compiler.version, compiled);
+      data: compiled,
+    };
+    this.print(
+      `Compilation finished for ${relativeFilePath} with solidity version ${parsedContent?.compiler.version}.`
+    );
+    this.emit(
+      "compilationFinished",
+      relativeFilePath,
+      { sources: source },
+      parsedContent?.compiler.version,
+      compiled
+    );
   }
 
   getCompilationResult() {
@@ -208,5 +359,35 @@ export default class NativeSolcPlugin extends CommandPlugin {
   }
   getSolidityVersions() {
     return this.versions;
+  }
+
+  // Load solc compiler version according to pragma in contract file
+  async _setCompilerVersionFromPragma(filename) {
+    
+    let data = await this.call("fileManager", "readFile", filename);
+    let versionFound;
+    const pragmaArr = data.match(/(pragma solidity (.+?);)/g);
+    if (pragmaArr && pragmaArr.length === 1) {
+      const pragmaStr = pragmaArr[0].replace("pragma solidity", "").trim();
+      const pragma = pragmaStr.substring(0, pragmaStr.length - 1);
+
+      console.log(pragma);
+      
+      //console.log(this.versions)
+      for(let version of Object.keys(this.versions)){
+        //console.log(version)
+        if(semver.satisfies(version, pragma)){
+          versionFound = this.versions[version]
+        }
+      }
+    }
+    return new Promise((resolve, reject)=>{
+      if(versionFound){
+        resolve(versionFound)
+      }else{
+        reject()
+      }
+    })
+    
   }
 }

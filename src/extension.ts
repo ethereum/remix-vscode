@@ -10,45 +10,60 @@ import {
   Uri,
   extensions,
 } from "vscode";
+import {
+  absolutePath,
+  relativePath,
+} from "@remixproject/engine-vscode/util/path";
 import { PluginManager, Engine } from "@remixproject/engine";
+
 import { ThemeUrls } from "@remixproject/plugin-api";
 import {
   VscodeAppManager,
   WebviewPlugin,
   ThemePlugin,
-  FileManagerPlugin,
   EditorPlugin,
   EditorOptions,
   transformCmd,
   ThemeOptions,
-  ContentImportPlugin,
 } from "@remixproject/engine-vscode";
+
+import VscodeFileManager from "./plugins/file_manager";
 
 import { RmxPluginsProvider } from "./rmxPlugins";
 import NativeSolcPlugin from "./plugins/native_solidity_plugin";
+import Terminal from "./plugins/terminal";
 import DeployModule from "./plugins/udapp";
 import {
   pluginActivate,
   pluginDeactivate,
   pluginDocumentation,
   pluginUninstall,
+  runCommand,
 } from "./optionInputs";
 import { ExtAPIPlugin } from "./plugins/ext_api_plugin";
 import { ToViewColumn, GetPluginData } from "./utils";
 import { PluginInfo, CompilerInputOptions } from "./types";
 import { Profile } from "@remixproject/plugin-utils";
-import WalletConnect from "./plugins/wallet";
+import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
+import RemixDProvider from "./plugins/remixDProvider";
+import DGitProvider from './plugins/dGitProvider'
 import semver from "semver";
-const queryString = require("query-string");
+import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
+
+import SettingsModule from "./plugins/settings";
+import { NetworkModule } from "./plugins/network";
+
+
+const path = require("path");
 
 class VscodeManager extends VscodeAppManager {
-  onActivation() {
-  }
+  onActivation() {}
 }
 
 export async function activate(context: ExtensionContext) {
-  let selectedVersion: string = "latest";
+  console.log("CONTEXT 2", context)  
+  let selectedVersion: string = null;
   let compilerOpts: CompilerInputOptions = {
     language: "Solidity",
     optimize: false,
@@ -63,24 +78,41 @@ export async function activate(context: ExtensionContext) {
   const rmxPluginsProvider = new RmxPluginsProvider(
     workspace.workspaceFolders[0].uri.fsPath
   );
+  const rmxControlsProvider = new RmxPluginsProvider(
+    workspace.workspaceFolders[0].uri.fsPath
+  );
   const editoropt: EditorOptions = { language: "solidity", transformCmd };
   const engine = new Engine();
   const manager = new VscodeManager();
   const solpl = new NativeSolcPlugin();
+  const terminal = new Terminal();
   const deployModule = new DeployModule();
   const web3Povider = new Web3ProviderModule();
+  const networkModule = new NetworkModule();
+  const RemixD = new RemixDProvider();
+  const dgitprovider = new DGitProvider();
   const vscodeExtAPI = new ExtAPIPlugin();
   const wallet = new WalletConnect();
-  const filemanager = new FileManagerPlugin();
+  const filemanager = new VscodeFileManager();
   const editorPlugin = new EditorPlugin(editoropt);
-  const importer = new ContentImportPlugin();
+  const settings = new SettingsModule();
+  // compiler
+  const importer = new CompilerImports();
+  const artefacts = new CompilerArtefacts();
+  const fetchAndCompile = new FetchAndCompile();
+  const offsetToLineColumnConverter = new OffsetToLineColumnConverter();
+  const metadata = new CompilerMetadata()
+
   const themeURLs: Partial<ThemeUrls> = {
     light:
       "https://remix-alpha.ethereum.org/assets/css/themes/remix-light_powaqg.css",
-    dark: "https://remix-alpha.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
+    dark: "https://remix.ethereum.org/assets/css/themes/remix-dark_tvx1s2.css",
   };
   const themeOpts: ThemeOptions = { urls: themeURLs };
   const theme = new ThemePlugin(themeOpts);
+
+  filemanager.setContext(context);
+  settings.setContext(context);
 
   engine.setPluginOption = ({ name, kind }) => {
     if (kind === "provider") return { queueTimeout: 60000 * 2 };
@@ -92,59 +124,238 @@ export async function activate(context: ExtensionContext) {
   engine.register([
     manager,
     solpl,
+    terminal,
     filemanager,
     editorPlugin,
     theme,
-    importer,
     web3Povider,
     deployModule,
+    networkModule,
     wallet,
     vscodeExtAPI,
+    RemixD,
+    importer,
+    artefacts,
+    fetchAndCompile,
+    offsetToLineColumnConverter,
+    settings,
+    metadata,
+    dgitprovider
   ]);
+  window.registerTreeDataProvider("rmxControls2", rmxControlsProvider);
+  window.registerTreeDataProvider("rmxControls", rmxControlsProvider);
   window.registerTreeDataProvider("rmxPlugins", rmxPluginsProvider);
 
-  await manager.activatePlugin([
-    "web3Provider",
-    "udapp",
-  ]);
+  await manager.activatePlugin(["web3Provider", "udapp", "network"]);
   await deployModule.setListeners();
-  await manager.activatePlugin(["walletconnect"]);
+  await networkModule.setListeners();
+  await manager.activatePlugin([
+    "walletconnect",
+    "remixdprovider",
+    "fileManager",
+    "settings",
+    "contentImport",
+    "compilerArtefacts",
+    "fetchAndCompile",
+    "offsetToLineColumnConverter",
+    'compilerMetadata',
+  ]);
 
   // fetch default data from the plugins-directory filtered by engine
-  const defaultPluginData = await manager.registeredPluginData();
-  /* const defaultPluginData = [
+  let defaultPluginData = await manager.registeredPluginData();
+  let rmxControls = [
     {
       name: "vscodeudapp",
-      displayName: "Deploy & Run",
+      displayName: "Run & Deploy",
       events: [],
       methods: ["displayUri"],
       version: "0.1.0",
-      url: "http://localhost:3000",
+      url: "https://vscoderemixudapp.web.app",
+      //url: "http://localhost:3000",
       documentation:
         "https://github.com/bunsenstraat/remix-vscode-walletconnect",
       description: "Connect to a network to run and deploy.",
-      icon: "https://remix.ethereum.org/assets/img/deployAndRun.webp",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "deployAndRun.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "deployAndRun.webp"))
+      },
       location: "sidePanel",
       targets: ["vscode"],
       targetVersion: {
-        vscode: ">=0.0.8",
+        vscode: ">=0.0.9",
       },
     },
-  ];  */
+    {
+      name: "remixd",
+      displayName: "Start remixd client",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      documentation:
+        "",
+      description: "Start a remixd client",
+      icon: Uri.file(
+        path.join(context.extensionPath, "resources", "redbutton.svg")
+      ),
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.9",
+      },
+      options: {
+        Start: runCommand,
+        Stop: runCommand,
+      },
+      optionArgs: {
+        Start: "rmxPlugins.startRemixd",
+        Stop: "rmxPlugins.stopRemixd",
+      },
+    },
+    {
+      name: "solidityversion",
+      displayName: "Set compiler version",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
+      },
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.9",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.versionSelector",
+      },
+    },
+    {
+      name: "compiler",
+      displayName: "Compiler",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "Compile contracts",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "solidity.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "solidity.webp"))
+      },
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.9",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.compileFiles",
+      },
+    },
+    {
+      name: "ipfs",
+      displayName: "IPFS",
+      events: [],
+      methods: [],
+      version: "0.1.0",
+      url: "",
+      description: "Publish to IPFS",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "ipfs-logo.svg")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "ipfs-logo.svg"))
+      },
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.11",
+      },
+      options: {
+        Select: runCommand,
+      },
+      optionArgs: {
+        Select: "rmxPlugins.push",
+      },
+    },
+    {
+      name: "debugger",
+      displayName: "Debugger",
+      events: [],
+      methods: ['debug', 'getTrace'],
+      version: "0.1.0",
+      url: "https://debuggervscode.web.app/",
+      documentation:
+        "https://remix-ide.readthedocs.io/en/latest/debugger.html",
+      description: "Transaction debugger",
+      icon: { 
+        light:Uri.file(path.join(context.extensionPath, "resources/light", "debugger.webp")),
+        dark:Uri.file(path.join(context.extensionPath, "resources/dark", "debugger.webp"))
+      },
+      location: "sidePanel",
+      targets: ["vscode"],
+      targetVersion: {
+        vscode: ">=0.0.9",
+      },
+    },
+  ];
+
   rmxPluginsProvider.setDefaultData(defaultPluginData);
+  rmxControlsProvider.setDefaultData(rmxControls);
   // compile
+
+  commands.registerCommand("rmxPlugins.compileFiles", async () => {
+    try {
+      const files = filemanager.getOpenedFiles();
+
+      const opts: Array<QuickPickItem> = Object.values(files)
+        .filter((x: any) => ( path.extname(x) === ".sol" || path.extname(x) === ".yul"))
+        .map((v): QuickPickItem => {
+          const vopt: QuickPickItem = {
+            label: v,
+            description: `Compile ${v}`,
+          };
+          return vopt;
+        });
+      window.showQuickPick(opts).then(async (selected) => {
+        if (selected) {
+          await manager.activatePlugin([
+            "solidity",
+            "fileManager",
+            "editor",
+            "contentImport",
+            "compilerArtefacts",
+          ]);
+          await filemanager.switchFile(selected.label);
+
+          solpl.compile(selectedVersion, compilerOpts, selected.label);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   commands.registerCommand("rmxPlugins.compile", async () => {
     await manager.activatePlugin([
       "solidity",
       "fileManager",
       "editor",
       "contentImport",
+      "compilerArtefacts",
     ]);
     solpl.compile(selectedVersion, compilerOpts);
   });
   commands.registerCommand("rmxPlugins.compile.solidity", async () => {
     await manager.activatePlugin([
       "solidity",
+      "terminal",
       "fileManager",
       "editor",
       "contentImport",
@@ -161,6 +372,18 @@ export async function activate(context: ExtensionContext) {
     }
   });
 
+
+  commands.registerCommand("rmxPlugins.push", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.push()
+    console.log("pushed",cid)
+  });
+
+  commands.registerCommand("rmxPlugins.clone", async () => {  
+    await manager.activatePlugin(['dGitProvider']);
+    const cid = await dgitprovider.pull('')
+  });
+
   const checkSemver = async (pluginData: PluginInfo) => {
     if (!(pluginData.targetVersion && pluginData.targetVersion.vscode))
       return true;
@@ -170,11 +393,13 @@ export async function activate(context: ExtensionContext) {
     );
   };
 
+  
+
   const activatePlugin = async (pluginId: string) => {
     // Get plugininfo from plugin array
     const pluginData: PluginInfo = GetPluginData(
       pluginId,
-      rmxPluginsProvider.getData()
+      [...rmxPluginsProvider.getData(), ...rmxControlsProvider.getData()]
     );
     const versionCheck = await checkSemver(pluginData);
     if (!versionCheck) {
@@ -209,6 +434,54 @@ export async function activate(context: ExtensionContext) {
     //await activatePlugin('qr')
     await wallet.connect();
     //await web3Module.deploy()
+  });
+
+  commands.registerCommand("rmxPlugins.testaction", async () => {
+    //sharedFolderClient.call("fileManager",'getCurrentFile')
+    //RemixD.connect(undefined)
+    //let file = await filemanager.call('fileManager', 'getOpenedFiles')
+    console.log("test");
+    try {
+      //await filemanager.call('fileManager', 'writeFile', 'deps/test/something/burp','burp')
+      // filemanager.exists('deps/test/something/burp').then((x)=>{
+      //   console.log(x)
+      // })
+      //importer.resolveAndSave('https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol','')
+      //console.log(await filemanager.call('contentImport', 'resolveAndSave', '@openzeppelin/contracts/token/ERC1155/ERC1155.sol', ''))
+      //console.log(await filemanager.call('solidity-logic', 'compile', 's.sol'))
+      //importer.resolveAndSave('@openzeppelin/contracts/token/ERC1155/ERC1155.sol','')
+      await manager.activatePlugin(["solidity"]);
+      console.log(await solpl._setCompilerVersionFromPragma("s.sol"));
+    } catch (e) {
+      console.log(e);
+    }
+    return;
+    console.log("test");
+    for (let d of workspace.textDocuments) {
+      console.log(relativePath(d.fileName));
+    }
+    //console.log(file)
+  });
+
+  RemixD.on("remixdprovider" as any, "statusChanged", (x: any) => {
+    //console.log("STATUS CHANGE", x);
+    const icons = {
+      waiting: "yellowbutton.svg",
+      connected: "greenbutton.svg",
+      disconnected: "redbutton.svg",
+    };
+    rmxControlsProvider.setDataForPlugin("remixd", {
+      icon: Uri.file(path.join(context.extensionPath, "resources", icons[x])),
+      description: x,
+    });
+  });
+
+  commands.registerCommand("rmxPlugins.startRemixd", async () => {
+    RemixD.connect(undefined);
+  });
+
+  commands.registerCommand("rmxPlugins.stopRemixd", async () => {
+    RemixD.disconnect();
   });
 
   commands.registerCommand("rmxPlugins.walletDisconnect", async () => {
@@ -250,7 +523,7 @@ export async function activate(context: ExtensionContext) {
       displayName: "Remix plugin example",
       methods: [],
       version: "0.0.1-dev",
-      url: "",
+      url: "http://localhost:3000",
       description: "Run remix plugin in your Remix project",
       icon: "",
       location: "sidePanel",
@@ -277,10 +550,10 @@ export async function activate(context: ExtensionContext) {
     let id = "";
     if (plugin instanceof Object) id = plugin.id;
     else id = plugin;
-    const pluginData = GetPluginData(id, rmxPluginsProvider.getData());
+    const pluginData = GetPluginData(id, [...rmxPluginsProvider.getData(), ...rmxControlsProvider.getData()]);
     const options: {
       [key: string]: (context: ExtensionContext, id: string) => Promise<void>;
-    } = {
+    } = pluginData.options || {
       Activate: pluginActivate,
       Deactivate: pluginDeactivate,
     };
@@ -291,15 +564,27 @@ export async function activate(context: ExtensionContext) {
       !pluginData.targets
     )
       options["Uninstall"] = pluginUninstall;
-    const quickPick = window.createQuickPick();
-    quickPick.items = Object.keys(options).map((label) => ({ label }));
-    quickPick.onDidChangeSelection((selection) => {
-      if (selection[0]) {
-        options[selection[0].label](context, id).catch(console.error);
-      }
-    });
-    quickPick.onDidHide(() => quickPick.dispose());
-    quickPick.show();
+    if (Object.keys(options).length == 1) { 
+      const args =
+      (pluginData.optionArgs &&
+        pluginData.optionArgs[Object.keys(options)[0]]) ||
+      id;
+      options[Object.keys(options)[0]](context, args)
+    } else {
+      const quickPick = window.createQuickPick();
+      quickPick.items = Object.keys(options).map((label) => ({ label }));
+      quickPick.onDidChangeSelection((selection) => {
+        const args =
+          (pluginData.optionArgs &&
+            pluginData.optionArgs[selection[0].label]) ||
+          id;
+        if (selection[0]) {
+          options[selection[0].label](context, args).catch(console.error);
+        }
+      });
+      quickPick.onDidHide(() => quickPick.dispose());
+      quickPick.show();
+    }
   });
   commands.registerCommand(
     "extension.deActivateRmxPlugin",
@@ -312,7 +597,9 @@ export async function activate(context: ExtensionContext) {
   commands.registerCommand("rmxPlugins.versionSelector", async () => {
     try {
       await manager.activatePlugin(["solidity"]);
-      const versions = solpl.getSolidityVersions();
+      
+      const versions = {...{'latest':'latest'},...solpl.getSolidityVersions()};
+
       const opts: Array<QuickPickItem> = Object.keys(versions).map(
         (v): QuickPickItem => {
           const vopt: QuickPickItem = {
@@ -325,6 +612,10 @@ export async function activate(context: ExtensionContext) {
       window.showQuickPick(opts).then((selected) => {
         if (selected) {
           selectedVersion = selected.label;
+          solpl.setVersion(selectedVersion)
+          rmxControlsProvider.setDataForPlugin("solidityversion",{
+            description: selectedVersion
+          })
         }
       });
     } catch (error) {

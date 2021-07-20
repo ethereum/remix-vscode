@@ -1,3 +1,4 @@
+import { time } from "console";
 import {TreeItem, TreeDataProvider, EventEmitter, Event, TreeItemCollapsibleState, Command} from "vscode";
 import { Uri } from "vscode";
 import { PluginInfo } from "./types";
@@ -14,6 +15,14 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
   setDefaultData(data:any[]){
     this.defaultData = data
     this.refresh()
+  }
+
+  setDataForPlugin(name: string, newData: Partial<PluginInfo>) {
+    this.data.map((plugin: PluginInfo, index: number) => {
+      if(plugin.name === name)
+        this.data[index] = {...plugin,... newData}
+    })
+    this._onDidChangeTreeData.fire(null);
   }
 
   getData(){
@@ -46,7 +55,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
       return Promise.resolve(children);
     });
   }
-  private toPlugin = (pluginName: string, id: string, text: string, icon: string): PluginInterface => {
+  private toPlugin = (pluginName: string, id: string, text: string, icon: any): PluginInterface => {
     return new PluginInterface(
       pluginName,
       id,
@@ -57,7 +66,7 @@ export class RmxPluginsProvider implements TreeDataProvider<PluginInterface> {
         title: pluginName,
         arguments: [id],
       },
-      Uri.parse(icon)
+      icon
     );
   };
 
@@ -80,15 +89,15 @@ export class PluginInterface extends TreeItem {
     private text: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly command?: Command,
-    public readonly iconURI?: Uri
+    public readonly icon?: any
   ) {
     super(label, collapsibleState);
   }
   tooltip = `${this.label}-${this.text}`;
   description = this.text;
   iconPath = {
-    light: this.iconURI,
-    dark: this.iconURI,
+    light: (this.icon.light? Uri.parse(this.icon.light):Uri.parse(this.icon)),
+    dark: (this.icon.dark? Uri.parse(this.icon.dark):Uri.parse(this.icon)),
   };
   contextValue = "options";
 }

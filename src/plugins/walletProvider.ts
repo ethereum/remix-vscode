@@ -1,6 +1,6 @@
 import { Plugin } from "@remixproject/engine";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { OutputChannel, window } from "vscode";
+import { window } from "vscode";
 
 const profile = {
   name: "walletconnect",
@@ -13,11 +13,9 @@ const profile = {
   kind: "provider",
 };
 export default class WalletConnect extends Plugin {
-  private outputChannel: OutputChannel;
   provider: WalletConnectProvider;
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
   }
 
   async createProvider() {
@@ -45,12 +43,13 @@ export default class WalletConnect extends Plugin {
     });
 
     // Subscribe to accounts change
-    this.provider.on("accountsChanged", (accounts: string[]) => {
+    this.provider.on("accountsChanged", async (accounts: string[]) => {
       for(const account of accounts){
         this.print(`Wallet account : ${account}`)
       }
-      this.emit('accountsChanged', accounts || [])
-      this.call("udapp" as any, "getAccounts");
+      //this.emit('accountsChanged', accounts || [])
+      const acc = await this.call("udapp" as any, "getAccounts");
+      this.emit('accountsChanged', acc)
       //this.call("walletconnect" as any, "dismiss");
       //this.provider.disconnect();
     });
@@ -84,18 +83,12 @@ export default class WalletConnect extends Plugin {
   }
 
   // terminal printing
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
-
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m)
   }
 
   sendAsync = (data) => {
+    console.log(data)
     return new Promise((resolve, reject) => {
       if (this.provider) {
         this.provider.sendAsync(data, (error, message) => {

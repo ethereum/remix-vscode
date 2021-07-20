@@ -155,13 +155,14 @@ export default class DGitProvider extends Plugin {
 
 		const cid = input
 		if (!this.checkIpfsConfig()) return false
-		for await (const file of this.ipfs.get(cid)) {
+		let files = this.ipfs.get(cid)
+		for (const file of files) {
 			file.path = file.path.replace(cid, '')
 			if (!file.content) {
 				continue
 			}
 			const content = []
-			for await (const chunk of file.content) {
+			for (const chunk of file.content) {
 				content.push(chunk)
 			}
 			const dir = nodepath.dirname(file.path)

@@ -47,7 +47,7 @@ import { Profile } from "@remixproject/plugin-utils";
 import WalletConnect from "./plugins/walletProvider";
 import { Web3ProviderModule } from "./plugins/web3provider";
 import RemixDProvider from "./plugins/remixDProvider";
-import DGitProvider from './plugins/dgitProvider'
+import DGitProvider from './plugins/dGitProvider'
 import semver from "semver";
 import { FetchAndCompile, OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, CompilerImports } from "@remix-project/core-plugin";
 

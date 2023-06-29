@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This extension has been removed from the VSCODE marketplace and will be replaced by a dedicated stand alone dektop application.
+
 # Ethereum Remix Project extension for Visual Studio Code
 This project brings Remix plugins to Visual Studio Code.<br>Remix plugins can perform a variety of tasks such as verifying contracts, linting, generating documentation, running tutorials, compiling, debugging and much more.<br>The Remix Plugin API allows plugins that run in Remix to run in Visual Studio Code too.<br>
 It allows developers to access and interact with the file system, components, extensions and other Remix plugins without actually having to create a different code base.

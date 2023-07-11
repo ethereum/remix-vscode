@@ -1,0 +1,1 @@
+export { RemixURLResolver } from './resolve';

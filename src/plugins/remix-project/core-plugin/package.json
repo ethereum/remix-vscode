@@ -1,0 +1,43 @@
+{
+  "name": "@remix-project/core-plugin",
+  "version": "0.0.1",
+  "description": "This library was generated with [Nx](https://nx.dev).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Remix Team",
+  "license": "ISC",
+  "typings": "index.d.ts",
+  "dependencies": {
+		"@remix-project/remix-solidity": "file:../remix-solidity",
+		"@remix-project/remix-lib": "file:../remix-lib",
+    "ethers": "^5.1.4",
+    "async": "^2.6.2",
+    "ethereumjs-util": "^7.0.10",
+    "@ethereumjs/tx": "^3.2.1",
+    "@ethereumjs/block": "^3.3.0",
+    "web3": "1.2.4",
+    "string-similarity": "^4.0.4",
+		"@remix-project/remix-url-resolver": "file:../remix-url-resolver",
+    "axios": ">=0.21.1",
+    "@erebos/bzz-node": "^0.13.0",
+    "@remix-project/remix-tests": "0.2.2",
+    "@remix-project/remix-simulator": "0.2.2",
+    "merge": "^1.2.0",
+    "express-ws": "^4.0.0",
+    "ansi-gray": "^0.1.1",
+    "time-stamp": "^2.2.0",
+    "color-support": "^1.1.3",
+    "@ethereumjs/vm": "^5.4.1",
+    "@ethereumjs/common": "^2.3.1",
+    "signale": "^1.4.0",
+    "winston": "^3.3.3",
+    "commander": "^2.20.3",
+    "change-case": "^4.1.1",
+    "@remix-project/remix-debug": "0.5.2",
+    "@remix-project/remix-astwalker": "0.0.32",
+    "deep-equal": "^1.0.1",
+    "@remixproject/engine": "^0.3.19"
+  }
+}

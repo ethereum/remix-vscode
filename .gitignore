@@ -2,3 +2,4 @@ out
 node_modules
 error.log
 *.vsix
+*.DS_Store

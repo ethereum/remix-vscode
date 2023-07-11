@@ -1,20 +1,6 @@
 import { Plugin } from "@remixproject/engine";
-import {
-  absolutePath,
-  relativePath,
-} from "@remixproject/engine-vscode/util/path";
-import {
-  window,
-  workspace,
-  Uri,
-  commands,
-  ViewColumn,
-  InputBoxOptions,
-  OutputChannel,
-  QuickPickItem,
-} from "vscode";
 import Web3 from "web3";
-import { AbiInput, AbiItem } from "web3-utils";
+import { AbiItem, Unit } from "web3-utils";
 
 const profile = {
   name: "udapp",
@@ -22,12 +8,17 @@ const profile = {
   description: "",
   icon: "assets/img/fileManager.webp",
   version: "0.0.1",
-  methods: ["deploy", "send", "addNetwork", "getAccounts", "setAccount", "disconnect"],
+  methods: [
+    "deploy",
+    "send",
+    "getAccounts",
+    "setAccount",
+    "disconnect",
+  ],
   events: ["receipt", "deploy"],
   kind: "file-system",
 };
 export default class DeployModule extends Plugin {
-  private outputChannel: OutputChannel;
   private web3Provider;
   public compiledContracts;
   private accounts: string[] = [];
@@ -35,22 +26,10 @@ export default class DeployModule extends Plugin {
   private networkName: string;
   constructor() {
     super(profile);
-    this.outputChannel = window.createOutputChannel("Remix IDE");
     this.compiledContracts = {};
   }
 
   async setListeners() {
-    // listen for plugins
-    this.on(
-      "manager",
-      "pluginActivated",
-      await this.addPluginProvider.bind(this)
-    );
-    this.on(
-      "manager",
-      "pluginDeactivated",
-      await this.removePluginProvider.bind(this)
-    );
     this.on(
       "solidity",
       "compilationFinished",
@@ -58,11 +37,22 @@ export default class DeployModule extends Plugin {
         this.compiledContracts = data.contracts[file];
       }
     );
-  }
-
-  async addNetwork(network: string) {
-    let networkprovider = new Web3.providers.HttpProvider(network);
-    this.call("web3Provider", "setProvider", networkprovider);
+    const me = this;
+    this.web3Provider = {
+      async sendAsync(payload, callback) {
+        try {
+          const result = await me.call(
+            "web3Provider",
+            "sendAsync",
+            payload
+          );
+          callback(null, result);
+        } catch (e) {
+          callback(e);
+        }
+      },
+    };
+    this.web3 = new Web3(this.web3Provider);
   }
 
   async setAccount(account: string) {
@@ -71,95 +61,38 @@ export default class DeployModule extends Plugin {
   }
 
   async getAccounts(setAccount: boolean = true) {
+    let provider = await this.call("web3Provider", "getProvider");
+    this.print("Get accounts...");
+    console.log("GET ACCOUNTS UDAPP", provider);
+    if (!provider) return [];
     try {
       if (await this.web3.eth.net.isListening()) {
         let accounts = await this.web3.eth.getAccounts();
-        if (setAccount){
+        if (setAccount) {
           if (accounts.length > 0) this.web3.eth.defaultAccount = accounts[0];
           this.print(`Account changed to ${this.web3.eth.defaultAccount}`);
         }
         return accounts;
       }
     } catch (e) {
+      this.print(`Can't get accounts...`);
       console.log(e);
     }
     return [];
   }
 
-  // web3
-  async addPluginProvider(profile) {
-    if (profile.kind === "provider") {
-      ((profile, app) => {
-        let web3Provider = {
-          async sendAsync(payload, callback) {
-            try {
-              const result = await app.call(profile.name, "sendAsync", payload);
-              callback(null, result);
-            } catch (e) {
-              callback(e);
-            }
-          },
-        };
-        this.call("web3Provider", "setProvider", web3Provider);
-        this.web3Provider = {
-          async sendAsync(payload, callback) {
-            try {
-              const result = await app.call(
-                "web3Provider",
-                "sendAsync",
-                payload
-              );
-              callback(null, result);
-            } catch (e) {
-              callback(e);
-            }
-          },
-        };
-        this.web3 = new Web3(this.web3Provider);
-        //app.blockchain.addProvider({ name: profile.displayName, provider: web3Provider })
-      })(profile, this);
-    }
-  }
-  async removePluginProvider(profile) {
-    if (profile.kind === "provider") this.web3Provider = null;
-  }
 
-  private getNow(): string {
-    const date = new Date(Date.now());
-    return date.toLocaleTimeString();
-  }
 
   private print(m: string) {
-    const now = this.getNow();
-    this.outputChannel.appendLine(`[${now}]: ${m}`);
-    this.outputChannel.show();
+    this.call("terminal", "log", m);
   }
 
   async showContractPicker() {
     const keys = Object.keys(this.compiledContracts);
   }
 
-  async detectNetwork() {
-    await this.web3.eth.net.getId((err, id) => {
-      this.networkName = null;
-      if (err) {
-        this.print(`Could not detect network! Please connnect to your wallet.`);
-        return;
-      }
-      // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-      else if (id === 1) this.networkName = "Main";
-      else if (id === 2) this.networkName = "Morden (deprecated)";
-      else if (id === 3) this.networkName = "Ropsten";
-      else if (id === 4) this.networkName = "Rinkeby";
-      else if (id === 5) this.networkName = "Goerli";
-      else if (id === 42) this.networkName = "Kovan";
-      else this.networkName = "Custom";
-      this.print(`Network is ${this.networkName}!`);
-    });
-  }
-
   async txDetailsLink(hash: string) {
-    await this.detectNetwork();
+    await this.call("network", "detectNetwork");
     const transactionDetailsLinks = {
       Main: "https://www.etherscan.io/address/",
       Rinkeby: "https://rinkeby.etherscan.io/address/",
@@ -170,6 +103,17 @@ export default class DeployModule extends Plugin {
 
     if (transactionDetailsLinks[this.networkName]) {
       return transactionDetailsLinks[this.networkName] + hash;
+    }
+  }
+
+  async printReceipt(receipt: any) {
+    let allowedKeys = ['hash','gas','from','to']
+    let keys = Object.keys(receipt).filter((k)=> allowedKeys.findIndex((v)=> k.toLowerCase().indexOf(v)> -1) > -1)
+    for (let key of keys) {
+      if (receipt[key] && typeof receipt[key]!=undefined) {
+        this.print(`${key.toUpperCase()} :`)
+        this.print(JSON.stringify(receipt[key]))
+      }
     }
   }
 
@@ -197,8 +141,8 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
-      let accounts = await this.web3.eth.getAccounts();
-      await this.detectNetwork();
+
+      await this.call("network", "detectNetwork")
       let contract = new this.web3.eth.Contract(c.abi);
       let deployObject = contract.deploy({
         data: c.evm.bytecode.object,
@@ -216,7 +160,11 @@ export default class DeployModule extends Plugin {
           gas: gas,
         })
         .on("receipt", async function (receipt) {
-          me.emit("deploy", { receipt: receipt, abi:c.abi, contractName: contractName })
+          me.emit("deploy", {
+            receipt: receipt,
+            abi: c.abi,
+            contractName: contractName,
+          });
           me.print(`Contract deployed at ${receipt.contractAddress}`);
           const link: string = await me.txDetailsLink(receipt.contractAddress);
           me.print(link);
@@ -229,7 +177,14 @@ export default class DeployModule extends Plugin {
     }
   }
 
-  async send(abi: AbiItem, payload: any[], address: string) {
+  async send(
+    abi: AbiItem,
+    payload: any[],
+    address: string,
+    value: string,
+    unit: Unit,
+    gaslimit: number
+  ) {
     try {
       if (!this.web3Provider) {
         this.print(
@@ -237,7 +192,7 @@ export default class DeployModule extends Plugin {
         );
         return;
       }
-      await this.detectNetwork();
+      await this.call("network", "detectNetwork")
 
       let contract = new this.web3.eth.Contract(
         JSON.parse(JSON.stringify([abi])),
@@ -249,14 +204,14 @@ export default class DeployModule extends Plugin {
           this.print(
             `Calling method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${
-              this.web3.eth.defaultAccount
+            )} from ${this.web3.eth.defaultAccount
             } at contract address ${address}`
           );
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).call({
-                from: this.web3.eth.defaultAccount,
-              })
+              from: this.web3.eth.defaultAccount,
+              gas: gaslimit,
+            })
             : null;
           this.print(JSON.stringify(txReceipt));
           return txReceipt;
@@ -270,16 +225,24 @@ export default class DeployModule extends Plugin {
           this.print(
             `Send data to method '${abi.name}' with ${JSON.stringify(
               payload
-            )} from ${
-              this.web3.eth.defaultAccount
+            )} from ${this.web3.eth.defaultAccount
             } at contract address ${address}`
           );
+          console.log({
+            from: this.web3.eth.defaultAccount,
+            gas: gaslimit,
+            value: this.web3.utils.toWei(value, unit),
+          });
+          await contract.methods[abi.name](...payload);
           const txReceipt = abi.name
             ? await contract.methods[abi.name](...payload).send({
-                from: this.web3.eth.defaultAccount,
-              })
+              from: this.web3.eth.defaultAccount,
+              gas: gaslimit,
+              value: this.web3.utils.toWei(value, unit),
+            })
             : null;
-          this.print(JSON.stringify(txReceipt));
+          this.printReceipt(txReceipt)
+          //this.print(JSON.stringify(txReceipt));
           return txReceipt;
           // TODO: LOG
         } catch (e) {
